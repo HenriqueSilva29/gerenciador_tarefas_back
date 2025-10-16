@@ -2,10 +2,11 @@
 using Repository.ConfigEF.ToDoItemConfig;
 using Domain.ToDoItem;
 
-namespace Infrastructure.Data
+namespace Repository.ContextEFs
 {
     public class ContextEF : DbContext
     {
+        public ContextEF() { }
         public DbSet<ToDoItem> ToDoItems { get; set; }
 
         public ContextEF(DbContextOptions<ContextEF> options) : base(options) { }

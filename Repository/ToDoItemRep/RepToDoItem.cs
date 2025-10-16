@@ -1,5 +1,5 @@
 ﻿using Domain.ToDoItem;
-using Infrastructure.Data;
+using Repository.ContextEFs;
 using Microsoft.EntityFrameworkCore;
 
 namespace Repository.ToDoItemRep
@@ -34,14 +34,10 @@ namespace Repository.ToDoItemRep
             await _context.SaveChangesAsync();
         }
 
-        public async Task Remover(int id)
+        public async Task Remover(ToDoItem toDoItem)
         {
-            var ToDoItem = await _context.ToDoItems.FindAsync(id);
-            if (ToDoItem != null)
-            {
-                _context.ToDoItems.Remove(ToDoItem);
+                _context.ToDoItems.Remove(toDoItem);
                 await _context.SaveChangesAsync();
-            }
         }
 
         public async Task<IEnumerable<ToDoItem>> Filtrar(string category, bool? isCompleted)
@@ -61,4 +57,5 @@ namespace Repository.ToDoItemRep
             return await query.ToListAsync();
         }
     }
+
 }
