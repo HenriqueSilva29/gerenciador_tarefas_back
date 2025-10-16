@@ -1,4 +1,5 @@
-﻿using Application.Services.ToDoItemServices;
+﻿using Application.Services.Dto;
+using Application.Services.ToDoItemServices;
 using Domain.ToDoItem;
 using Microsoft.AspNetCore.Mvc;
 
@@ -50,14 +51,10 @@ namespace API.Controllers.ToDoItems
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Atualizar(int id, [FromBody] ToDoItem todoItem)
+        public async Task<ActionResult> Atualizar(int id, [FromBody] ToDoItemDto toDoItemDto)
         {
-            if (id != todoItem.idToDoItem)
-            {
-                return BadRequest("Id mismatch.");
-            }
 
-            await aplic.Atualizar(todoItem);
+            await aplic.Atualizar(id, toDoItemDto);
             return NoContent(); // 204 No Content
         }
 

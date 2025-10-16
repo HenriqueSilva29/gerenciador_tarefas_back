@@ -1,41 +1,53 @@
-﻿using Domain.ToDoItem;
+﻿using Application.Services.Dto;
+using Application.Services.Mappers.ToDoItems;
+using Domain.ToDoItem;
 using Repository.ToDoItemRep;
 
 namespace Application.Services.ToDoItemServices
 {
     public class ToDoItemService
     {
-        private readonly IRepToDoItem _ToDoItemRepository;
+        private readonly IRepToDoItem _rep;
 
         public ToDoItemService(IRepToDoItem toDoItemRepository)
         {
-            _ToDoItemRepository = toDoItemRepository;
+            _rep = toDoItemRepository;
         }
 
         public async Task<IEnumerable<ToDoItem>> RecuperarTodos()
         {
-            return await _ToDoItemRepository.RecuperarTodos();
+            return await _rep.RecuperarTodos();
         }
 
         public async Task Adicionar(ToDoItem todoItem)
-        {
-            // Aqui você pode adicionar validações ou lógica de negócios, como garantir que o título não exista
-            await _ToDoItemRepository.Adicionar(todoItem);
+        {          
+            await _rep.Adicionar(todoItem);
         }
 
         public async Task<IEnumerable<ToDoItem>> Filtrar(string category, bool? isCompleted)
         {
-            return await _ToDoItemRepository.Filtrar(category, isCompleted);
+            return await _rep.Filtrar(category, isCompleted);
         }
 
-        public async Task Atualizar(ToDoItem todoItem)
+        public async Task Atualizar(int id, ToDoItemDto dto)
         {
-            await _ToDoItemRepository.Atualizar(todoItem);
+
+            var ToDoItem = await _rep.RecuperarPorId(id);
+
+            if (ToDoItem is null) throw new Exception("Registro não encontrado");
+
+            ToDoItem = new MapToDoItem().Mapear(ToDoItem, dto);
+
+            await _rep.Atualizar(ToDoItem);
         }
 
         public async Task Remover(int id)
         {
-            await _ToDoItemRepository.Remover(id);
+            var toDoItem = await _rep.RecuperarPorId(id);
+
+            if (toDoItem is null) throw new Exception("Registro não encontrado");
+
+            await _rep.Remover(toDoItem);
         }
     }
 }
