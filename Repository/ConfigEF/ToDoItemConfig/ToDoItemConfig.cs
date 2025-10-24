@@ -12,9 +12,10 @@ namespace Repository.ConfigEF.ToDoItemConfig
 
             builder.ToTable("ToDoItem");
 
-            builder.HasKey(t => t.idToDoItem);
+            builder.HasKey(t => t.CodigoToDoItem);
 
-            builder.Property(t => t.idToDoItem)
+            builder.Property(t => t.CodigoToDoItem)
+                 .HasColumnName("idToDoItem")
                  .ValueGeneratedOnAdd();
 
             builder.Property(t => t.Titulo)
@@ -25,19 +26,20 @@ namespace Repository.ConfigEF.ToDoItemConfig
                 .HasMaxLength(500);
 
             builder.Property(t => t.Prioridade)
-                .IsRequired();
+                .IsRequired()
+                .HasConversion<int>(); 
 
             builder.Property(t => t.Categoria)
-                .HasMaxLength(100);
+                .HasConversion<int>();  
+
+            builder.Property(t => t.Status)
+                .HasConversion<int>();  
 
             builder.Property(t => t.DataCriacao)
                 .IsRequired();
 
             builder.Property(t => t.DataVencimento)
                 .IsRequired(false);
-
-            builder.Property(t => t.Concluido)
-                .HasDefaultValue(false);
         }
     }
 }

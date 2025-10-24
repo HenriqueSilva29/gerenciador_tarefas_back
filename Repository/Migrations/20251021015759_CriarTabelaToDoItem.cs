@@ -19,11 +19,11 @@ namespace Repository.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Titulo = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Descricao = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Concluido = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     DataCriacao = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataVencimento = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     Prioridade = table.Column<int>(type: "int", nullable: false),
-                    Categoria = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    Categoria = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

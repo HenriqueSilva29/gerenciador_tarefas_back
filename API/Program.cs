@@ -6,7 +6,7 @@ using Repository.ToDoItemRep;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<ToDoItemService>();
+builder.Services.AddScoped<ServToDoItem>();
 builder.Services.AddScoped<IRepToDoItem, RepToDoItem>();
 
 builder.Services.AddSwaggerGen(c =>
@@ -18,7 +18,8 @@ builder.Logging.AddConsole();
 
 
 builder.Services.AddDbContext<ContextEF>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), 
+                                 x => x.MigrationsAssembly("Repository")));
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();

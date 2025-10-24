@@ -1,7 +1,9 @@
-﻿using Application.Services.Dto;
+﻿using Application.Dtos;
+using Application.Interfaces.IToDoItems;
 using Application.Services.ToDoItemServices;
 using Domain.ToDoItem;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq.Expressions;
 
 namespace API.Controllers.ToDoItems
 {
@@ -9,9 +11,9 @@ namespace API.Controllers.ToDoItems
     [ApiController]
     public class ToDoItemController : ControllerBase
     {
-        private readonly ToDoItemService aplic;
+        private readonly ServToDoItem aplic;
 
-        public ToDoItemController(ToDoItemService toDoItemService)
+        public ToDoItemController(ServToDoItem toDoItemService)
         {
             aplic = toDoItemService;
         }
@@ -24,28 +26,28 @@ namespace API.Controllers.ToDoItems
         }
 
         [HttpGet("filtrar")]
-        public async Task<ActionResult<IEnumerable<ToDoItem>>> Filtrar(string category, bool? isCompleted)
+        public async Task<ActionResult<IEnumerable<ToDoItem>>> Filtrar(Expression<Func<ToDoItem, bool>> parametros)
         {
-            var filteredItems = await aplic.Filtrar(category, isCompleted);
+            var filteredItems = await aplic.Filtrar(parametros);
             return Ok(filteredItems);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Adicionar([FromBody] ToDoItem todoItem)
+        public async Task<ActionResult> Adicionar([FromBody] ToDoItemDto todoItemDto)
         {
-            if (todoItem == null)
+            if (todoItemDto == null)
             {
                 return BadRequest("Todo item cannot be null.");
             }
 
             try
             {
-                await aplic.Adicionar(todoItem);  // O serviço que você implementou
-                return CreatedAtAction(nameof(RecuperarTodos), new { id = todoItem.idToDoItem }, todoItem);
+                await aplic.Adicionar(todoItemDto);
+                //return CreatedAtAction(nameof(RecuperarTodos), new { id = todoItem.idToDoItem }, todoItem);
+                return Ok();
             }
             catch (Exception ex)
             {
-                // Log de erro
                 return StatusCode(500, $"Erro interno do servidor: {ex.Message}");
             }
         }
@@ -55,7 +57,7 @@ namespace API.Controllers.ToDoItems
         {
 
             await aplic.Atualizar(id, toDoItemDto);
-            return NoContent(); // 204 No Content
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
