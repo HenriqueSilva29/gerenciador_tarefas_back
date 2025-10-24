@@ -12,7 +12,7 @@ using Repository.ContextEFs;
 namespace Repository.Migrations
 {
     [DbContext(typeof(ContextEF))]
-    [Migration("20251016005416_CriarTabelaToDoItem")]
+    [Migration("20251021015759_CriarTabelaToDoItem")]
     partial class CriarTabelaToDoItem
     {
         /// <inheritdoc />
@@ -27,21 +27,15 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("Domain.ToDoItem.ToDoItem", b =>
                 {
-                    b.Property<int>("idToDoItem")
+                    b.Property<int>("CodigoToDoItem")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("idToDoItem");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CodigoToDoItem"));
+
+                    b.Property<int>("Categoria")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("idToDoItem"));
-
-                    b.Property<string>("Categoria")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<bool>("Concluido")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("datetime2");
@@ -57,12 +51,15 @@ namespace Repository.Migrations
                     b.Property<int>("Prioridade")
                         .HasColumnType("int");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<string>("Titulo")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.HasKey("idToDoItem");
+                    b.HasKey("CodigoToDoItem");
 
                     b.ToTable("ToDoItem", (string)null);
                 });

@@ -1,4 +1,4 @@
-﻿using Application.Services.Dto;
+﻿using Application.Dtos;
 using Domain.ToDoItem;
 
 namespace Application.Services.Mappers.ToDoItems
@@ -17,9 +17,9 @@ namespace Application.Services.Mappers.ToDoItems
         {
             ToDoItem.Titulo = dto.Titulo;
             ToDoItem.Descricao = dto.Descricao;
-            ToDoItem.Concluido = dto.Concluido;
             ToDoItem.DataCriacao = dto.DataCriacao;
             ToDoItem.DataVencimento = dto.DataVencimento;
+            ToDoItem.Status = dto.status;
             ToDoItem.Categoria = dto.Categoria;
             ToDoItem.Prioridade = dto.Prioridade;
 
