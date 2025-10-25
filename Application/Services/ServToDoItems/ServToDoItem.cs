@@ -1,82 +1,112 @@
 ﻿using Application.Dtos;
-using Application.Dtos.Filtros;
-using Application.Interfaces.IToDoItems;
+using Application.Dtos.Filtros.FiltroToDoItemDtos;
+using Application.Dtos.ToDoItemDtos;
+using Application.Filtros;
 using Application.Services.Mappers.ToDoItems;
-using Domain.ToDoItem;
+using Application.Services.ServToDoItems;
+using Application.Services.ServUtils;
+using Domain.ToDoItems;
+using Infra.Utils.SortHelperUtils;
 using Microsoft.EntityFrameworkCore;
 using Repository.Repositorys;
 
 namespace Application.Services.ToDoItemServices
 {
-    public class ServToDoItem : Service<ToDoItem>, IServToDoItem
+    public class ServToDoItem : IServToDoItem
     {
-        public ServToDoItem(IRepository<ToDoItem> repository) : base(repository)
-        {
+        private readonly IRepository<ToDoItem> _rep;
 
+        public ServToDoItem(IRepository<ToDoItem> repository) : base()
+        {
+            _rep = repository;
         }
 
-        public async Task<IEnumerable<ToDoItem>> RecuperarTarefas()
+        public async Task<IEnumerable<ToDoItem>> RecuperarTodos()
         {
-            return await RecuperarTodos();
+            return await _rep.RecuperarTodos();
         }
 
         public async Task Adicionar(ToDoItemDto dto)
         {
-            var ToDoItem = new ToDoItem();
+            var toDoItem = new ToDoItem();
 
             if (dto == null) throw new Exception("Objeto nulo");
 
-            ToDoItem = new MapToDoItem().Mapear(ToDoItem, dto);
+            toDoItem = new MapToDoItem().Mapear(toDoItem, dto);
 
-            await Adicionar(ToDoItem);
+            await _rep.Adicionar(toDoItem);
         }
 
         public async Task Atualizar(int id, ToDoItemDto dto)
         {
 
-            var ToDoItem = await RecuperarPorId(id);
+            var ToDoItem = await _rep.RecuperarPorId(id);
 
             if (ToDoItem is null) throw new Exception("Registro não encontrado");
 
             ToDoItem = new MapToDoItem().Mapear(ToDoItem, dto);
 
-            await Atualizar(ToDoItem);
+            await _rep.Atualizar(ToDoItem);
         }
 
         public async Task Remover(int id)
         {
-            var toDoItem = await RecuperarPorId(id);
+            var toDoItem = await _rep.RecuperarPorId(id);
 
             if (toDoItem is null) throw new Exception("Registro não encontrado");
 
-            await Remover(toDoItem);
+            await _rep.Remover(toDoItem);
         }
 
         public async Task<IEnumerable<ToDoItem>> Filtrar(FiltroToDoItemDto parametros)
         {
+            return await AplicarFiltro(parametros);
+        }
 
+        private async Task<IEnumerable<ToDoItem>> AplicarFiltro(FiltroToDoItemDto parametros)
+        {            
             var query = _rep.AsQueryable();
 
-            if (!string.IsNullOrEmpty(parametros.Titulo))
-                query = query.Where(x => x.Titulo.Contains(parametros.Titulo));
-
-            if (!string.IsNullOrEmpty(parametros.Descricao))
-                query = query.Where(x => x.Descricao.Contains(parametros.Descricao));
-
-            if (parametros.DataCriacao.HasValue)
-                query = query.Where(x => x.DataCriacao >= parametros.DataCriacao.Value);
-
-            if (parametros.DataVencimento.HasValue)
-                query = query.Where(x => x.DataVencimento <= parametros.DataVencimento.Value);
-
-            if (parametros.Prioridade.HasValue)
-                query = query.Where(x => x.Prioridade == parametros.Prioridade.Value);
-
-            if (parametros.Categoria.HasValue)
-                query = query.Where(x => x.Categoria == parametros.Categoria.Value);
+            query = MontarFiltro(parametros).ExecutarFiltroQueryable(query);
+            query = AplicarOrdenacao(query, parametros);
 
             return await query.ToListAsync();
         }
 
+        private IQueryable<ToDoItem> AplicarOrdenacao(IQueryable<ToDoItem> query, FiltroToDoItemDto parametros)
+        {
+            var (colunaOrdenada, ascDescOrdenada) = ServUtil.DefinirParametrosOrdenacao(parametros);
+            query = SortHelperUtil<ToDoItem>.ExecutarOrdenacao(query, colunaOrdenada, ascDescOrdenada);
+
+            return query;
+        }
+
+        private Filtro<ToDoItem> MontarFiltro(FiltroToDoItemDto parametros)
+        {
+            var filtro = new Filtro<ToDoItem>();
+
+            if (parametros.CodigoToDoItem.HasValue)
+                filtro.AdicionarFiltro(x => x.CodigoToDoItem == parametros.CodigoToDoItem);
+
+            if (!string.IsNullOrEmpty(parametros.Titulo))
+                filtro.AdicionarFiltro(x => x.Titulo.Contains(parametros.Titulo));
+
+            if (!string.IsNullOrEmpty(parametros.Descricao))
+                filtro.AdicionarFiltro(x => x.Descricao.Contains(parametros.Descricao));
+
+            if (parametros.DataCriacao.HasValue)
+                filtro.AdicionarFiltro(x => x.DataCriacao >= parametros.DataCriacao.Value);
+
+            if (parametros.DataVencimento.HasValue)
+                filtro.AdicionarFiltro(x => x.DataVencimento <= parametros.DataVencimento.Value);
+
+            if (parametros.Prioridade.HasValue)
+                filtro.AdicionarFiltro(x => x.Prioridade == parametros.Prioridade.Value);
+
+            if (parametros.Categoria.HasValue)
+                filtro.AdicionarFiltro(x => x.Categoria == parametros.Categoria.Value);
+
+            return filtro;
+        }
     }
 }

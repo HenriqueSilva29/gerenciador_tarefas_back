@@ -1,25 +1,27 @@
+using Application.Services.ServToDoItems;
 using Application.Services.ToDoItemServices;
-using Repository.ContextEFs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Repository.ContextEFs;
+using Repository.Repositorys;
 using Repository.ToDoItemRep;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<ServToDoItem>();
+builder.Services.AddDbContext<ContextEF>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+                         x => x.MigrationsAssembly("Repository")));
+
+
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IServToDoItem, ServToDoItem>();
 builder.Services.AddScoped<IRepToDoItem, RepToDoItem>();
 
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "ToDo API", Version = "v1" });
 });
-
-builder.Logging.AddConsole();
-
-
-builder.Services.AddDbContext<ContextEF>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), 
-                                 x => x.MigrationsAssembly("Repository")));
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
@@ -36,10 +38,8 @@ if (app.Environment.IsDevelopment())
     });
 
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-
-    app.UseDeveloperExceptionPage(); 
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();

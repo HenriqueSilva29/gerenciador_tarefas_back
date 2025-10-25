@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Repository.ConfigEF.ToDoItemConfig;
-using Domain.ToDoItem;
+using Domain.ToDoItems;
 
 namespace Repository.ContextEFs
 {

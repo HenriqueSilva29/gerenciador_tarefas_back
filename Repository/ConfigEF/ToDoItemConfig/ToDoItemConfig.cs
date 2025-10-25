@@ -1,4 +1,4 @@
-﻿using Domain.ToDoItem;
+﻿using Domain.ToDoItems;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

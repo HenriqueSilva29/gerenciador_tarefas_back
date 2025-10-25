@@ -1,6 +1,6 @@
-﻿using Domain.Enums;
+﻿using Domain.Enums.EnumToDoItem;
 
-namespace Domain.ToDoItem
+namespace Domain.ToDoItems
 {
     public class ToDoItem
     {
@@ -11,7 +11,6 @@ namespace Domain.ToDoItem
         }
 
         public int CodigoToDoItem { get; set; }
-        public int Codigo { get; set; }
         public string Titulo { get; set; }
         public string Descricao { get; set; }
         public DateTime DataCriacao { get; set; }
