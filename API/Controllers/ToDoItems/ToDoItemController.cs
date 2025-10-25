@@ -1,9 +1,8 @@
-﻿using Application.Dtos;
-using Application.Interfaces.IToDoItems;
-using Application.Services.ToDoItemServices;
-using Domain.ToDoItem;
+﻿using Application.Dtos.Filtros.FiltroToDoItemDtos;
+using Application.Dtos.ToDoItemDtos;
+using Application.Services.ServToDoItems;
+using Domain.ToDoItems;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq.Expressions;
 
 namespace API.Controllers.ToDoItems
 {
@@ -11,11 +10,11 @@ namespace API.Controllers.ToDoItems
     [ApiController]
     public class ToDoItemController : ControllerBase
     {
-        private readonly ServToDoItem aplic;
+        private readonly IServToDoItem aplic;
 
-        public ToDoItemController(ServToDoItem toDoItemService)
+        public ToDoItemController(IServToDoItem servToDoItem)
         {
-            aplic = toDoItemService;
+            aplic = servToDoItem;
         }
 
         [HttpGet]
@@ -26,24 +25,18 @@ namespace API.Controllers.ToDoItems
         }
 
         [HttpGet("filtrar")]
-        public async Task<ActionResult<IEnumerable<ToDoItem>>> Filtrar(Expression<Func<ToDoItem, bool>> parametros)
+        public async Task<ActionResult<IEnumerable<ToDoItem>>> Filtrar([FromQuery] FiltroToDoItemDto filtroToDoItemDto)
         {
-            var filteredItems = await aplic.Filtrar(parametros);
+            var filteredItems = await aplic.Filtrar(filtroToDoItemDto);
             return Ok(filteredItems);
         }
 
         [HttpPost]
         public async Task<ActionResult> Adicionar([FromBody] ToDoItemDto todoItemDto)
         {
-            if (todoItemDto == null)
-            {
-                return BadRequest("Todo item cannot be null.");
-            }
-
             try
             {
-                await aplic.Adicionar(todoItemDto);
-                //return CreatedAtAction(nameof(RecuperarTodos), new { id = todoItem.idToDoItem }, todoItem);
+                await aplic.Adicionar(todoItemDto);               
                 return Ok();
             }
             catch (Exception ex)

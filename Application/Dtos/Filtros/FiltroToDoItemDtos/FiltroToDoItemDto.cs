@@ -1,13 +1,8 @@
-﻿using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Enums.EnumToDoItem;
 
-namespace Application.Dtos.Filtros
+namespace Application.Dtos.Filtros.FiltroToDoItemDtos
 {
-    public class FiltroToDoItemDto
+    public class FiltroToDoItemDto : SortHelperDto
     {
         public int? CodigoToDoItem { get; set; }
         public string? Titulo { get; set; }
@@ -17,5 +12,6 @@ namespace Application.Dtos.Filtros
         public EnumStatusToDoItem? Status { get; set; }
         public EnumPrioridadeToDoItem? Prioridade { get; set; }
         public EnumCategoriaToDoItem? Categoria { get; set; }
+
     }
 }

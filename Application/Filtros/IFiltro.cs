@@ -3,7 +3,7 @@ namespace Application.Filtros
 {
     public interface IFiltro<T>
     {
-        Task<IEnumerable<T>> AplicarFiltroEnumerable(IEnumerable<T> source);
-        Task<IQueryable<T>> AplicarFiltroQueryable(IQueryable<T> source);
+        IEnumerable<T> ExecutarFiltroEnumerable(IEnumerable<T> source);
+        IQueryable<T> ExecutarFiltroQueryable(IQueryable<T> source);
     }
 }

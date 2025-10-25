@@ -1,8 +1,8 @@
-﻿using Domain.Enums;
+﻿using Domain.Enums.EnumToDoItem;
 
-namespace Application.Dtos
+namespace Application.Dtos.ToDoItemDtos
 {
-    public class ToDoItemDto
+    public class ToDoItemDto : SortHelperDto
     {
         public string Titulo { get; set; }
         public string Descricao { get; set; }
@@ -11,6 +11,5 @@ namespace Application.Dtos
         public EnumStatusToDoItem Status { get; set; }
         public EnumPrioridadeToDoItem Prioridade { get; set; }
         public EnumCategoriaToDoItem Categoria { get; set; }
-        public EnumStatusToDoItem status { get; set; }
     }
 }

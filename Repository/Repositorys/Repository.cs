@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 
 namespace Repository.Repositorys
 {
+    
     public class Repository<T> : IRepository<T> where T : class
     {
         private readonly ContextEF _context;
@@ -18,6 +19,11 @@ namespace Repository.Repositorys
         public IQueryable<T> AsQueryable()
         {
             return _dbSet.AsQueryable();
+        }
+
+        public IEnumerable<T> AsEnumerable()
+        {
+            return _dbSet.AsEnumerable();
         }
 
         public async Task<IEnumerable<T>> RecuperarTodos()
@@ -52,5 +58,6 @@ namespace Repository.Repositorys
         {
             return await _dbSet.Where(filtro).ToListAsync();
         }
+
     }
 }
