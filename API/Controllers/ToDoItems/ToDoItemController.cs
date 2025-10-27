@@ -17,7 +17,7 @@ namespace API.Controllers.ToDoItems
             aplic = servToDoItem;
         }
 
-        [HttpGet]
+        [HttpGet("recuperar-todos")]
         public async Task<ActionResult<IEnumerable<ToDoItem>>> RecuperarTodos()
         {
             var toDoItems = await aplic.RecuperarTodos();
@@ -31,7 +31,7 @@ namespace API.Controllers.ToDoItems
             return Ok(filteredItems);
         }
 
-        [HttpPost]
+        [HttpPost("adicionar")]
         public async Task<ActionResult> Adicionar([FromBody] ToDoItemDto todoItemDto)
         {
             try
@@ -45,7 +45,7 @@ namespace API.Controllers.ToDoItems
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}/atualizar")]
         public async Task<ActionResult> Atualizar(int id, [FromBody] ToDoItemDto toDoItemDto)
         {
 
@@ -53,10 +53,24 @@ namespace API.Controllers.ToDoItems
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}/remover")]
         public async Task<ActionResult> Remover(int id)
         {
             await aplic.Remover(id);
+            return NoContent();
+        }
+
+        [HttpGet("tarefas-vencidas")]
+        public ActionResult RecuperarTarefasVencidas()
+        {
+            var tarefas =  aplic.RecuperarTarefasVencidas();
+            return Ok(tarefas);
+        }
+
+        [HttpPost("{id}/atualizar-prioridade")]
+        public async Task<ActionResult> AtualizarPrioridade(int id, [FromBody] AtualizarPrioridadeDto dto)
+        {
+            await aplic.AtualizarPrioridade(id, dto);
             return NoContent();
         }
     }
