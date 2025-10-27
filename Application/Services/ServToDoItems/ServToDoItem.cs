@@ -5,10 +5,12 @@ using Application.Filtros;
 using Application.Services.Mappers.ToDoItems;
 using Application.Services.ServToDoItems;
 using Application.Services.ServUtils;
+using Domain.Enums.EnumToDoItem;
 using Domain.ToDoItems;
 using Infra.Utils.SortHelperUtils;
 using Microsoft.EntityFrameworkCore;
 using Repository.Repositorys;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Application.Services.ToDoItemServices
 {
@@ -63,6 +65,30 @@ namespace Application.Services.ToDoItemServices
             return await AplicarFiltro(parametros);
         }
 
+        
+        public async Task<IEnumerable<ToDoItem>> RecuperarTarefasVencidas()
+        {
+            var query = _rep.AsQueryable();
+            var filtro = new Filtro<ToDoItem>();
+
+            filtro.AdicionarFiltro(x => x.EstaVencida());
+
+            query = filtro.ExecutarFiltroQueryable(query);
+
+            return await query.ToListAsync();
+        }
+        public async Task AtualizarPrioridade(int id, AtualizarPrioridadeDto dto)
+        {
+            var toDoItem = await _rep.RecuperarPorId(id);
+
+            if (toDoItem == null)
+                throw new Exception("Tarefa não encontrada.");
+
+            toDoItem.DefinirPrioridade(dto.Prioridade);
+
+            await _rep.Atualizar(toDoItem);
+        }
+
         private async Task<IEnumerable<ToDoItem>> AplicarFiltro(FiltroToDoItemDto parametros)
         {            
             var query = _rep.AsQueryable();
@@ -108,5 +134,6 @@ namespace Application.Services.ToDoItemServices
 
             return filtro;
         }
+
     }
 }

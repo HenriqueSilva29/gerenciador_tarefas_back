@@ -19,14 +19,29 @@ namespace Domain.ToDoItems
         public EnumPrioridadeToDoItem Prioridade { get; set; }
         public EnumCategoriaToDoItem Categoria { get; set; }
 
-        private void ConcluirTarefa()
+        public void ConcluirTarefa()
         {
             Status = EnumStatusToDoItem.Concluida;
         }
 
-        private void CancelarTarefa()
+        public void CancelarTarefa()
         {
             Status = EnumStatusToDoItem.Cancelada;
+        }
+
+        public bool EstaVencida()
+        {
+            return DataVencimento.HasValue && DataVencimento.Value < DateTime.Now;
+        }
+
+        public bool EstaNoPrazo()
+        {
+            return DataVencimento.HasValue && DataVencimento.Value > DateTime.Now;
+        }
+
+        public void DefinirPrioridade(EnumPrioridadeToDoItem prioridade)
+        {
+            Prioridade = prioridade;
         }
 
     }

@@ -11,5 +11,8 @@ namespace Application.Services.ServToDoItems
         Task Atualizar(int id, ToDoItemDto toDoItemDto);
         Task Remover(int id);
         Task<IEnumerable<ToDoItem>> Filtrar(FiltroToDoItemDto parametros);
+        Task<IEnumerable<ToDoItem>> RecuperarTarefasVencidas();
+        Task AtualizarPrioridade(int id, AtualizarPrioridadeDto dto);
+        //List<ToDoItem> RecuperarTarefasVencidas();
     }
 }
