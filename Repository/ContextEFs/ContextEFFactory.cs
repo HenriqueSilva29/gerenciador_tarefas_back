@@ -13,8 +13,8 @@ namespace Repository.ContextEFs
 
             var projectDirectory = Path.Combine(Directory.GetCurrentDirectory(), @"..\API"); 
             var configuration = new ConfigurationBuilder()
-                .SetBasePath(projectDirectory)  // Caminho para o diretório API
-                .AddJsonFile("appsettings.json") // Arquivo de configuração
+                .SetBasePath(projectDirectory)  
+                .AddJsonFile("appsettings.json")
                 .Build();
 
             var connectionString = configuration.GetConnectionString("DefaultConnection");

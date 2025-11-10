@@ -1,6 +1,6 @@
 ﻿using Domain.Enums.EnumToDoItem;
 
-namespace Application.Dtos.Filtros.FiltroToDoItemDtos
+namespace Application.Dtos.Filtros
 {
     public class FiltroToDoItemDto : SortHelperDto
     {

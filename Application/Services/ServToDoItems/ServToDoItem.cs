@@ -1,52 +1,51 @@
 ﻿using Application.Dtos;
-using Application.Dtos.Filtros.FiltroToDoItemDtos;
+using Application.Dtos.Filtros;
 using Application.Dtos.ToDoItemDtos;
 using Application.Filtros;
-using Application.Services.Mappers.ToDoItems;
+using Application.Mappers;
 using Application.Services.ServToDoItems;
 using Application.Services.ServUtils;
-using Domain.Enums.EnumToDoItem;
+using Application.Views;
 using Domain.ToDoItems;
 using Infra.Utils.SortHelperUtils;
 using Microsoft.EntityFrameworkCore;
 using Repository.Repositorys;
-using System.Reflection.Metadata.Ecma335;
+using Repository.ToDoItemRep;
 
 namespace Application.Services.ToDoItemServices
 {
     public class ServToDoItem : IServToDoItem
     {
-        private readonly IRepository<ToDoItem> _rep;
+        private readonly IRepToDoItem _rep;
 
-        public ServToDoItem(IRepository<ToDoItem> repository) : base()
+        public ServToDoItem(IRepToDoItem rep) : base()
         {
-            _rep = repository;
+            _rep = rep;
         }
 
-        public async Task<IEnumerable<ToDoItem>> RecuperarTodos()
+        public async Task<List<ToDoItemView>> RecuperarTodos()
         {
-            return await _rep.RecuperarTodos();
+            var listaDeTarefas = await _rep.RecuperarTodos();
+
+            var listaDeTarefasMapeadas = listaDeTarefas.Select(t => MapToDoItem.MapearParaView(t)).ToList();
+
+            return listaDeTarefasMapeadas;
         }
 
-        public async Task Adicionar(ToDoItemDto dto)
+        public async Task Adicionar(AdicionarToDoItemDto dto)
         {
-            var toDoItem = new ToDoItem();
-
-            if (dto == null) throw new Exception("Objeto nulo");
-
-            toDoItem = new MapToDoItem().Mapear(toDoItem, dto);
+            var toDoItem = MapToDoItem.AdicionarToDoItemDto(dto);
 
             await _rep.Adicionar(toDoItem);
         }
 
-        public async Task Atualizar(int id, ToDoItemDto dto)
+        public async Task Atualizar(int id, AtualizarToDoItemDto dto)
         {
-
             var ToDoItem = await _rep.RecuperarPorId(id);
 
             if (ToDoItem is null) throw new Exception("Registro não encontrado");
 
-            ToDoItem = new MapToDoItem().Mapear(ToDoItem, dto);
+            ToDoItem = MapToDoItem.AtualizarToDoItemDto(ToDoItem, dto);
 
             await _rep.Atualizar(ToDoItem);
         }
@@ -64,19 +63,29 @@ namespace Application.Services.ToDoItemServices
         {
             return await AplicarFiltro(parametros);
         }
-
         
-        public async Task<IEnumerable<ToDoItem>> RecuperarTarefasVencidas()
+        public async Task<List<ToDoItem>> RecuperarTarefasVencidas()
         {
-            var query = _rep.AsQueryable();
-            var filtro = new Filtro<ToDoItem>();
+            try
+            {
+                var query = _rep.AsQueryable();
+                var filtro = new Filtro<ToDoItem>();
 
-            filtro.AdicionarFiltro(x => x.EstaVencida());
+                var dataAtual = DateTime.Today;
 
-            query = filtro.ExecutarFiltroQueryable(query);
+                filtro.AdicionarFiltro(x => x.DataVencimento < dataAtual);
 
-            return await query.ToListAsync();
+                query = filtro.ExecutarFiltroQueryable(query);
+
+                return await query.ToListAsync();
+            }
+            catch(Exception e)
+            {
+               throw new Exception(e.Message);
+            }
+
         }
+
         public async Task AtualizarPrioridade(int id, AtualizarPrioridadeDto dto)
         {
             var toDoItem = await _rep.RecuperarPorId(id);
