@@ -1,10 +1,11 @@
-﻿using Application.Dtos.Filtros.FiltroToDoItemDtos;
+﻿using Application.Dtos.Filtros;
 using Application.Dtos.ToDoItemDtos;
 using Application.Services.ServToDoItems;
 using Domain.ToDoItems;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.IIS.Core;
 
-namespace API.Controllers.ToDoItems
+namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -32,11 +33,11 @@ namespace API.Controllers.ToDoItems
         }
 
         [HttpPost("adicionar")]
-        public async Task<ActionResult> Adicionar([FromBody] ToDoItemDto todoItemDto)
+        public async Task<ActionResult> Adicionar([FromBody] AdicionarToDoItemDto todoItemDto)
         {
             try
             {
-                await aplic.Adicionar(todoItemDto);               
+                await aplic.Adicionar(todoItemDto);
                 return Ok();
             }
             catch (Exception ex)
@@ -46,7 +47,7 @@ namespace API.Controllers.ToDoItems
         }
 
         [HttpPut("{id}/atualizar")]
-        public async Task<ActionResult> Atualizar(int id, [FromBody] ToDoItemDto toDoItemDto)
+        public async Task<ActionResult> Atualizar([FromQuery] int id, [FromBody] AtualizarToDoItemDto toDoItemDto)
         {
 
             await aplic.Atualizar(id, toDoItemDto);
@@ -61,11 +62,20 @@ namespace API.Controllers.ToDoItems
         }
 
         [HttpGet("tarefas-vencidas")]
-        public ActionResult RecuperarTarefasVencidas()
+        public async Task<ActionResult> RecuperarTarefasVencidas()
         {
-            var tarefas =  aplic.RecuperarTarefasVencidas();
-            return Ok(tarefas);
+            try
+            {
+                var tarefas = await aplic.RecuperarTarefasVencidas();
+                return Ok(tarefas);
+            }
+            catch(Exception e)
+            {
+                return StatusCode(500,e.Message) ;
+            }
+
         }
+
 
         [HttpPost("{id}/atualizar-prioridade")]
         public async Task<ActionResult> AtualizarPrioridade(int id, [FromBody] AtualizarPrioridadeDto dto)

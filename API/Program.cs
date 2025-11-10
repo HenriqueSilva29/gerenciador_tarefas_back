@@ -1,5 +1,7 @@
+using Application.Services.ServSubTarefas;
 using Application.Services.ServToDoItems;
 using Application.Services.ToDoItemServices;
+using Autofac.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Repository.ContextEFs;
@@ -17,6 +19,7 @@ builder.Services.AddDbContext<ContextEF>(options =>
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IServToDoItem, ServToDoItem>();
 builder.Services.AddScoped<IRepToDoItem, RepToDoItem>();
+builder.Services.AddScoped<IServSubtarefa, ServSubtarefa>();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -25,6 +28,13 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.MaxDepth = 32;
+    });
 
 var app = builder.Build();
 

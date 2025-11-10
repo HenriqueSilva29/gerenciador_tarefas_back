@@ -19,6 +19,11 @@ namespace Domain.ToDoItems
         public EnumPrioridadeToDoItem Prioridade { get; set; }
         public EnumCategoriaToDoItem Categoria { get; set; }
 
+        //Relacionamento autorreferente
+        public int? CodigoToDoItemPai { get; set; }
+        public ToDoItem? ToDoItemPai { get; set; }
+        public List<ToDoItem> SubTarefas { get; set; }
+
         public void ConcluirTarefa()
         {
             Status = EnumStatusToDoItem.Concluida;

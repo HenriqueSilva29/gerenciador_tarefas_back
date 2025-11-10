@@ -14,6 +14,11 @@ namespace Repository.ConfigEF.ToDoItemConfig
 
             builder.HasKey(t => t.CodigoToDoItem);
 
+            builder.HasMany(t => t.SubTarefas)
+                   .WithOne(t => t.ToDoItemPai)
+                   .HasForeignKey(t => t.CodigoToDoItemPai)
+                   .OnDelete(DeleteBehavior.NoAction);
+
             builder.Property(t => t.CodigoToDoItem)
                  .HasColumnName("idToDoItem")
                  .ValueGeneratedOnAdd();
