@@ -1,4 +1,5 @@
 ﻿using Domain.Enums.EnumToDoItem;
+using Domain.Lembretes;
 
 namespace Domain.ToDoItems
 {
@@ -8,6 +9,8 @@ namespace Domain.ToDoItems
         public ToDoItem()
         {
             Status = EnumStatusToDoItem.NaoIniciada;
+            SubTarefas = new List<ToDoItem>();
+            this.Lembretes = new List<Lembrete>();
         }
 
         public int CodigoToDoItem { get; set; }
@@ -19,10 +22,13 @@ namespace Domain.ToDoItems
         public EnumPrioridadeToDoItem Prioridade { get; set; }
         public EnumCategoriaToDoItem Categoria { get; set; }
 
-        //Relacionamento autorreferente
+        //autorreferente
         public int? CodigoToDoItemPai { get; set; }
         public ToDoItem? ToDoItemPai { get; set; }
         public List<ToDoItem> SubTarefas { get; set; }
+
+        //LEMBRETES
+        public List<Lembrete> Lembretes { get; set; }
 
         public void ConcluirTarefa()
         {

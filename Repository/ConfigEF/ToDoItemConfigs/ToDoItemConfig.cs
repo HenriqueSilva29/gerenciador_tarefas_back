@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Repository.ConfigEF.ToDoItemConfig
+namespace Repository.ConfigEF.ToDoItemConfigs
 {
     public class ToDoItemConfig : IEntityTypeConfiguration<ToDoItem>
     {

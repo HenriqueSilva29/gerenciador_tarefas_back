@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace Repository.Repositorys
 {
-    public interface IRepository<T>
+    public interface IRepository<T> where T : class
     {
         IQueryable<T> AsQueryable();
         IEnumerable<T> AsEnumerable();
         Task<IEnumerable<T>> RecuperarTodos();
-        Task<T> RecuperarPorId(int id);
         Task Adicionar(T entity);
         Task Atualizar(T entity);
         Task Remover(T entity);

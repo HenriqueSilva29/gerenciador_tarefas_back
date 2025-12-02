@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Repository.ConfigEF.ToDoItemConfig;
+using Repository.ConfigEF.ToDoItemConfigs;
 using Domain.ToDoItems;
+using Repository.ConfigEF.LembreteConfigs;
 
 namespace Repository.ContextEFs
 {
@@ -16,6 +17,7 @@ namespace Repository.ContextEFs
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new ToDoItemConfig());
+            modelBuilder.ApplyConfiguration(new LembreteConfig());
         }
     }
 }
