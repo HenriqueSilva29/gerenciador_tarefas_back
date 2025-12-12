@@ -1,4 +1,4 @@
-﻿using Application.Dtos.SubtarefaDto;
+﻿using Application.Dtos.SubtarefaDtos;
 using Domain.ToDoItems;
 
 namespace Application.Mappers

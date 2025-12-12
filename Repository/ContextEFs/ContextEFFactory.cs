@@ -8,18 +8,21 @@ namespace Repository.ContextEFs
     {
         public ContextEF CreateDbContext(string[] args)
         {
-            // Configura as opções para o DbContext
-            var optionsBuilder = new DbContextOptionsBuilder<ContextEF>();
+            // Pega o diretório do projeto a partir do primeiro argumento, se existir
+            var basePath = args.Length > 0 ? args[0] : Directory.GetCurrentDirectory();
 
-            var projectDirectory = Path.Combine(Directory.GetCurrentDirectory(), @"..\API"); 
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(projectDirectory)  
+            Console.WriteLine($"Base path usado: {basePath}");
+
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(basePath)
                 .AddJsonFile("appsettings.json")
-                .Build();
+                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
+                .AddEnvironmentVariables();
 
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            var config = builder.Build();
 
-            optionsBuilder.UseSqlServer(connectionString);
+            var optionsBuilder = new DbContextOptionsBuilder<ContextEF>();
+            optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));
 
             return new ContextEF(optionsBuilder.Options);
         }

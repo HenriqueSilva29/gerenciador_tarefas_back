@@ -27,7 +27,6 @@ namespace Domain.ToDoItems
         public ToDoItem? ToDoItemPai { get; set; }
         public List<ToDoItem> SubTarefas { get; set; }
 
-        //LEMBRETES
         public List<Lembrete> Lembretes { get; set; }
 
         public void ConcluirTarefa()

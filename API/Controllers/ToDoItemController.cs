@@ -1,9 +1,8 @@
-﻿using Application.Dtos.Filtros;
+﻿using Application.Dtos.FiltroDtos;
 using Application.Dtos.ToDoItemDtos;
 using Application.Services.ServToDoItems;
 using Domain.ToDoItems;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.IIS.Core;
 
 namespace API.Controllers
 {
@@ -25,10 +24,10 @@ namespace API.Controllers
             return Ok(toDoItems);
         }
 
-        [HttpGet("filtrar")]
-        public async Task<ActionResult<IEnumerable<ToDoItem>>> Filtrar([FromQuery] FiltroToDoItemDto filtroToDoItemDto)
+        [HttpGet("listarFiltradoAsync")]
+        public async Task<ActionResult<IEnumerable<ToDoItem>>> ListarFiltradoAsync([FromQuery] FiltroToDoItemDto filtroToDoItemDto)
         {
-            var filteredItems = await aplic.Filtrar(filtroToDoItemDto);
+            var filteredItems = await aplic.ListarFiltradoAsync(filtroToDoItemDto);
             return Ok(filteredItems);
         }
 

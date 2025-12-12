@@ -7,9 +7,6 @@ namespace Repository.ContextEFs
 {
     public class ContextEF : DbContext
     {
-        public ContextEF() { }
-        public DbSet<ToDoItem> ToDoItems { get; set; }
-
         public ContextEF(DbContextOptions<ContextEF> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,4 +1,5 @@
 ﻿using Domain.Lembretes;
+using Repository.Repositorys.GuidRep;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Repository.Repositorys.LembreteRep
 {
-    public interface IRepLembrete : IRepository<Lembrete>
+    public interface IRepLembrete : IRepGuid<Lembrete>
     {
     }
 }

@@ -5,7 +5,7 @@ namespace Domain.Lembretes
     public class Lembrete
     {
         public Guid CodigoLembrete { get; set; }
-        public Guid CodigoToDoItem { get; set; }
+        public int CodigoToDoItem { get; set; }
         public ToDoItem ToDoItem { get; set; }
         public DateTime DataDoLembrete { get; set; }
         public string Texto { get; set; } = string.Empty;

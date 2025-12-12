@@ -6,7 +6,7 @@ using Repository.Repositorys.IntRep;
 
 namespace Repository.ToDoItemRep
 {   
-    public class RepToDoItem : RepInt<ToDoItem>
+    public class RepToDoItem : RepInt<ToDoItem>, IRepToDoItem
     {
         public RepToDoItem(ContextEF context) : base(context)
         {
