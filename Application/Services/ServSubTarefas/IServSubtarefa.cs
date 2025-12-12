@@ -1,4 +1,4 @@
-﻿using Application.Dtos.SubtarefaDto;
+﻿using Application.Dtos.SubtarefaDtos;
 using Application.Dtos.ToDoItemDtos;
 using System;
 using System.Collections.Generic;

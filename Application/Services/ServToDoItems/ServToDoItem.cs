@@ -1,15 +1,12 @@
-﻿using Application.Dtos;
-using Application.Dtos.Filtros;
+﻿using Application.Dtos.FiltroDtos;
 using Application.Dtos.ToDoItemDtos;
-using Application.Filtros;
 using Application.Mappers;
 using Application.Services.ServToDoItems;
-using Application.Services.ServUtils;
+using Application.Utils.Filtro;
+using Application.Utils.Ordenacao;
 using Application.Views;
 using Domain.ToDoItems;
-using Infra.Utils.SortHelperUtils;
 using Microsoft.EntityFrameworkCore;
-using Repository.Repositorys;
 using Repository.ToDoItemRep;
 
 namespace Application.Services.ToDoItemServices
@@ -59,23 +56,15 @@ namespace Application.Services.ToDoItemServices
             await _rep.Remover(toDoItem);
         }
 
-        public async Task<IEnumerable<ToDoItem>> Filtrar(FiltroToDoItemDto parametros)
-        {
-            return await AplicarFiltro(parametros);
-        }
+
         
         public async Task<List<ToDoItem>> RecuperarTarefasVencidas()
         {
             try
             {
                 var query = _rep.AsQueryable();
-                var filtro = new Filtro<ToDoItem>();
-
-                var dataAtual = DateTime.Today;
-
-                filtro.AdicionarFiltro(x => x.DataVencimento < dataAtual);
-
-                query = filtro.ExecutarFiltroQueryable(query);
+                
+                //Implementar consultas ao banco
 
                 return await query.ToListAsync();
             }
@@ -98,51 +87,14 @@ namespace Application.Services.ToDoItemServices
             await _rep.Atualizar(toDoItem);
         }
 
-        private async Task<IEnumerable<ToDoItem>> AplicarFiltro(FiltroToDoItemDto parametros)
-        {            
+        public async Task<List<ToDoItem>> ListarFiltradoAsync(FiltroToDoItemDto parametros)
+        {
             var query = _rep.AsQueryable();
 
-            query = MontarFiltro(parametros).ExecutarFiltroQueryable(query);
-            query = AplicarOrdenacao(query, parametros);
+            query = query.AplicarFiltros(parametros);
+            query = query.AplicarOrdenacao(parametros);
 
             return await query.ToListAsync();
         }
-
-        private IQueryable<ToDoItem> AplicarOrdenacao(IQueryable<ToDoItem> query, FiltroToDoItemDto parametros)
-        {
-            var (colunaOrdenada, ascDescOrdenada) = ServUtil.DefinirParametrosOrdenacao(parametros);
-            query = SortHelperUtil<ToDoItem>.ExecutarOrdenacao(query, colunaOrdenada, ascDescOrdenada);
-
-            return query;
-        }
-
-        private Filtro<ToDoItem> MontarFiltro(FiltroToDoItemDto parametros)
-        {
-            var filtro = new Filtro<ToDoItem>();
-
-            if (parametros.CodigoToDoItem.HasValue)
-                filtro.AdicionarFiltro(x => x.CodigoToDoItem == parametros.CodigoToDoItem);
-
-            if (!string.IsNullOrEmpty(parametros.Titulo))
-                filtro.AdicionarFiltro(x => x.Titulo.Contains(parametros.Titulo));
-
-            if (!string.IsNullOrEmpty(parametros.Descricao))
-                filtro.AdicionarFiltro(x => x.Descricao.Contains(parametros.Descricao));
-
-            if (parametros.DataCriacao.HasValue)
-                filtro.AdicionarFiltro(x => x.DataCriacao >= parametros.DataCriacao.Value);
-
-            if (parametros.DataVencimento.HasValue)
-                filtro.AdicionarFiltro(x => x.DataVencimento <= parametros.DataVencimento.Value);
-
-            if (parametros.Prioridade.HasValue)
-                filtro.AdicionarFiltro(x => x.Prioridade == parametros.Prioridade.Value);
-
-            if (parametros.Categoria.HasValue)
-                filtro.AdicionarFiltro(x => x.Categoria == parametros.Categoria.Value);
-
-            return filtro;
-        }
-
     }
 }

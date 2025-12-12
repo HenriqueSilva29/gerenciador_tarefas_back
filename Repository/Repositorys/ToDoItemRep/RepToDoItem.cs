@@ -1,17 +1,15 @@
 ﻿using Domain.ToDoItems;
+using Microsoft.EntityFrameworkCore;
 using Repository.ContextEFs;
 using Repository.Repositorys;
-using System.Linq.Expressions;
+using Repository.Repositorys.IntRep;
 
 namespace Repository.ToDoItemRep
-{
-    
-    public class RepToDoItem : Repository<ToDoItem>, IRepToDoItem
+{   
+    public class RepToDoItem : RepInt<ToDoItem>, IRepToDoItem
     {
         public RepToDoItem(ContextEF context) : base(context)
         {
         }
-     
     }
-
 }

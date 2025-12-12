@@ -1,11 +1,6 @@
 ﻿using Domain.Enums.EnumToDoItem;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Application.Dtos.SubtarefaDto
+namespace Application.Dtos.SubtarefaDtos
 {
     public class AdicionarSubtarefaDto
     {

@@ -1,4 +1,4 @@
-﻿using Application.Dtos.SubtarefaDto;
+﻿using Application.Dtos.SubtarefaDtos;
 using Application.Services.ServSubTarefas;
 using Microsoft.AspNetCore.Mvc;
 

@@ -31,11 +31,6 @@ namespace Repository.Repositorys
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<T> RecuperarPorId(int id)
-        {
-            return await _dbSet.FindAsync(id);
-        }
-
         public async Task Adicionar(T entity)
         {
             await _dbSet.AddAsync(entity);
@@ -58,6 +53,5 @@ namespace Repository.Repositorys
         {
             return await _dbSet.Where(filtro).ToListAsync();
         }
-
     }
 }
