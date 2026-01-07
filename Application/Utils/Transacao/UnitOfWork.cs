@@ -3,7 +3,7 @@ using Repository.ContextEFs;
 
 namespace Application.Utils.Transacao
 {
-    internal class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly ContextEF _context;
         private IDbContextTransaction? _transaction;
