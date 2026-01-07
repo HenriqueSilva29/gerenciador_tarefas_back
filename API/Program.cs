@@ -1,6 +1,8 @@
+using API.Middlewares;
 using Application.Services.ServSubTarefas;
 using Application.Services.ServToDoItems;
 using Application.Services.ToDoItemServices;
+using Application.Utils.Transacao;
 using Hangfire;
 using Infra.Jobs.Hangfire.JobDeLembretes;
 using Infra.Mensageria.RabbitMQ.Publicadores;
@@ -35,8 +37,9 @@ builder.Services.AddScoped<IServToDoItem, ServToDoItem>();
 builder.Services.AddScoped<IServSubtarefa, ServSubtarefa>();
 
 builder.Services.AddScoped<IPublicadorDeMensagens, PublicadorDeMensagens>();
-
 builder.Services.AddScoped<IJobDeLembrete, JobDeLembrete>();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -71,9 +74,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseRouting();
-app.UseAuthorization();
 
+app.UseRouting();
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseAuthorization();
 app.MapControllers();
 app.MapRazorPages();
 

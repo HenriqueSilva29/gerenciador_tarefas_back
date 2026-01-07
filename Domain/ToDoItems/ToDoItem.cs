@@ -1,11 +1,10 @@
-﻿using Domain.Enums.EnumToDoItem;
+﻿using Domain.Exceptions;
 using Domain.Lembretes;
 
 namespace Domain.ToDoItems
 {
     public class ToDoItem
     {
-
         public ToDoItem()
         {
             Status = EnumStatusToDoItem.NaoIniciada;
@@ -29,9 +28,35 @@ namespace Domain.ToDoItems
 
         public List<Lembrete> Lembretes { get; set; }
 
-        public void ConcluirTarefa()
+        public enum EnumCategoriaToDoItem
         {
-            Status = EnumStatusToDoItem.Concluida;
+            Trabalho = 0,
+            Pessoal = 1,
+            Estudo = 2,
+            Lazer = 3,
+            Compras = 4,
+            Casa = 5,
+            Saude = 6,
+            Outros = 7
+        }
+
+        public enum EnumPrioridadeToDoItem
+        {
+            Baixa = 0,
+            Media = 1,
+            Alta = 2
+        }
+
+        public enum EnumStatusToDoItem
+        {
+            NaoIniciada = 0,
+            EmProgresso = 1,
+            Concluida = 2,
+            Cancelada = 3,
+            Atrasada = 4,
+            Pausada = 5,
+            AguardandoRevisao = 6,
+            Adiada = 7
         }
 
         public void CancelarTarefa()
@@ -54,5 +79,38 @@ namespace Domain.ToDoItems
             Prioridade = prioridade;
         }
 
+        public bool PossuiSubtarefaNaoConcluida()
+        {
+            return SubTarefas.Any(st => st.Status != EnumStatusToDoItem.Concluida);
+        }
+
+        public bool PodeConcluirTarefa()
+        {
+            return !PossuiSubtarefaNaoConcluida();
+        }
+
+        public void ConcluirTarefa()
+        {
+            if (!PodeConcluirTarefa())
+                throw new DomainException(
+                    "SUBTASK_NOT_COMPLETED",
+                    "Não é possivel concluir tarefa pois existem subtarefas não concluídas");
+
+            Status = EnumStatusToDoItem.Concluida;
+        }
+
+        public bool PossuiSubtarefaComPrioridadeMaior()
+        {
+            return SubTarefas.Any(st => st.Prioridade > this.Prioridade);
+        }
+
+        public bool ValidaPrioridadeParaSubtarefa(){
+            if (PossuiSubtarefaComPrioridadeMaior())
+                throw new DomainException(
+                    "SUBTASK_NOT_COMPLETED",
+                    "Subtarefa foi definida com prioridade maior que tarefa pai");
+
+            return true;
+        }
     }
 }

@@ -1,6 +1,8 @@
-﻿using Application.Dtos.FiltroDtos;
+﻿using API.Errors;
+using Application.Dtos.FiltroDtos;
 using Application.Dtos.ToDoItemDtos;
 using Application.Services.ServToDoItems;
+using Application.Utils.Paginacao;
 using Domain.ToDoItems;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,14 +20,14 @@ namespace API.Controllers
         }
 
         [HttpGet("recuperar-todos")]
-        public async Task<ActionResult<IEnumerable<ToDoItem>>> RecuperarTodos()
+        public async Task<ActionResult<PaginacaoHelper<ToDoItem>>> RecuperarTodos(int pagina, int quantidade)
         {
-            var toDoItems = await aplic.RecuperarTodos();
+            var toDoItems = await aplic.RecuperarTodos(pagina, quantidade);
             return Ok(toDoItems);
         }
 
         [HttpGet("listarFiltradoAsync")]
-        public async Task<ActionResult<IEnumerable<ToDoItem>>> ListarFiltradoAsync([FromQuery] FiltroToDoItemDto filtroToDoItemDto)
+        public async Task<ActionResult<PaginacaoHelper<ToDoItem>>> ListarFiltradoAsync([FromQuery] FiltroToDoItemDto filtroToDoItemDto)
         {
             var filteredItems = await aplic.ListarFiltradoAsync(filtroToDoItemDto);
             return Ok(filteredItems);
@@ -34,21 +36,13 @@ namespace API.Controllers
         [HttpPost("adicionar")]
         public async Task<ActionResult> Adicionar([FromBody] AdicionarToDoItemDto todoItemDto)
         {
-            try
-            {
                 await aplic.Adicionar(todoItemDto);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erro interno do servidor: {ex.Message}");
-            }
+                return Ok();  
         }
 
         [HttpPut("{id}/atualizar")]
         public async Task<ActionResult> Atualizar([FromQuery] int id, [FromBody] AtualizarToDoItemDto toDoItemDto)
         {
-
             await aplic.Atualizar(id, toDoItemDto);
             return NoContent();
         }
@@ -61,18 +55,10 @@ namespace API.Controllers
         }
 
         [HttpGet("tarefas-vencidas")]
-        public async Task<ActionResult> RecuperarTarefasVencidas()
+        public async Task<ActionResult> RecuperarTarefasVencidas(int pagina, int quantidade)
         {
-            try
-            {
-                var tarefas = await aplic.RecuperarTarefasVencidas();
+                var tarefas = await aplic.RecuperarTarefasVencidas(pagina, quantidade);
                 return Ok(tarefas);
-            }
-            catch(Exception e)
-            {
-                return StatusCode(500,e.Message) ;
-            }
-
         }
 
 

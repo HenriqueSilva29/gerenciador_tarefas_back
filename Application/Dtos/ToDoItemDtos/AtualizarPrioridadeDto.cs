@@ -1,9 +1,4 @@
-﻿using Domain.Enums.EnumToDoItem;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using static Domain.ToDoItems.ToDoItem;
 
 namespace Application.Dtos.ToDoItemDtos
 {
