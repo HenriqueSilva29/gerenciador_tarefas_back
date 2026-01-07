@@ -1,4 +1,4 @@
-﻿using Domain.Enums.EnumToDoItem;
+﻿using static Domain.ToDoItems.ToDoItem;
 
 namespace Application.Dtos.ToDoItemDtos
 {

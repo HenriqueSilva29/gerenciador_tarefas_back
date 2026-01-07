@@ -26,27 +26,20 @@ namespace Repository.Repositorys
             return _dbSet.AsEnumerable();
         }
 
-        public async Task<IEnumerable<T>> RecuperarTodos()
-        {
-            return await _dbSet.ToListAsync();
-        }
 
         public async Task Adicionar(T entity)
         {
             await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
         }
 
         public async Task Atualizar(T entity)
         {
             _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
         }
 
         public async Task Remover(T entity)
         {
             _dbSet.Remove(entity);
-            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<T>> Filtrar(Expression<Func<T, bool>> filtro)

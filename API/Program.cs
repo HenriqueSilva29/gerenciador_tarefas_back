@@ -1,3 +1,4 @@
+using API.Middlewares;
 using Application.Services.ServSubTarefas;
 using Application.Services.ServToDoItems;
 using Application.Services.ToDoItemServices;
@@ -71,9 +72,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseRouting();
-app.UseAuthorization();
 
+app.UseRouting();
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseAuthorization();
 app.MapControllers();
 app.MapRazorPages();
 

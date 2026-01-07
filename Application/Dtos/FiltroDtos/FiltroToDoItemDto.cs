@@ -1,12 +1,13 @@
 ﻿using Application.Dtos.Filtros;
+using Application.Dtos.PaginacaoDtos;
 using Application.Utils.Ordenacao;
-using Domain.Enums.EnumToDoItem;
 using Domain.ToDoItems;
 using System.Linq.Expressions;
+using static Domain.ToDoItems.ToDoItem;
 
 namespace Application.Dtos.FiltroDtos
 {
-    public class FiltroToDoItemDto : IFiltroDto<ToDoItem>, ISortHelper<ToDoItem>
+    public class FiltroToDoItemDto : PaginacaoDto, IFiltroDto<ToDoItem>, ISortHelper<ToDoItem>
     {
         public string OrdenarPor { get; set; } = "Codigo";
         public string Direcao { get; set; } = "asc";

@@ -11,7 +11,6 @@ namespace Repository.Repositorys
     {
         IQueryable<T> AsQueryable();
         IEnumerable<T> AsEnumerable();
-        Task<IEnumerable<T>> RecuperarTodos();
         Task Adicionar(T entity);
         Task Atualizar(T entity);
         Task Remover(T entity);
