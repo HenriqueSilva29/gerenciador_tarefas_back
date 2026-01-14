@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Common;
 
 namespace Repository.Repositorys.IntRep
 {
     public interface IRepInt<T> : IRepository<T> where T : class
     {
-        Task<T> RecuperarPorId(int id);
+        Task<T?> RecuperarPorId(int id);
     }
 }

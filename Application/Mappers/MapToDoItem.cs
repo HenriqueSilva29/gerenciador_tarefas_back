@@ -1,6 +1,7 @@
 ﻿using Application.Dtos.ToDoItemDtos;
 using Application.Views;
-using Domain.ToDoItems;
+using Domain.Common.ValueObjects;
+using Domain.Entities.ToDoItems;
 
 namespace Application.Mappers
 {
@@ -10,7 +11,7 @@ namespace Application.Mappers
         {
             ToDoItem.Titulo = dto.Titulo;
             ToDoItem.Descricao = dto.Descricao;
-            ToDoItem.DataCriacao = DateTime.Now;
+            ToDoItem.DataCriacao = UtcDateTime.Now();
             ToDoItem.DataVencimento = dto.DataVencimento;
             ToDoItem.Status = dto.Status;
             ToDoItem.Categoria = dto.Categoria;
@@ -25,7 +26,7 @@ namespace Application.Mappers
             {
                 Titulo = dto.Titulo,
                 Descricao = dto.Descricao,
-                DataCriacao = DateTime.Now,
+                DataCriacao = UtcDateTime.Now(),
                 DataVencimento = dto.DataVencimento,
                 Prioridade = dto.Prioridade,
                 Categoria = dto.Categoria
@@ -47,7 +48,7 @@ namespace Application.Mappers
         {
             return new ToDoItemView
             {
-                CodigoToDoItem = toDoItem.CodigoToDoItem,
+                CodigoToDoItem = toDoItem.Id,
                 Titulo = toDoItem.Titulo,
                 Descricao = toDoItem.Descricao,
                 DataCriacao = toDoItem.DataCriacao,
@@ -56,7 +57,7 @@ namespace Application.Mappers
                 Prioridade = toDoItem.Prioridade,
                 Categoria = toDoItem.Categoria,
                 CodigoToDoItemPai = toDoItem.CodigoToDoItemPai,
-                SubTarefas = toDoItem.SubTarefas?.Select(st => st.CodigoToDoItem).ToList()
+                SubTarefas = toDoItem.SubTarefas?.Select(st => st.Id).ToList()
             };
         }
     }

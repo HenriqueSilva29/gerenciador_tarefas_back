@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Repository.ConfigEF.ToDoItemConfigs;
-using Domain.ToDoItems;
 using Repository.ConfigEF.LembreteConfigs;
 
 namespace Repository.ContextEFs

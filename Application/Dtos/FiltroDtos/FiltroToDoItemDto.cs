@@ -1,9 +1,9 @@
 ﻿using Application.Dtos.Filtros;
 using Application.Dtos.PaginacaoDtos;
 using Application.Utils.Ordenacao;
-using Domain.ToDoItems;
+using Domain.Entities.ToDoItems;
 using System.Linq.Expressions;
-using static Domain.ToDoItems.ToDoItem;
+using static Domain.Entities.ToDoItems.ToDoItem;
 
 namespace Application.Dtos.FiltroDtos
 {
@@ -16,7 +16,7 @@ namespace Application.Dtos.FiltroDtos
         {
             return new()
             {
-                { "Codigo", x => x.CodigoToDoItem },
+                { "Codigo", x => x.Id },
                 { "Titulo", x => x.Titulo },
                 { "Descricao", x => x.Descricao },
                 { "DataCriacao", x => x.DataCriacao },
@@ -41,7 +41,7 @@ namespace Application.Dtos.FiltroDtos
             var filtros = new Dictionary<string, Expression<Func<ToDoItem, bool>>>();
 
             if (CodigoToDoItem.HasValue)
-                filtros.Add("Codigo", x => x.CodigoToDoItem == CodigoToDoItem.Value);
+                filtros.Add("Codigo", x => x.Id == CodigoToDoItem.Value);
 
             if (!string.IsNullOrWhiteSpace(Titulo))
                 filtros.Add("Titulo", x => x.Titulo.Contains(Titulo));
@@ -50,10 +50,10 @@ namespace Application.Dtos.FiltroDtos
                 filtros.Add("Prioridade", x => x.Descricao == Descricao);
 
             if (DataCriacao.HasValue)
-                filtros.Add("DataCriacao", x => x.DataCriacao >= DataCriacao.Value);
+                filtros.Add("DataCriacao", x => x.DataCriacao.Value >= DataCriacao.Value);
 
             if (DataVencimento.HasValue)
-                filtros.Add("DataVencimento", x => x.DataVencimento <= DataVencimento.Value);
+                filtros.Add("DataVencimento", x => x.DataVencimento.Value <= DataVencimento.Value);
 
             if (Prioridade.HasValue)
                 filtros.Add("Prioridade", x => x.Prioridade == Prioridade.Value);

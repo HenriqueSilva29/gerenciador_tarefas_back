@@ -1,34 +1,28 @@
 ﻿using RabbitMQ.Client;
 using System.Text.Json;
 using System.Text;
+using Application.Dtos.LembreteDtos;
 
 namespace Infra.Mensageria.RabbitMQ.Publicadores
 {
     public class PublicadorDeMensagens : IPublicadorDeMensagens
     {
-        public async Task PublicarAsync(object mensagem)
+        private readonly IRabbitChannelFactory _channelFactory;
+
+        public PublicadorDeMensagens(IRabbitChannelFactory channelFactory)
         {
-            var factory = new ConnectionFactory
-            {
-                Uri = new Uri("amqp://guest:guest@rabbitmq:5672/")
-            };
+            _channelFactory = channelFactory;
+        }
 
-            await using var connection = await factory.CreateConnectionAsync();
-            await using var channel = await connection.CreateChannelAsync();
-
-            await channel.QueueDeclareAsync(
-                "notificacoes",
-                durable: true,
-                exclusive: false,
-                autoDelete: false
-            );
+        public async Task PublicarAsync(LembreteMensagemDto mensagem)
+        {
+            await using var channel = await _channelFactory.CreateChannelAsync();
 
             var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(mensagem));
 
             await channel.BasicPublishAsync(
                 exchange: "",
                 routingKey: "notificacoes",
-                mandatory: false,
                 body: body
             );
         }

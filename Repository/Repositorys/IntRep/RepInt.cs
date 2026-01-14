@@ -1,22 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Common;
+using Microsoft.EntityFrameworkCore;
 using Repository.ContextEFs;
 
 namespace Repository.Repositorys.IntRep
 {
-    public class RepInt<T> : Repository<T>, IRepInt<T> where T : class
+    public class RepInt<T> : Repository<T>, IRepInt<T> where T : class, IEntityInt
     {
 
         private readonly ContextEF _context;
-        private readonly DbSet<T> _dbSet;
 
         public RepInt(ContextEF context) : base(context)
         {
             _context = context;
-            _dbSet = _context.Set<T>();
         }
 
-        public async Task<T> RecuperarPorId(int id)
-            =>  await _dbSet.FindAsync(id);
+        public async Task<T?> RecuperarPorId(int id)
+        {
+            return await _context.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
+        }
 
     }
 }

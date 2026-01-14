@@ -1,4 +1,4 @@
-﻿using Domain.Lembretes;
+﻿using Domain.Entities.Lembretes;
 using Repository.ContextEFs;
 using Repository.Repositorys.GuidRep;
 

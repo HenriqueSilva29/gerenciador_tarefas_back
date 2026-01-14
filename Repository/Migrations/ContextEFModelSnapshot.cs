@@ -22,48 +22,106 @@ namespace Repository.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.Lembretes.Lembrete", b =>
+                {
+                    b.Property<Guid>("CodigoLembrete")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("idLembrete");
+
+                    b.Property<TimeSpan>("Antecedencia")
+                        .HasColumnType("time")
+                        .HasColumnName("antecedencia");
+
+                    b.Property<int>("CodigoToDoItem")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DataDeEnvio")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("data_de_envio");
+
+                    b.Property<DateTime>("DataDoEnvio")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("data_do_envio");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Texto")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)")
+                        .HasColumnName("texto");
+
+                    b.HasKey("CodigoLembrete");
+
+                    b.HasIndex("CodigoToDoItem");
+
+                    b.ToTable("Lembrete", (string)null);
+                });
+
             modelBuilder.Entity("Domain.ToDoItems.ToDoItem", b =>
                 {
                     b.Property<int>("CodigoToDoItem")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("idToDoItem");
+                        .HasColumnName("idtodoitem");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CodigoToDoItem"));
 
                     b.Property<int>("Categoria")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("categoria");
 
                     b.Property<int?>("CodigoToDoItemPai")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("idtodoitempai");
 
                     b.Property<DateTime>("DataCriacao")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasColumnName("data_criacao");
 
-                    b.Property<DateTime?>("DataVencimento")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime>("DataVencimento")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("data_vencimento");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("descricao");
 
                     b.Property<int>("Prioridade")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("prioridade");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("status");
 
                     b.Property<string>("Titulo")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("titulo");
 
                     b.HasKey("CodigoToDoItem");
 
                     b.HasIndex("CodigoToDoItemPai");
 
                     b.ToTable("ToDoItem", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Lembretes.Lembrete", b =>
+                {
+                    b.HasOne("Domain.ToDoItems.ToDoItem", "ToDoItem")
+                        .WithMany("Lembretes")
+                        .HasForeignKey("CodigoToDoItem")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ToDoItem");
                 });
 
             modelBuilder.Entity("Domain.ToDoItems.ToDoItem", b =>
@@ -78,6 +136,8 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("Domain.ToDoItems.ToDoItem", b =>
                 {
+                    b.Navigation("Lembretes");
+
                     b.Navigation("SubTarefas");
                 });
 #pragma warning restore 612, 618

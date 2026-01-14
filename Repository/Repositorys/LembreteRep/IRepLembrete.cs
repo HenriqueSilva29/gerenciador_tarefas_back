@@ -1,4 +1,4 @@
-﻿using Domain.Lembretes;
+﻿using Domain.Entities.Lembretes;
 using Repository.Repositorys.GuidRep;
 using System;
 using System.Collections.Generic;

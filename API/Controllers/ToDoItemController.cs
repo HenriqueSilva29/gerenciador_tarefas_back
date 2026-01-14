@@ -3,7 +3,7 @@ using Application.Dtos.FiltroDtos;
 using Application.Dtos.ToDoItemDtos;
 using Application.Services.ServToDoItems;
 using Application.Utils.Paginacao;
-using Domain.ToDoItems;
+using Domain.Entities.ToDoItems;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -19,38 +19,31 @@ namespace API.Controllers
             aplic = servToDoItem;
         }
 
-        [HttpGet("recuperar-todos")]
-        public async Task<ActionResult<PaginacaoHelper<ToDoItem>>> RecuperarTodos(int pagina, int quantidade)
+        [HttpGet("listar-tarefas")]
+        public async Task<ActionResult<PaginacaoHelper<ToDoItem>>> Listar([FromQuery] FiltroToDoItemDto filtroToDoItemDto)
         {
-            var toDoItems = await aplic.RecuperarTodos(pagina, quantidade);
-            return Ok(toDoItems);
-        }
-
-        [HttpGet("listarFiltradoAsync")]
-        public async Task<ActionResult<PaginacaoHelper<ToDoItem>>> ListarFiltradoAsync([FromQuery] FiltroToDoItemDto filtroToDoItemDto)
-        {
-            var filteredItems = await aplic.ListarFiltradoAsync(filtroToDoItemDto);
+            var filteredItems = await aplic.ListarTarefas(filtroToDoItemDto);
             return Ok(filteredItems);
         }
 
-        [HttpPost("adicionar")]
-        public async Task<ActionResult> Adicionar([FromBody] AdicionarToDoItemDto todoItemDto)
+        [HttpPost("criar-tarefa")]
+        public async Task<ActionResult> CriarTarefa([FromBody] AdicionarToDoItemDto todoItemDto)
         {
-                await aplic.Adicionar(todoItemDto);
+                await aplic.CriarTarefa(todoItemDto);
                 return Ok();  
         }
 
-        [HttpPut("{id}/atualizar")]
+        [HttpPut("{id}/atualizar-tarefa")]
         public async Task<ActionResult> Atualizar([FromQuery] int id, [FromBody] AtualizarToDoItemDto toDoItemDto)
         {
-            await aplic.Atualizar(id, toDoItemDto);
+            await aplic.AtualizarTarefa(id, toDoItemDto);
             return NoContent();
         }
 
-        [HttpDelete("{id}/remover")]
+        [HttpDelete("{id}/remover-tarefa")]
         public async Task<ActionResult> Remover(int id)
         {
-            await aplic.Remover(id);
+            await aplic.RemoverTarefa(id);
             return NoContent();
         }
 

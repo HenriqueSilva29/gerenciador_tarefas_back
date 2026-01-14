@@ -1,5 +1,6 @@
 ﻿using Application.Dtos.SubtarefaDtos;
-using Domain.ToDoItems;
+using Domain.Common.ValueObjects;
+using Domain.Entities.ToDoItems;
 
 namespace Application.Mappers
 {
@@ -11,7 +12,7 @@ namespace Application.Mappers
             {
                 Titulo = dto.Titulo,
                 Descricao = dto.Descricao,
-                DataCriacao = DateTime.Now,
+                DataCriacao = UtcDateTime.Now(),
                 DataVencimento = dto.DataVencimento,
                 Status = dto.Status,
                 Prioridade = dto.Prioridade,
