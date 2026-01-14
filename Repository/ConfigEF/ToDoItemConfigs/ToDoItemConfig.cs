@@ -1,4 +1,4 @@
-﻿using Domain.ToDoItems;
+﻿using Domain.Entities.ToDoItems;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -6,45 +6,54 @@ namespace Repository.ConfigEF.ToDoItemConfigs
 {
     public class ToDoItemConfig : IEntityTypeConfiguration<ToDoItem>
     {
-        //modelo Fluent API
         public void Configure(EntityTypeBuilder<ToDoItem> builder)
         {
 
             builder.ToTable("ToDoItem");
 
-            builder.HasKey(t => t.CodigoToDoItem);
+            builder.HasKey(t => t.Id);
 
             builder.HasMany(t => t.SubTarefas)
                    .WithOne(t => t.ToDoItemPai)
                    .HasForeignKey(t => t.CodigoToDoItemPai)
                    .OnDelete(DeleteBehavior.NoAction);
 
-            builder.Property(t => t.CodigoToDoItem)
-                 .HasColumnName("idToDoItem")
+            builder.Property(t => t.Id)
+                 .HasColumnName("idtodoitem")
                  .ValueGeneratedOnAdd();
+
+            builder.Property(t => t.CodigoToDoItemPai)
+                 .HasColumnName("idtodoitempai");
 
             builder.Property(t => t.Titulo)
                 .IsRequired()
-                .HasMaxLength(200);
+                .HasMaxLength(200)
+                .HasColumnName("titulo");
 
             builder.Property(t => t.Descricao)
-                .HasMaxLength(500);
+                .HasMaxLength(500)
+                .HasColumnName("descricao");
 
             builder.Property(t => t.Prioridade)
                 .IsRequired()
-                .HasConversion<int>(); 
+                .HasConversion<int>()
+                .HasColumnName("prioridade"); 
 
             builder.Property(t => t.Categoria)
-                .HasConversion<int>();  
+                .HasConversion<int>()
+                .HasColumnName("categoria");  
 
             builder.Property(t => t.Status)
-                .HasConversion<int>();  
+                .HasConversion<int>()
+                .HasColumnName("status");  
 
             builder.Property(t => t.DataCriacao)
-                .IsRequired();
+                .IsRequired()
+                .HasColumnName("data_criacao");
 
             builder.Property(t => t.DataVencimento)
-                .IsRequired(false);
+                .IsRequired(true)
+                .HasColumnName("data_vencimento");
         }
     }
 }

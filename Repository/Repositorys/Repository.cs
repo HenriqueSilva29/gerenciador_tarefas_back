@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Repository.ContextEFs;
-using System.Linq.Expressions;
 
 namespace Repository.Repositorys
 {
@@ -34,17 +33,13 @@ namespace Repository.Repositorys
 
         public async Task Atualizar(T entity)
         {
-            _dbSet.Update(entity);
+             _dbSet.Update(entity);
         }
 
         public async Task Remover(T entity)
         {
-            _dbSet.Remove(entity);
+             _dbSet.Remove(entity);
         }
 
-        public async Task<IEnumerable<T>> Filtrar(Expression<Func<T, bool>> filtro)
-        {
-            return await _dbSet.Where(filtro).ToListAsync();
-        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Application.Dtos.FiltroDtos;
 using Application.Dtos.ToDoItemDtos;
+using Application.Interfaces;
 using Application.Mappers;
 using Application.Services.ServToDoItems;
 using Application.Utils.Filtro;
@@ -7,98 +8,134 @@ using Application.Utils.Ordenacao;
 using Application.Utils.Paginacao;
 using Application.Utils.Queryable;
 using Application.Utils.Transacao;
-using Application.Views;
-using Domain.ToDoItems;
-using Microsoft.EntityFrameworkCore;
+using Domain.Common.ValueObjects;
+using Domain.Entities.Lembretes;
+using Domain.Entities.ToDoItems;
+using Repository.Repositorys.LembreteRep;
 using Repository.ToDoItemRep;
 
 namespace Application.Services.ToDoItemServices
 {
     public class ServToDoItem : IServToDoItem
-    {
-        private readonly IRepToDoItem _rep;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public ServToDoItem(IRepToDoItem rep, IUnitOfWork unitOfWork) : base()
         {
-            _rep = rep;
-            _unitOfWork = unitOfWork;
-        }
+            private readonly IRepToDoItem _rep;
+            private readonly IRepLembrete _repLembrete;
+            private readonly IUnitOfWork _unitOfWork;
+            private readonly IJobScheduler _jobScheduler;
 
-        public async Task<PaginacaoHelper<ToDoItemView>> RecuperarTodos(int pagina = 1, int quantidade = 10)
-        {
-            var query =  _rep.AsQueryable();
+            public ServToDoItem(IRepToDoItem rep,
+                                IUnitOfWork unitOfWork,
+                                IJobScheduler jobScheduler,
+                                IRepLembrete repLembrete
+                                ) : base()
+            {
+                _rep = rep;
+                _jobScheduler = jobScheduler;
+                _unitOfWork = unitOfWork;
+                _repLembrete = repLembrete;
+            }
 
-            var queryMapeada = query.Select(t => MapToDoItem.MapearParaView(t));
+            public async Task CriarTarefa(AdicionarToDoItemDto dto)
+            {
 
-            return await queryMapeada.PaginarAsync(pagina, quantidade);
-        }
+                await _unitOfWork.BeginTransactionAsync();    
 
-        public async Task Adicionar(AdicionarToDoItemDto dto)
-        {
-            var toDoItem = MapToDoItem.AdicionarToDoItemDto(dto);
+                var toDoItem = MapToDoItem.AdicionarToDoItemDto(dto);
 
-            await _rep.Adicionar(toDoItem);
+                await _rep.Adicionar(toDoItem);
 
-            _unitOfWork.CommitTransactionAsync();
+                if (dto.EnviarLembrete)
+                {
+                    AgendarLembrete(toDoItem, dto);
+                }
 
-        }
+                 await _unitOfWork.CommitTransactionAsync();
 
-        public async Task Atualizar(int id, AtualizarToDoItemDto dto)
-        {
-            var ToDoItem = await _rep.RecuperarPorId(id);
+            }
 
-            if (ToDoItem is null) throw new Exception("Registro não encontrado");
+            public async Task AtualizarTarefa(int id, AtualizarToDoItemDto dto)
+            {
+                await _unitOfWork.BeginTransactionAsync();
 
-            ToDoItem = MapToDoItem.AtualizarToDoItemDto(ToDoItem, dto);
+                var ToDoItem = await _rep.RecuperarPorId(id);
 
-            await _rep.Atualizar(ToDoItem);
+                if (ToDoItem is null) throw new Exception("Registro não encontrado");
 
-            _unitOfWork.CommitTransactionAsync();
-        }
+                ToDoItem = MapToDoItem.AtualizarToDoItemDto(ToDoItem, dto);
 
-        public async Task Remover(int id)
-        {
-            var toDoItem = await _rep.RecuperarPorId(id);
+                await _rep.Atualizar(ToDoItem);
 
-            if (toDoItem is null) throw new Exception("Registro não encontrado");
+                await _unitOfWork.CommitTransactionAsync();
+            }
 
-            await _rep.Remover(toDoItem);
+            public async Task RemoverTarefa(int id)
+            {
+                await _unitOfWork.BeginTransactionAsync();
 
-            _unitOfWork.CommitTransactionAsync();
-        }
+                var toDoItem = await _rep.RecuperarPorId(id);
+
+                if (toDoItem is null) throw new Exception("Registro não encontrado");
+
+                await _rep.Remover(toDoItem);
+
+                await _unitOfWork.CommitTransactionAsync();
+            }
         
-        public async Task<PaginacaoHelper<ToDoItem>> RecuperarTarefasVencidas(int pagina, int quantidade)
-        {
-                var dataHoje = DateTime.Now.Date;
+            public async Task<PaginacaoHelper<ToDoItem>> RecuperarTarefasVencidas(int pagina, int quantidade)
+            {
+                var agoraUtc = UtcDateTime.Now();
+
                 var query = _rep.AsQueryable()
-                                .Where(t => t.DataVencimento < dataHoje);
+                                .Where(t => t.DataVencimento.Value < agoraUtc.Value);
 
                 return await query.PaginarAsync(pagina,quantidade);
-        }
+            }
 
-        public async Task AtualizarPrioridade(int id, AtualizarPrioridadeDto dto)
-        {
+            public async Task AtualizarPrioridade(int id, AtualizarPrioridadeDto dto)
+            {
+            await _unitOfWork.BeginTransactionAsync();
+
             var toDoItem = await _rep.RecuperarPorId(id);
 
-            if (toDoItem == null)
-                throw new Exception("Tarefa não encontrada.");
+                if (toDoItem == null)
+                    throw new Exception("Tarefa não encontrada.");
 
-            toDoItem.DefinirPrioridade(dto.Prioridade);
+                toDoItem.DefinirPrioridade(dto.Prioridade);
 
-            await _rep.Atualizar(toDoItem);
+                await _rep.Atualizar(toDoItem);
 
-            _unitOfWork.CommitTransactionAsync();
-        }
+                await _unitOfWork.CommitTransactionAsync();
+            }
 
-        public async Task<PaginacaoHelper<ToDoItem>> ListarFiltradoAsync(FiltroToDoItemDto parametros)
-        {
-            var query = _rep.AsQueryable();
+            public async Task<PaginacaoHelper<ToDoItem>> ListarTarefas(FiltroToDoItemDto parametros)
+            {
+                var query = _rep.AsQueryable();
 
-            query = query.AplicarFiltros(parametros);
-            query = query.AplicarOrdenacao(parametros);
+                query = query.AplicarFiltros(parametros);
+                query = query.AplicarOrdenacao(parametros);
 
-            return await query.PaginarAsync(parametros.Pagina,parametros.QuantidadePorPagina);
+                return await query.PaginarAsync(parametros.Pagina,parametros.QuantidadePorPagina);
+            }
+
+            private async void AgendarLembrete(ToDoItem toDoItem, AdicionarToDoItemDto dto)
+            {
+                var lembrete = new Lembrete(
+                                       toDoItem,
+                                       dto.PrazoDeAvisoAntesDoVencimento,
+                                       "Seu vencimento está próximo"
+                                   );
+
+                await _repLembrete.Adicionar(lembrete);
+
+                lembrete.DataDeExecucaoDoAgendamento = CalcularHorarioDeExecucaoDoAgendamento(dto.DataVencimento, dto.PrazoDeAvisoAntesDoVencimento);
+
+                _jobScheduler.AgendarLembrete(lembrete);
+
+            }
+
+            private UtcDateTime CalcularHorarioDeExecucaoDoAgendamento(DateTimeOffset vencimento, TimeSpan prazoDeAvisoAntesDoVencimento)
+            {
+                return vencimento.Subtract(prazoDeAvisoAntesDoVencimento);
+            }
         }
     }
-}

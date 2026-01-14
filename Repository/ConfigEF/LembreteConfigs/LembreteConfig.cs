@@ -1,4 +1,4 @@
-﻿using Domain.Lembretes;
+﻿using Domain.Entities.Lembretes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,9 +10,9 @@ namespace Repository.ConfigEF.LembreteConfigs
         {
             builder.ToTable("Lembrete");
 
-            builder.HasKey(l => l.CodigoLembrete);
+            builder.HasKey(l => l.Id);
 
-            builder.Property(l => l.CodigoLembrete)
+            builder.Property(l => l.Id)
                 .HasColumnName("idLembrete")
                 .ValueGeneratedOnAdd();
 
@@ -21,20 +21,25 @@ namespace Repository.ConfigEF.LembreteConfigs
                    .HasForeignKey(l => l.CodigoToDoItem)
                    .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Property(l => l.DataDoLembrete)
-                .IsRequired();
+            builder.Property(l => l.Antecedencia)
+                .IsRequired()
+                .HasColumnName("antecedencia");
 
             builder.Property(l => l.Texto)
                 .HasMaxLength(300)
-                .IsRequired();
-
-            builder.Property(l => l.FoiEnviado)
                 .IsRequired()
-                .HasColumnName("foiEnviado");
+                .HasColumnName("texto");
 
-            builder.Property(l => l.DataDeEnvio)
+            builder.Property(l => l.Status)
+                .IsRequired()
+                .HasColumnName("status");
+
+            builder.Property(l => l.DataDeAgendamento)
                 .IsRequired(false)
-                .HasColumnName("dataEnvio");
+                .HasColumnName("data_de_agendamento");
+
+            builder.Property(l => l.DataDeExecucaoDoAgendamento)
+                .HasColumnName("data_de_execucao_do_agendamento");
         }
     }
 }

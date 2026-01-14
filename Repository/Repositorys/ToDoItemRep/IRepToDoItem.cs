@@ -1,4 +1,4 @@
-﻿using Domain.ToDoItems;
+﻿using Domain.Entities.ToDoItems;
 using Repository.Repositorys;
 using Repository.Repositorys.IntRep;
 using System.Linq.Expressions;

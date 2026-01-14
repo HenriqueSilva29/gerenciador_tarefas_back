@@ -1,22 +1,24 @@
-﻿using Domain.Exceptions;
-using Domain.Lembretes;
+﻿using Domain.Common;
+using Domain.Common.ValueObjects;
+using Domain.Entities.Lembretes;
+using Domain.Exceptions;
 
-namespace Domain.ToDoItems
+namespace Domain.Entities.ToDoItems
 {
-    public class ToDoItem
+    public class ToDoItem : IEntityInt
     {
         public ToDoItem()
         {
             Status = EnumStatusToDoItem.NaoIniciada;
             SubTarefas = new List<ToDoItem>();
-            this.Lembretes = new List<Lembrete>();
+            Lembretes = new List<Lembrete>();
         }
 
-        public int CodigoToDoItem { get; set; }
+        public int Id { get; set; }
         public string Titulo { get; set; }
         public string Descricao { get; set; }
-        public DateTime DataCriacao { get; set; }
-        public DateTime? DataVencimento { get; set; }
+        public UtcDateTime DataCriacao { get; set; }
+        public UtcDateTime DataVencimento { get; set; }
         public EnumStatusToDoItem Status { get; set; }
         public EnumPrioridadeToDoItem Prioridade { get; set; }
         public EnumCategoriaToDoItem Categoria { get; set; }
@@ -46,7 +48,6 @@ namespace Domain.ToDoItems
             Media = 1,
             Alta = 2
         }
-
         public enum EnumStatusToDoItem
         {
             NaoIniciada = 0,
@@ -62,16 +63,6 @@ namespace Domain.ToDoItems
         public void CancelarTarefa()
         {
             Status = EnumStatusToDoItem.Cancelada;
-        }
-
-        public bool EstaVencida()
-        {
-            return DataVencimento.HasValue && DataVencimento.Value < DateTime.Now;
-        }
-
-        public bool EstaNoPrazo()
-        {
-            return DataVencimento.HasValue && DataVencimento.Value > DateTime.Now;
         }
 
         public void DefinirPrioridade(EnumPrioridadeToDoItem prioridade)
@@ -101,10 +92,11 @@ namespace Domain.ToDoItems
 
         public bool PossuiSubtarefaComPrioridadeMaior()
         {
-            return SubTarefas.Any(st => st.Prioridade > this.Prioridade);
+            return SubTarefas.Any(st => st.Prioridade > Prioridade);
         }
 
-        public bool ValidaPrioridadeParaSubtarefa(){
+        public bool ValidaPrioridadeParaSubtarefa()
+        {
             if (PossuiSubtarefaComPrioridadeMaior())
                 throw new DomainException(
                     "SUBTASK_NOT_COMPLETED",

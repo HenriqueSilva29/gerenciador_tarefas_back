@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Application.Dtos.LembreteDtos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace Infra.Mensageria.RabbitMQ.Publicadores
 {
     public interface IPublicadorDeMensagens
     {
-         Task PublicarAsync(object mensagem);
+         Task PublicarAsync(LembreteMensagemDto mensagem);
     }
 }

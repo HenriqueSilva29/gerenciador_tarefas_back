@@ -1,6 +1,4 @@
 ﻿using Application.Dtos.SubtarefaDtos;
-using Application.Dtos.SubtarefaDtos;
-using Application.Dtos.ToDoItemDtos;
 using Application.Mappers;
 using Repository.ToDoItemRep;
 

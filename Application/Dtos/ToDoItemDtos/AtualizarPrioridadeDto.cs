@@ -1,4 +1,4 @@
-﻿using static Domain.ToDoItems.ToDoItem;
+﻿using static Domain.Entities.ToDoItems.ToDoItem;
 
 namespace Application.Dtos.ToDoItemDtos
 {

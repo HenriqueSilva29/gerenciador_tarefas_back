@@ -1,4 +1,4 @@
-﻿using static Domain.ToDoItems.ToDoItem;
+﻿using static Domain.Entities.ToDoItems.ToDoItem;
 
 namespace Application.Dtos.ToDoItemDtos
 {
@@ -6,7 +6,7 @@ namespace Application.Dtos.ToDoItemDtos
     {
         public string Titulo { get; set; }
         public string? Descricao { get; set; }
-        public DateTime? DataVencimento { get; set; }
+        public DateTimeOffset DataVencimento { get; set; }
         public EnumPrioridadeToDoItem Prioridade { get; set; }
         public EnumCategoriaToDoItem Categoria { get; set; }
         public EnumStatusToDoItem Status { get; set; }

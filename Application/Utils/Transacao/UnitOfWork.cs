@@ -26,7 +26,7 @@ namespace Application.Utils.Transacao
             try
             {
                 await _context.SaveChangesAsync();
-                await _transaction?.CommitAsync();
+                await _transaction.CommitAsync();
             }
             catch
             {

@@ -1,31 +1,37 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
-using System.Text;
-using System.Text.Json;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
+using Infra.Mensageria.RabbitMQ.Consumidores;
+using Application.Services.ServLembretes;
+using Microsoft.Extensions.DependencyInjection;
 
 public class WorkerDeNotificacoes : BackgroundService
 {
     private readonly ILogger<WorkerDeNotificacoes> _logger;
     private readonly IConfiguration _config;
+    private readonly IServiceScopeFactory _scopeFactory;
     private IConnection? _connection;
     private IChannel? _channel;
 
-    public WorkerDeNotificacoes(ILogger<WorkerDeNotificacoes> logger, IConfiguration config)
+
+    public WorkerDeNotificacoes(
+          ILogger<WorkerDeNotificacoes> logger,
+          IConfiguration config,
+          IServiceScopeFactory scopeFactory)
     {
         _logger = logger;
         _config = config;
+        _scopeFactory = scopeFactory;
     }
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Iniciando Worker de Notificações...");
 
-        var uri = _config["RabbitMQ:Uri"];
 
-        var factory = new ConnectionFactory
+        var uri = _config["RabbitMQ:Uri"];
+        var factory = new ConnectionFactory 
         {
             Uri = new Uri(uri)
         };
@@ -37,59 +43,18 @@ public class WorkerDeNotificacoes : BackgroundService
                         cancellationToken: cancellationToken
                     );
 
-
-        await _channel.QueueDeclareAsync(
-            queue: "notificacoes",
-            durable: true,
-            exclusive: false,
-            autoDelete: false,
-            cancellationToken: cancellationToken
-        );
-
         await base.StartAsync(cancellationToken);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if (_channel == null)
-        {
-            throw new InvalidOperationException("Canal RabbitMQ não foi inicializado.");
-        }
+        if(_channel == null)
+            throw new InvalidOperationException("Canal não inicializado");
 
-        var consumer = new AsyncEventingBasicConsumer(_channel);
+        var consumidor = new ConsumidorDeMensagens(_channel, _scopeFactory);
+        await consumidor.IniciarAsync();
 
-        consumer.ReceivedAsync += async (sender, ea) =>
-        {
-            try
-            {
-                string json = Encoding.UTF8.GetString(ea.Body.ToArray());
-                _logger.LogInformation($"Mensagem recebida do RabbitMQ: {json}");
-
-                var dados = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
-
-                // Simulação de envio de notificação (e-mail, push, SMS etc.)
-                _logger.LogInformation($"Processando notificação → {json}");
-
-                // Confirma processamento
-                await _channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao processar mensagem.");
-                // NACK → devolve mensagem para a fila
-                await _channel.BasicNackAsync(ea.DeliveryTag, multiple: false, requeue: true);
-            }
-        };
-
-        await _channel.BasicConsumeAsync(
-            queue: "notificacoes",
-            autoAck: false, // só dá ACK quando a mensagem for processada
-            consumer: consumer,
-            cancellationToken: stoppingToken
-        );
-
-        await Task.CompletedTask;
+        await Task.Delay(Timeout.Infinite, stoppingToken);
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken)
