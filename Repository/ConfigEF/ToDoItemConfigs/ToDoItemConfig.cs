@@ -1,4 +1,5 @@
-﻿using Domain.Entities.ToDoItems;
+﻿using Domain.Common.ValueObjects;
+using Domain.Entities.ToDoItems;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -49,11 +50,19 @@ namespace Repository.ConfigEF.ToDoItemConfigs
 
             builder.Property(t => t.DataCriacao)
                 .IsRequired()
-                .HasColumnName("data_criacao");
+                .HasColumnName("data_criacao")
+                .HasConversion(
+                    utc => utc.Value,
+                    utc => UtcDateTime.From(utc)
+                );
 
             builder.Property(t => t.DataVencimento)
                 .IsRequired(true)
-                .HasColumnName("data_vencimento");
+                .HasColumnName("data_vencimento")
+                .HasConversion(
+                    utc => utc.Value,
+                    utc => UtcDateTime.From(utc)
+                );
         }
     }
 }

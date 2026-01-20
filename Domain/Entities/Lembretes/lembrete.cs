@@ -12,7 +12,7 @@ namespace Domain.Entities.Lembretes
 
         public ToDoItem ToDoItem { get; set; }
 
-        public TimeSpan Antecedencia { get; set; }
+        public TimeSpan PrazoDeAvisoAntesDoVencimento { get; set; }
         public bool FoiAgendado { get; set; }
         public UtcDateTime DataDeAgendamento { get; set; }
         public UtcDateTime? DataDeExecucaoDoAgendamento { get; set; }
@@ -24,35 +24,44 @@ namespace Domain.Entities.Lembretes
         public enum LembreteStatus
         {
             Pendente = 0,
-            Enviado = 1,
+            Executado = 1,
             Cancelado = 2
         }
 
         protected Lembrete() { }
 
-        public Lembrete(ToDoItem toDoItem, TimeSpan antecedencia, string texto)
+        public Lembrete(ToDoItem toDoItem, TimeSpan prazoDeAvisoAntesDoVencimento, string texto)
         {
             Id = Guid.NewGuid();
             ToDoItem = toDoItem;
             CodigoToDoItem = toDoItem.Id;
-            Antecedencia = antecedencia;
+            PrazoDeAvisoAntesDoVencimento = prazoDeAvisoAntesDoVencimento;
             Texto = texto;
 
             Status = LembreteStatus.Pendente;
         }
 
-        public void MarcarComoEnviado()
+        public void Agendar()
         {
-            if (Status == LembreteStatus.Enviado)
+            if (FoiAgendado)
                 return;
 
-            Status = LembreteStatus.Enviado;
+            FoiAgendado = true;
             DataDeAgendamento = UtcDateTime.Now();
+        }
+
+        public void Executar()
+        {
+            if (Status == LembreteStatus.Executado)
+                return;
+
+            Status = LembreteStatus.Executado;
+            DataDeExecucaoDoAgendamento = UtcDateTime.Now();
         }
 
         public void Cancelar()
         {
-            if (Status == LembreteStatus.Enviado)
+            if (Status == LembreteStatus.Executado)
                 throw new DomainException("LEMBRETE_ALREADY_SENT", "Lembrete já foi enviado.");
 
             Status = LembreteStatus.Cancelado;

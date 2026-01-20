@@ -13,13 +13,18 @@ namespace Application.Services.ServLembretes
             _rep = rep;
             _unitOfWork = unitOfWork;
         }
-        public async Task MarcarLembreteComoEnviado(Guid id)
+        public async Task AgendarLembrete(Guid id)
         {
+            await _unitOfWork.BeginTransactionAsync();
+
             var lembrete = await _rep.RecuperarPorGuid(id);
             if (lembrete is null)
+            {
+                Console.WriteLine("Lembrete não encontrado");
                 return;
+            }
 
-            lembrete.MarcarComoEnviado();
+            lembrete.Agendar();
             await _rep.Atualizar(lembrete);
 
             await _unitOfWork.CommitTransactionAsync();

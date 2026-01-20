@@ -1,4 +1,5 @@
-﻿namespace Domain.Common.ValueObjects
+﻿
+namespace Domain.Common.ValueObjects
 {
     public readonly struct UtcDateTime
     {
@@ -8,6 +9,9 @@
         {
             Value = value;
         }
+
+        public static UtcDateTime From(DateTimeOffset value)
+           => new(value);
 
         public static UtcDateTime Now()
             => new(DateTimeOffset.UtcNow);

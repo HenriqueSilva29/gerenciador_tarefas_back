@@ -22,7 +22,7 @@ namespace Repository.ContextEFs
             var config = builder.Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<ContextEF>();
-            optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+            optionsBuilder.UseSqlServer("Server=127.0.0.1,14333;Database=ToDoItem;User Id=sa;Password=YourStrongPassword123!;TrustServerCertificate=True;");
 
             return new ContextEF(optionsBuilder.Options);
         }

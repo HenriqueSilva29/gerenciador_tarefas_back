@@ -41,7 +41,7 @@ namespace Infra.Jobs.Hangfire.JobDeLembretes
                 IdTarefa = lembrete.CodigoToDoItem
             });
 
-            lembrete.MarcarComoEnviado();
+            lembrete.Executar();
             await _rep.Atualizar(lembrete);
 
             await _unitOfWork.CommitTransactionAsync();

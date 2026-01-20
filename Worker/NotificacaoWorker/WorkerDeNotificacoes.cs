@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using Infra.Mensageria.RabbitMQ.Consumidores;
-using Application.Services.ServLembretes;
 using Microsoft.Extensions.DependencyInjection;
 
 public class WorkerDeNotificacoes : BackgroundService
