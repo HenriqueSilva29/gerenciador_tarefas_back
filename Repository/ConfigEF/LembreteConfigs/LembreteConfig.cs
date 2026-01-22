@@ -1,4 +1,5 @@
-﻿using Domain.Entities.Lembretes;
+﻿using Domain.Common.ValueObjects;
+using Domain.Entities.Lembretes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -21,8 +22,8 @@ namespace Repository.ConfigEF.LembreteConfigs
                    .HasForeignKey(l => l.CodigoToDoItem)
                    .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Property(l => l.Antecedencia)
-                .IsRequired()
+            builder.Property(l => l.PrazoDeAvisoAntesDoVencimento)
+                .IsRequired(true)
                 .HasColumnName("antecedencia");
 
             builder.Property(l => l.Texto)
@@ -31,15 +32,24 @@ namespace Repository.ConfigEF.LembreteConfigs
                 .HasColumnName("texto");
 
             builder.Property(l => l.Status)
-                .IsRequired()
+                .IsRequired(true)
                 .HasColumnName("status");
 
             builder.Property(l => l.DataDeAgendamento)
-                .IsRequired(false)
-                .HasColumnName("data_de_agendamento");
+                .IsRequired(true)
+                .HasColumnName("data_de_agendamento")
+                .HasConversion(
+                    utc => utc.Value,
+                    value => UtcDateTime.From(value)
+                  );
 
             builder.Property(l => l.DataDeExecucaoDoAgendamento)
-                .HasColumnName("data_de_execucao_do_agendamento");
+                .IsRequired(false)
+                .HasColumnName("data_de_execucao_do_agendamento")
+                .HasConversion(
+                    utc => utc.HasValue ? utc.Value.Value : (DateTimeOffset?)null,
+                    value => value.HasValue ? UtcDateTime.From(value.Value) : null
+                );
         }
     }
 }

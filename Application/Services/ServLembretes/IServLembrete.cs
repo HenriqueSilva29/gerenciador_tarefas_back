@@ -2,6 +2,6 @@
 {
     public interface IServLembrete
     {
-        Task MarcarLembreteComoEnviado(Guid id);
+        Task AgendarLembrete(Guid id);
     }
 }

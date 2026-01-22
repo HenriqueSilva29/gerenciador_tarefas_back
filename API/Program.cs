@@ -21,10 +21,6 @@ using Repository.ToDoItemRep;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Console.WriteLine("Ambiente atual: " + builder.Environment.EnvironmentName);
-Console.WriteLine("Connection string usada: " + builder.Configuration.GetConnectionString("DefaultConnection"));
-
-
 builder.Services.AddDbContext<ContextEF>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
                          x => x.MigrationsAssembly("Repository")));
