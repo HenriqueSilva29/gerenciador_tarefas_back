@@ -127,13 +127,15 @@ namespace Application.Services.ToDoItemServices
                                        toDoItem,
                                        dto.PrazoDeAvisoAntesDoVencimento,
                                        "Seu vencimento está próximo"
-                                   );
-
-                lembrete.Agendar();
+                                   );            
 
                 await _repLembrete.Adicionar(lembrete);
 
                 _jobScheduler.AgendarLembrete(lembrete);
+
+                lembrete.Agendar();
+
+                await _repLembrete.Atualizar(lembrete);
 
             }
         }
