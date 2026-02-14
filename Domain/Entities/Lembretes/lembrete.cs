@@ -12,7 +12,8 @@ namespace Domain.Entities.Lembretes
 
         public ToDoItem ToDoItem { get; set; }
 
-        public TimeSpan PrazoDeAvisoAntesDoVencimento { get; set; }
+        public DateTimeOffset DataDeVencimento { get; set; }
+        public int DiasAntesDoVencimento { get; set; }
         public bool FoiAgendado { get; set; }
         public UtcDateTime DataDeAgendamento { get; set; }
         public UtcDateTime? DataDeExecucaoDoAgendamento { get; set; }
@@ -30,18 +31,18 @@ namespace Domain.Entities.Lembretes
 
         protected Lembrete() { }
 
-        public Lembrete(ToDoItem toDoItem, TimeSpan prazoDeAvisoAntesDoVencimento, string texto)
+        public Lembrete(ToDoItem toDoItem, DateTimeOffset dataDeVencimento, string texto)
         {
             Id = Guid.NewGuid();
             ToDoItem = toDoItem;
             CodigoToDoItem = toDoItem.Id;
-            PrazoDeAvisoAntesDoVencimento = prazoDeAvisoAntesDoVencimento;
+            DataDeVencimento = dataDeVencimento;
             Texto = texto;
 
             Status = LembreteStatus.Pendente;
         }
 
-        public void Agendar()
+        public void MarcarComoAgendado()
         {
             if (FoiAgendado)
                 return;

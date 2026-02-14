@@ -11,7 +11,7 @@ namespace Application.Dtos.ToDoItemDtos
         public EnumPrioridadeToDoItem Prioridade { get; set; }
         public EnumCategoriaToDoItem Categoria { get; set; }
 
-        public bool EnviarLembrete { get; set; }
-        public TimeSpan PrazoDeAvisoAntesDoVencimento { get; set; }
+        public bool AvisarQueVaiVencer { get; set; }
+        public int DiasAntesDoVencimento { get; set; }
     }
 }

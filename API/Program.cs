@@ -1,23 +1,24 @@
 using API.Middlewares;
-using Application.Interfaces;
-using Application.Services.ServLembretes;
+using Application.Interfaces.Messaging;
+using Application.Interfaces.Schedulers;
 using Application.Services.ServSubTarefas;
 using Application.Services.ServToDoItems;
 using Application.Services.ToDoItemServices;
 using Application.Utils.Transacao;
 using Hangfire;
 using Hangfire.SqlServer;
-using Infra.Jobs.Hangfire.Dashboard;
-using Infra.Jobs.Hangfire.JobDeAgendamentos;
-using Infra.Jobs.Hangfire.JobDeLembretes;
-using Infra.Mensageria.RabbitMQ;
-using Infra.Mensageria.RabbitMQ.Publicadores;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Repository.ContextEFs;
 using Repository.Repositorys;
 using Repository.Repositorys.LembreteRep;
 using Repository.ToDoItemRep;
+using Infra.Mensageria.RabbitMQ.Publicadores;
+using Infra.Mensageria.RabbitMQ.Connections;
+using Infra.Mensageria.RabbitMQ.Channels;
+using Infra.Jobs.Hangfire.JobDeAgendamentos;
+using Infra.Jobs.Hangfire.Dashboard;
+using Infra.Mensageria.RabbitMQ.Topology;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,14 +43,13 @@ builder.Services.AddScoped<IRepLembrete, RepLembrete>();
 
 builder.Services.AddScoped<IServToDoItem, ServToDoItem>();
 builder.Services.AddScoped<IServSubtarefa, ServSubtarefa>();
-builder.Services.AddScoped<IServLembrete, ServLembrete>();
 
-builder.Services.AddScoped<IPublicadorDeMensagens, PublicadorDeMensagens>();
-builder.Services.AddScoped<IJobDeLembrete, JobDeLembrete>();
-builder.Services.AddScoped<IJobScheduler, JobScheduler>();
+builder.Services.AddScoped<INotificacaoPublisher, RabbitNotificacaoPublisher>();
+builder.Services.AddScoped<IBackgroundLembreteJobScheduler, SchedulerLembreteDeAviso>();
 
 builder.Services.AddScoped<IRabbitConnection, RabbitConnection>();
 builder.Services.AddScoped<IRabbitChannelFactory, RabbitChannelFactory>();
+builder.Services.AddScoped<IRabbitTopologyInitializer, RabbitTopologyInitializer>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 

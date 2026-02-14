@@ -2,11 +2,15 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Repository.Repositorys.LembreteRep;
-using Application.Services.ServLembretes;
 using Application.Utils.Transacao;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Repository.ContextEFs;
+using Infra.Mensageria.RabbitMQ.Consumidores;
+using Application.Interfaces.Messaging;
+using Infra.Mensageria.RabbitMQ.Channels;
+using Infra.Mensageria.RabbitMQ.Connections;
+using Infra.Mensageria.RabbitMQ.Topology;
 
 Host.CreateDefaultBuilder(args)
     .ConfigureLogging(logging =>
@@ -28,8 +32,11 @@ Host.CreateDefaultBuilder(args)
         // 🔹 Repositório
         services.AddScoped<IRepLembrete, RepLembrete>();
 
-        // 🔹 Serviço
-        services.AddScoped<IServLembrete, ServLembrete>();
+        services.AddSingleton<IRabbitConnection, RabbitConnection>();
+        services.AddSingleton<IRabbitChannelFactory, RabbitChannelFactory>();
+        services.AddSingleton<IMessageConsumer, RabbitMessageConsumer>();
+        services.AddScoped<IRabbitTopologyInitializer, RabbitTopologyInitializer>();
+        services.AddHostedService<WorkerDeNotificacoes>();
     })
     .Build()
     .Run();
