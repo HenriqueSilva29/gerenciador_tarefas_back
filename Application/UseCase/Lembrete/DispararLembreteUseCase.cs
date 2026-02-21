@@ -1,11 +1,12 @@
 ﻿using Application.Interfaces.Messaging;
+using Application.Interfaces.UseCases;
 using Application.Utils.Transacao;
 using Repository.Repositorys.LembreteRep;
 using static Domain.Entities.Lembretes.Lembrete;
 
 namespace Application.UseCase.Lembrete
 {
-    public class DispararLembreteUseCase
+    public class DispararLembreteUseCase : IDispararLembreteUseCase
     {
         private readonly IRepLembrete _rep;
         private readonly IUnitOfWork _unitOfWork;

@@ -8,15 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="RabbitMQ.Client" Version="7.2.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\Repository\Repository.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Email\" />
   </ItemGroup>
 
 </Project>

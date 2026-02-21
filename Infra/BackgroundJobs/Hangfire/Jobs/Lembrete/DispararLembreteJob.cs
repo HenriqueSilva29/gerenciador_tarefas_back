@@ -1,4 +1,5 @@
-﻿using Application.UseCase.Lembrete;
+﻿using Application.Interfaces.UseCases;
+using Application.UseCase.Lembrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +10,16 @@ namespace Infra.BackgroundJobs.Hangfire.Jobs.Lembrete
 {
     public class DispararLembreteJob
     {
-        private readonly DispararLembreteUseCase _publicarNotificacaoDeLembreteUseCase;
+        private readonly IDispararLembreteUseCase _dispararLembreteUseCase;
 
-        public DispararLembreteJob(DispararLembreteUseCase useCase)
+        public DispararLembreteJob(IDispararLembreteUseCase useCase)
         {
-            _publicarNotificacaoDeLembreteUseCase = useCase;
+            _dispararLembreteUseCase = useCase;
         }
 
         public async Task Execute(Guid lembreteId)
         {
-            await _publicarNotificacaoDeLembreteUseCase.ExecuteAsync(lembreteId);
+            await _dispararLembreteUseCase.ExecuteAsync(lembreteId);
         }
     }
 }

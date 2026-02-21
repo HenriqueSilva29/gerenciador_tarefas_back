@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
 namespace Infra.Mensageria.RabbitMQ.Connections
@@ -7,15 +8,26 @@ namespace Infra.Mensageria.RabbitMQ.Connections
     {
         private readonly ConnectionFactory _factory;
         private IConnection? _connection;
+        private readonly ILogger<RabbitConnection> _logger;
 
         public IConnection Connection { get; }
 
-        public RabbitConnection(IConfiguration config)
+        public RabbitConnection(IConfiguration config, ILogger<RabbitConnection> logger)
         {
+            _logger = logger;
+
             _factory = new ConnectionFactory
             {
                 Uri = new Uri(config["RabbitMQ:Uri"]!)
             };
+
+            var uriString = _factory.Uri;
+
+            _logger.LogInformation("======================================");
+            _logger.LogInformation("Tentando conectar no RabbitMQ...");
+            _logger.LogInformation("URI configurada: {Uri}", uriString);
+
+
         }
 
         public async Task<IConnection> GetConnectionAsync()

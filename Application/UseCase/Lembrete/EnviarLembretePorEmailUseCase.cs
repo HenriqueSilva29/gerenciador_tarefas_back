@@ -1,29 +1,28 @@
 ﻿using Application.Dtos.LembreteDtos;
 using Application.Emails;
 using Application.Interfaces.Email;
-using Application.Utils.Transacao;
+using Application.Interfaces.UseCases;
 using Microsoft.Extensions.Logging;
-using Repository.Repositorys.LembreteRep;
 
 namespace Application.UseCase.Lembrete
 {
-    public class EnviarLembretePorEmailUseCase
+    public class EnviarLembretePorEmailUseCase : IEnviarLembretePorEmailUseCase
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<EnviarLembretePorEmailUseCase> _logger;
         private readonly LembreteEmailCompose _lembreteEmailCompose;
-        private readonly IEmailSender _emailSender;
+        private readonly IEmail _email;
 
 
         public EnviarLembretePorEmailUseCase
         (   
-            ILogger logger, 
+            ILogger<EnviarLembretePorEmailUseCase> logger, 
             LembreteEmailCompose lembreteEmailCompose,
-            IEmailSender emailSender
+            IEmail email
         )
         {
             _logger = logger;
             _lembreteEmailCompose = lembreteEmailCompose;
-            _emailSender = emailSender;
+            _email = email;
         }
 
         public async Task ExecuteAsync(LembreteMensagemDto message)
@@ -33,7 +32,7 @@ namespace Application.UseCase.Lembrete
 
             var email =  _lembreteEmailCompose.Compose(message);
 
-            await _emailSender.SendAsync(email);
+            await _email.SendAsync(email);
 
             _logger.LogInformation("Email enviado");
 

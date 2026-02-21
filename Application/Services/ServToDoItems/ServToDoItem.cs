@@ -129,11 +129,15 @@ namespace Application.Services.ToDoItemServices
 
                 await _repLembrete.Adicionar(lembrete);
 
+                await _unitOfWork.CommitTransactionAsync();
+
                 await _jobScheduler.AgendarLembreteDeAvisoAsync(lembrete.Id, lembrete.DataDeVencimento, dto.DiasAntesDoVencimento);
 
                 lembrete.MarcarComoAgendado();
 
-                await _repLembrete.Atualizar(lembrete);
+                _unitOfWork.BeginTransactionAsync();
+
+                 await _repLembrete.Atualizar(lembrete);
 
                 await _unitOfWork.CommitTransactionAsync();
         }

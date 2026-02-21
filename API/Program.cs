@@ -19,6 +19,12 @@ using Infra.Mensageria.RabbitMQ.Channels;
 using Infra.Jobs.Hangfire.JobDeAgendamentos;
 using Infra.Jobs.Hangfire.Dashboard;
 using Infra.Mensageria.RabbitMQ.Topology;
+using Application.UseCase.Lembrete;
+using Application.Interfaces.UseCases;
+using Application.Emails;
+using Application.Interfaces.Email;
+using Infra.Emails;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,7 +41,10 @@ builder.Services.AddHangfire(config =>
             QueuePollInterval = TimeSpan.FromSeconds(60)
         });
 });
-builder.Services.AddHangfireServer();
+builder.Services.AddHangfireServer( options => 
+    {
+    options.ServerName = "API-Hangfire-Server";
+    });
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IRepToDoItem, RepToDoItem>();
@@ -53,13 +62,17 @@ builder.Services.AddScoped<IRabbitTopologyInitializer, RabbitTopologyInitializer
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+builder.Services.AddScoped<IDispararLembreteUseCase, DispararLembreteUseCase>();
+builder.Services.AddScoped<IEnviarLembretePorEmailUseCase, EnviarLembretePorEmailUseCase>();
+builder.Services.AddScoped<LembreteEmailCompose>();
+builder.Services.AddScoped<IEmail,Email>();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "ToDo API", Version = "v1" });
 });
 
 builder.Services.AddRazorPages();
-builder.Services.AddControllers();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -67,6 +80,17 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.MaxDepth = 32;
     });
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console()
+    .WriteTo.File("logs/rabbit-log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
+var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
+logger.LogInformation("TESTE SERILOG");
 
 var app = builder.Build();
 
@@ -88,7 +112,7 @@ app.UseHangfireDashboard("/hangfire",
     { 
         Authorization = new[] { new HangfireAuthorizationFilter()} 
     });
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -96,5 +120,6 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 app.MapRazorPages();
+
 
 app.Run();

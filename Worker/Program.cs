@@ -11,6 +11,13 @@ using Application.Interfaces.Messaging;
 using Infra.Mensageria.RabbitMQ.Channels;
 using Infra.Mensageria.RabbitMQ.Connections;
 using Infra.Mensageria.RabbitMQ.Topology;
+using Application.Dtos.LembreteDtos;
+using Application.Interfaces.UseCases;
+using Application.Massaging.MessageHandlers;
+using Application.UseCase.Lembrete;
+using Application.Emails;
+using Application.Interfaces.Email;
+using Infra.Emails;
 
 Host.CreateDefaultBuilder(args)
     .ConfigureLogging(logging =>
@@ -20,11 +27,17 @@ Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((hostContext, services) =>
     {
+        // 🔥 MOSTRA O AMBIENTE LOGO NA INICIALIZAÇÃO
+        Console.WriteLine("======================================");
+        Console.WriteLine($"AMBIENTE ATUAL: {hostContext.HostingEnvironment.EnvironmentName}");
+        Console.WriteLine("======================================");
+
         services.AddHostedService<WorkerDeNotificacoes>();
 
         services.AddDbContext<ContextEF>(options =>
-            options.UseSqlServer(hostContext.Configuration.GetConnectionString("DefaultConnection"),
-                                 x => x.MigrationsAssembly("Repository")));
+            options.UseSqlServer(
+                hostContext.Configuration.GetConnectionString("DefaultConnection"),
+                x => x.MigrationsAssembly("Repository")));
 
         // 🔹 Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -32,11 +45,16 @@ Host.CreateDefaultBuilder(args)
         // 🔹 Repositório
         services.AddScoped<IRepLembrete, RepLembrete>();
 
+        // 🔹 RabbitMQ
         services.AddSingleton<IRabbitConnection, RabbitConnection>();
         services.AddSingleton<IRabbitChannelFactory, RabbitChannelFactory>();
+        services.AddSingleton<IRabbitTopologyInitializer, RabbitTopologyInitializer>();
         services.AddSingleton<IMessageConsumer, RabbitMessageConsumer>();
-        services.AddScoped<IRabbitTopologyInitializer, RabbitTopologyInitializer>();
-        services.AddHostedService<WorkerDeNotificacoes>();
+        services.AddScoped<IMessageHandler<LembreteMensagemDto>, EnviarLembretePorEmailMessageHandler>();
+        services.AddScoped<IEnviarLembretePorEmailUseCase, EnviarLembretePorEmailUseCase>();
+        services.AddScoped<LembreteEmailCompose>();
+        services.AddScoped<IEmail, Email>();
+
     })
     .Build()
     .Run();

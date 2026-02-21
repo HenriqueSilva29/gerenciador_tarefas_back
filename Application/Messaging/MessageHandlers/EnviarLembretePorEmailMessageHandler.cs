@@ -1,16 +1,17 @@
 ﻿using Application.Dtos.LembreteDtos;
 using Application.Interfaces.Messaging;
+using Application.Interfaces.UseCases;
 using Application.UseCase.Lembrete;
 
 namespace Application.Massaging.MessageHandlers
 {
     public class EnviarLembretePorEmailMessageHandler : IMessageHandler<LembreteMensagemDto>
     {
-        private readonly EnviarLembretePorEmailUseCase _enviarLembretePorEmailUseCase;
+        private readonly IEnviarLembretePorEmailUseCase _useCase;
 
-        public EnviarLembretePorEmailMessageHandler(EnviarLembretePorEmailUseCase enviarLembretePorEmailUseCase)
+        public EnviarLembretePorEmailMessageHandler(IEnviarLembretePorEmailUseCase useCase)
         {
-            _enviarLembretePorEmailUseCase = enviarLembretePorEmailUseCase;
+            _useCase = useCase;
         }
 
         public async Task HandleAsync
@@ -19,7 +20,7 @@ namespace Application.Massaging.MessageHandlers
             CancellationToken cancellationToken
         )
         {
-            await _enviarLembretePorEmailUseCase.ExecuteAsync(message);
+            await _useCase.ExecuteAsync(message);
         }
 
     }

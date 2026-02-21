@@ -19,6 +19,8 @@ public class WorkerDeNotificacoes : BackgroundService
     {
         _logger.LogInformation("Iniciando Worker de Notificações...");
         await _consumer.StartAsync(stoppingToken);
+
+        await Task.Delay(Timeout.Infinite, stoppingToken);
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken)
