@@ -13,7 +13,6 @@ using Infra.Mensageria.RabbitMQ.Connections;
 using Infra.Mensageria.RabbitMQ.Topology;
 using Application.Dtos.LembreteDtos;
 using Application.Interfaces.UseCases;
-using Application.Massaging.MessageHandlers;
 using Application.UseCase.Lembrete;
 using Application.Emails;
 using Application.Interfaces.Email;
@@ -54,6 +53,10 @@ Host.CreateDefaultBuilder(args)
         services.AddScoped<IEnviarLembretePorEmailUseCase, EnviarLembretePorEmailUseCase>();
         services.AddScoped<LembreteEmailCompose>();
         services.AddScoped<IEmail, Email>();
+
+        services.AddScoped<IMessageDispatcher, MessageDispatcher>();
+       ;
+
 
     })
     .Build()

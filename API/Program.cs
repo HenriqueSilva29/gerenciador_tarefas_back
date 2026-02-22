@@ -25,6 +25,8 @@ using Application.Emails;
 using Application.Interfaces.Email;
 using Infra.Emails;
 using Serilog;
+using Application.Dtos.LembreteDtos;
+using Infra.Messaging.RabbitMQ.Publicadores;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,7 +55,7 @@ builder.Services.AddScoped<IRepLembrete, RepLembrete>();
 builder.Services.AddScoped<IServToDoItem, ServToDoItem>();
 builder.Services.AddScoped<IServSubtarefa, ServSubtarefa>();
 
-builder.Services.AddScoped<INotificacaoPublisher, RabbitNotificacaoPublisher>();
+builder.Services.AddScoped<IRabbitEventPublisher, RabbitEventPublisher>();
 builder.Services.AddScoped<IBackgroundLembreteJobScheduler, SchedulerLembreteDeAviso>();
 
 builder.Services.AddScoped<IRabbitConnection, RabbitConnection>();
@@ -66,6 +68,9 @@ builder.Services.AddScoped<IDispararLembreteUseCase, DispararLembreteUseCase>();
 builder.Services.AddScoped<IEnviarLembretePorEmailUseCase, EnviarLembretePorEmailUseCase>();
 builder.Services.AddScoped<LembreteEmailCompose>();
 builder.Services.AddScoped<IEmail,Email>();
+
+builder.Services.AddScoped<IMessageDispatcher, MessageDispatcher>();
+builder.Services.AddScoped<IMessageHandler<LembreteMensagemDto>, EnviarLembretePorEmailMessageHandler>();
 
 builder.Services.AddSwaggerGen(c =>
 {

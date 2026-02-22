@@ -17,7 +17,7 @@ public class WorkerDeNotificacoes : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Iniciando Worker de Notificações...");
+        _logger.LogInformation("Iniciando Worker...");
         await _consumer.StartAsync(stoppingToken);
 
         await Task.Delay(Timeout.Infinite, stoppingToken);
@@ -25,7 +25,7 @@ public class WorkerDeNotificacoes : BackgroundService
 
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Encerrando Worker de Notificações...");
+        _logger.LogInformation("Encerrando Worker...");
         await base.StopAsync(cancellationToken);
     }
 }

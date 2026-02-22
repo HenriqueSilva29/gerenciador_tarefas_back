@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces.Messaging;
 using Application.Interfaces.UseCases;
 using Application.Utils.Transacao;
+using Infra.Messaging.RabbitMQ.Publicadores;
 using Repository.Repositorys.LembreteRep;
 using static Domain.Entities.Lembretes.Lembrete;
 
@@ -10,16 +11,16 @@ namespace Application.UseCase.Lembrete
     {
         private readonly IRepLembrete _rep;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly INotificacaoPublisher _notificacaoPublisher;
+        private readonly IRabbitEventPublisher _publisher;
 
         public DispararLembreteUseCase(
             IRepLembrete rep,
             IUnitOfWork unitOfWork,
-            INotificacaoPublisher notificacaoPublisher)
+            IRabbitEventPublisher publisher)
         {
             _rep = rep;
             _unitOfWork = unitOfWork;
-            _notificacaoPublisher = notificacaoPublisher;
+            _publisher = publisher;
         }
 
         public async Task ExecuteAsync(Guid lembreteId)
@@ -37,9 +38,10 @@ namespace Application.UseCase.Lembrete
 
             await _rep.Atualizar(lembrete);
 
-            await _notificacaoPublisher.PublicarAsync(lembrete);
-
             await _unitOfWork.CommitTransactionAsync();
+
+            await _publisher.PublishAsync("lembrete.email", lembrete);
+
         }
     }
 }
