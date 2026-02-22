@@ -22,9 +22,9 @@ namespace Repository.ConfigEF.LembreteConfigs
                    .HasForeignKey(l => l.CodigoToDoItem)
                    .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Property(l => l.PrazoDeAvisoAntesDoVencimento)
+            builder.Property(l => l.DiasAntesDoVencimento)
                 .IsRequired(true)
-                .HasColumnName("antecedencia");
+                .HasColumnName("diasAntesDoVencimento");
 
             builder.Property(l => l.Texto)
                 .HasMaxLength(300)

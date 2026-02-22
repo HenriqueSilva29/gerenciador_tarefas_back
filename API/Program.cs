@@ -1,23 +1,32 @@
 using API.Middlewares;
-using Application.Interfaces;
-using Application.Services.ServLembretes;
+using Application.Interfaces.Messaging;
+using Application.Interfaces.Schedulers;
 using Application.Services.ServSubTarefas;
 using Application.Services.ServToDoItems;
 using Application.Services.ToDoItemServices;
 using Application.Utils.Transacao;
 using Hangfire;
 using Hangfire.SqlServer;
-using Infra.Jobs.Hangfire.Dashboard;
-using Infra.Jobs.Hangfire.JobDeAgendamentos;
-using Infra.Jobs.Hangfire.JobDeLembretes;
-using Infra.Mensageria.RabbitMQ;
-using Infra.Mensageria.RabbitMQ.Publicadores;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Repository.ContextEFs;
 using Repository.Repositorys;
 using Repository.Repositorys.LembreteRep;
 using Repository.ToDoItemRep;
+using Infra.Mensageria.RabbitMQ.Publicadores;
+using Infra.Mensageria.RabbitMQ.Connections;
+using Infra.Mensageria.RabbitMQ.Channels;
+using Infra.Jobs.Hangfire.JobDeAgendamentos;
+using Infra.Jobs.Hangfire.Dashboard;
+using Infra.Mensageria.RabbitMQ.Topology;
+using Application.UseCase.Lembrete;
+using Application.Interfaces.UseCases;
+using Application.Emails;
+using Application.Interfaces.Email;
+using Infra.Emails;
+using Serilog;
+using Application.Dtos.LembreteDtos;
+using Infra.Messaging.RabbitMQ.Publicadores;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,7 +43,10 @@ builder.Services.AddHangfire(config =>
             QueuePollInterval = TimeSpan.FromSeconds(60)
         });
 });
-builder.Services.AddHangfireServer();
+builder.Services.AddHangfireServer( options => 
+    {
+    options.ServerName = "API-Hangfire-Server";
+    });
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IRepToDoItem, RepToDoItem>();
@@ -42,16 +54,23 @@ builder.Services.AddScoped<IRepLembrete, RepLembrete>();
 
 builder.Services.AddScoped<IServToDoItem, ServToDoItem>();
 builder.Services.AddScoped<IServSubtarefa, ServSubtarefa>();
-builder.Services.AddScoped<IServLembrete, ServLembrete>();
 
-builder.Services.AddScoped<IPublicadorDeMensagens, PublicadorDeMensagens>();
-builder.Services.AddScoped<IJobDeLembrete, JobDeLembrete>();
-builder.Services.AddScoped<IJobScheduler, JobScheduler>();
+builder.Services.AddScoped<IRabbitEventPublisher, RabbitEventPublisher>();
+builder.Services.AddScoped<IBackgroundLembreteJobScheduler, SchedulerLembreteDeAviso>();
 
 builder.Services.AddScoped<IRabbitConnection, RabbitConnection>();
 builder.Services.AddScoped<IRabbitChannelFactory, RabbitChannelFactory>();
+builder.Services.AddScoped<IRabbitTopologyInitializer, RabbitTopologyInitializer>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddScoped<IDispararLembreteUseCase, DispararLembreteUseCase>();
+builder.Services.AddScoped<IEnviarLembretePorEmailUseCase, EnviarLembretePorEmailUseCase>();
+builder.Services.AddScoped<LembreteEmailCompose>();
+builder.Services.AddScoped<IEmail,Email>();
+
+builder.Services.AddScoped<IMessageDispatcher, MessageDispatcher>();
+builder.Services.AddScoped<IMessageHandler<LembreteMensagemDto>, EnviarLembretePorEmailMessageHandler>();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -59,7 +78,6 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddRazorPages();
-builder.Services.AddControllers();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -67,6 +85,17 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.MaxDepth = 32;
     });
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console()
+    .WriteTo.File("logs/rabbit-log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
+var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
+logger.LogInformation("TESTE SERILOG");
 
 var app = builder.Build();
 
@@ -88,7 +117,7 @@ app.UseHangfireDashboard("/hangfire",
     { 
         Authorization = new[] { new HangfireAuthorizationFilter()} 
     });
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -96,5 +125,6 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 app.MapRazorPages();
+
 
 app.Run();

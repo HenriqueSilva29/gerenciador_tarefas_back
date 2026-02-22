@@ -1,71 +1,31 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using RabbitMQ.Client;
-using Infra.Mensageria.RabbitMQ.Consumidores;
-using Microsoft.Extensions.DependencyInjection;
+using Application.Interfaces.Messaging;
 
 public class WorkerDeNotificacoes : BackgroundService
 {
     private readonly ILogger<WorkerDeNotificacoes> _logger;
-    private readonly IConfiguration _config;
-    private readonly IServiceScopeFactory _scopeFactory;
-    private IConnection? _connection;
-    private IChannel? _channel;
-
+    private readonly IMessageConsumer _consumer;
 
     public WorkerDeNotificacoes(
-          ILogger<WorkerDeNotificacoes> logger,
-          IConfiguration config,
-          IServiceScopeFactory scopeFactory)
+              ILogger<WorkerDeNotificacoes> logger,
+               IMessageConsumer consumer)
     {
         _logger = logger;
-        _config = config;
-        _scopeFactory = scopeFactory;
-    }
-
-    public override async Task StartAsync(CancellationToken cancellationToken)
-    {
-        _logger.LogInformation("Iniciando Worker de Notificações...");
-
-
-        var uri = _config["RabbitMQ:Uri"];
-        var factory = new ConnectionFactory 
-        {
-            Uri = new Uri(uri)
-        };
-
-        _connection = await factory.CreateConnectionAsync(cancellationToken: cancellationToken);
-        _channel = await _connection.CreateChannelAsync
-                    (
-                        options: null,
-                        cancellationToken: cancellationToken
-                    );
-
-        await base.StartAsync(cancellationToken);
+        _consumer = consumer;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if(_channel == null)
-            throw new InvalidOperationException("Canal não inicializado");
-
-        var consumidor = new ConsumidorDeMensagens(_channel, _scopeFactory);
-        await consumidor.IniciarAsync();
+        _logger.LogInformation("Iniciando Worker...");
+        await _consumer.StartAsync(stoppingToken);
 
         await Task.Delay(Timeout.Infinite, stoppingToken);
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Encerrando Worker de Notificações...");
-
-        if (_channel != null)
-            await _channel.CloseAsync(cancellationToken);
-
-        if (_connection != null)
-            await _connection.CloseAsync(cancellationToken);
-
+        _logger.LogInformation("Encerrando Worker...");
         await base.StopAsync(cancellationToken);
     }
 }

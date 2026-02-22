@@ -15,10 +15,18 @@ namespace Application.Utils.Transacao
 
         public async Task BeginTransactionAsync()
         {
-            if (_transaction != null)
-                return;
+            try 
+            {
+                if (_transaction != null)
+                    return;
 
-            _transaction = await _context.Database.BeginTransactionAsync();
+                _transaction = await _context.Database.BeginTransactionAsync();
+            }
+            catch (Exception ex) 
+            {
+                throw;
+            }
+            
         }
 
         public async Task CommitTransactionAsync()
