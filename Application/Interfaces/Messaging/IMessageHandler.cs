@@ -2,6 +2,6 @@
 {
     public interface IMessageHandler<IMessage>
     {
-        Task HandleAsync(IMessage message, CancellationToken cancellationToken);
+        Task HandleAsync(IMessage message);
     }
 }

@@ -9,18 +9,18 @@ using System.Text;
 
 namespace Infra.Mensageria.RabbitMQ.Consumidores;
 
-public class RabbitMessageConsumer : IMessageConsumer
+public class NotificarEmailConsumer : IMessageConsumer
 {
     private readonly IRabbitChannelFactory _channelFactory;
     private readonly IRabbitTopologyInitializer _topology;
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ILogger<RabbitMessageConsumer> _logger;
+    private readonly ILogger<NotificarEmailConsumer> _logger;
 
-    public RabbitMessageConsumer(
+    public NotificarEmailConsumer(
         IRabbitChannelFactory channelFactory,
         IRabbitTopologyInitializer topology,
         IServiceScopeFactory scopeFactory,
-        ILogger<RabbitMessageConsumer> logger)
+        ILogger<NotificarEmailConsumer> logger)
     {
         _channelFactory = channelFactory;
         _topology = topology;
@@ -40,18 +40,17 @@ public class RabbitMessageConsumer : IMessageConsumer
             try
             {
                 using var scope = _scopeFactory.CreateScope();
-                _logger.LogError("Recuperar dispatcher");
+
                 var dispatcher = scope.ServiceProvider.GetRequiredService<IMessageDispatcher>();
 
                 var json = Encoding.UTF8.GetString(args.Body.ToArray());
 
-                _logger.LogError("Dispatch");
                 await dispatcher.DispatchAsync(json);
                 await channel.BasicAckAsync(args.DeliveryTag, false);
             }
             catch (Exception ex)
             {
-                _logger.LogError("Erro ao processar mensagem: " + ex.StackTrace);
+                _logger.LogError("Erro ao processar mensagem: " + ex.Message + " || StackTrace: " + ex.StackTrace );
                 await channel.BasicNackAsync(args.DeliveryTag, false, true);
             }
         };

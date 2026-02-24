@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Application.Interfaces.UseCases
 {
-    public interface IDispararLembreteUseCase 
+    public interface IVerificarLembretesVencendoUseCase
     {
-        Task ExecuteAsync(Guid lembreteId);
+        public Task ExecuteAsync();
     }
 }

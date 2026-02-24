@@ -11,14 +11,16 @@ using Application.Interfaces.Messaging;
 using Infra.Mensageria.RabbitMQ.Channels;
 using Infra.Mensageria.RabbitMQ.Connections;
 using Infra.Mensageria.RabbitMQ.Topology;
-using Application.Dtos.LembreteDtos;
 using Application.Interfaces.UseCases;
-using Application.UseCase.Lembrete;
 using Application.Emails;
 using Application.Interfaces.Email;
 using Infra.Emails;
+using Application.UseCase.Lembretes;
+using Hangfire;
+using Hangfire.SqlServer;
+using Infra.BackgroundJobs.Hangfire.Jobs.Lembretes;
 
-Host.CreateDefaultBuilder(args)
+var host = Host.CreateDefaultBuilder(args)
     .ConfigureLogging(logging =>
     {
         logging.ClearProviders();
@@ -31,7 +33,7 @@ Host.CreateDefaultBuilder(args)
         Console.WriteLine($"AMBIENTE ATUAL: {hostContext.HostingEnvironment.EnvironmentName}");
         Console.WriteLine("======================================");
 
-        services.AddHostedService<WorkerDeNotificacoes>();
+        services.AddHostedService<Worker>();
 
         services.AddDbContext<ContextEF>(options =>
             options.UseSqlServer(
@@ -48,16 +50,43 @@ Host.CreateDefaultBuilder(args)
         services.AddSingleton<IRabbitConnection, RabbitConnection>();
         services.AddSingleton<IRabbitChannelFactory, RabbitChannelFactory>();
         services.AddSingleton<IRabbitTopologyInitializer, RabbitTopologyInitializer>();
-        services.AddSingleton<IMessageConsumer, RabbitMessageConsumer>();
-        services.AddScoped<IMessageHandler<LembreteMensagemDto>, EnviarLembretePorEmailMessageHandler>();
+        services.AddSingleton<IMessageConsumer, NotificarEmailConsumer>();
+
+        services.AddScoped<IMessageHandler<LembreteVencimentoAtingidoEvent>, EnviarLembretePorEmailMessageHandler>();
         services.AddScoped<IEnviarLembretePorEmailUseCase, EnviarLembretePorEmailUseCase>();
         services.AddScoped<LembreteEmailCompose>();
         services.AddScoped<IEmail, Email>();
 
         services.AddScoped<IMessageDispatcher, MessageDispatcher>();
-       ;
 
+        services.AddHangfire(config =>
+        {
+            config.UseSqlServerStorage(hostContext.Configuration.GetConnectionString("DefaultConnection"),
+                new SqlServerStorageOptions
+                {
+                    PrepareSchemaIfNecessary = true,
+                    QueuePollInterval = TimeSpan.FromSeconds(60)
+                });
+        });
+        services.AddHangfireServer(options =>
+        {
+            options.ServerName = "API-Hangfire-Server";
+        });
 
     })
-    .Build()
-    .Run();
+    .Build();
+
+// 🔥 AQUI é o lugar certo
+using (var scope = host.Services.CreateScope())
+{
+    var recurringJobManager = scope.ServiceProvider
+        .GetRequiredService<IRecurringJobManager>();
+
+    recurringJobManager.AddOrUpdate<VerificarLembretesVencendoJob>(
+        "verificar-lembretes",
+        job => job.Execute(),
+        "*/5 * * * *"
+    );
+}
+
+host.Run();

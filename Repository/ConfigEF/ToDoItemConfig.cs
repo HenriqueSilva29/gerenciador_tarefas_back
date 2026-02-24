@@ -3,7 +3,7 @@ using Domain.Entities.ToDoItems;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Repository.ConfigEF.ToDoItemConfigs
+namespace Repository.ConfigEF
 {
     public class ToDoItemConfig : IEntityTypeConfiguration<ToDoItem>
     {
@@ -38,15 +38,15 @@ namespace Repository.ConfigEF.ToDoItemConfigs
             builder.Property(t => t.Prioridade)
                 .IsRequired()
                 .HasConversion<int>()
-                .HasColumnName("prioridade"); 
+                .HasColumnName("prioridade");
 
             builder.Property(t => t.Categoria)
                 .HasConversion<int>()
-                .HasColumnName("categoria");  
+                .HasColumnName("categoria");
 
             builder.Property(t => t.Status)
                 .HasConversion<int>()
-                .HasColumnName("status");  
+                .HasColumnName("status");
 
             builder.Property(t => t.DataCriacao)
                 .IsRequired()

@@ -1,14 +1,11 @@
 ﻿using Domain.Entities.Lembretes;
 using Repository.Repositorys.GuidRep;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Repository.Repositorys.IntRep;
 
 namespace Repository.Repositorys.LembreteRep
 {
-    public interface IRepLembrete : IRepGuid<Lembrete>
+    public interface IRepLembrete : IRepInt<Lembrete>
     {
+        public Task<List<Lembrete>> ObterPendentesParaDisparo(DateTimeOffset agora);
     }
 }

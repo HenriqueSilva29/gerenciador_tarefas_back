@@ -2,23 +2,27 @@
 using Microsoft.Extensions.Logging;
 using Application.Interfaces.Messaging;
 
-public class WorkerDeNotificacoes : BackgroundService
+public class Worker : BackgroundService
 {
-    private readonly ILogger<WorkerDeNotificacoes> _logger;
-    private readonly IMessageConsumer _consumer;
+    private readonly ILogger<Worker> _logger;
+    private readonly IEnumerable<IMessageConsumer> _consumers;
 
-    public WorkerDeNotificacoes(
-              ILogger<WorkerDeNotificacoes> logger,
-               IMessageConsumer consumer)
+    public Worker(
+              ILogger<Worker> logger,
+              IEnumerable<IMessageConsumer> consumer)
     {
         _logger = logger;
-        _consumer = consumer;
+        _consumers = consumer;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("Iniciando Worker...");
-        await _consumer.StartAsync(stoppingToken);
+
+        foreach (var consumer in _consumers)
+        {
+            await consumer.StartAsync(stoppingToken);
+        }
 
         await Task.Delay(Timeout.Infinite, stoppingToken);
     }

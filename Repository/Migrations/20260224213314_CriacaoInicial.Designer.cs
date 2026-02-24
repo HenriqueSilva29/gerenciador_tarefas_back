@@ -12,8 +12,8 @@ using Repository.ContextEFs;
 namespace Repository.Migrations
 {
     [DbContext(typeof(ContextEF))]
-    [Migration("20260111013650_coluna_data_de_envio_aceita_nulo")]
-    partial class colunadatadeenvioaceitanulo
+    [Migration("20260224213314_CriacaoInicial")]
+    partial class CriacaoInicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,27 +25,23 @@ namespace Repository.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Lembretes.Lembrete", b =>
+            modelBuilder.Entity("Domain.Entities.Lembretes.Lembrete", b =>
                 {
-                    b.Property<Guid>("CodigoLembrete")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("int")
                         .HasColumnName("idLembrete");
 
-                    b.Property<TimeSpan>("Antecedencia")
-                        .HasColumnType("time")
-                        .HasColumnName("antecedencia");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CodigoToDoItem")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DataDeEnvio")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("data_de_envio");
+                    b.Property<DateTimeOffset>("DataDisparo")
+                        .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTime>("DataDoEnvio")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("data_do_envio");
+                    b.Property<DateTimeOffset>("DataVencimento")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<int>("Status")
                         .HasColumnType("int")
@@ -57,21 +53,21 @@ namespace Repository.Migrations
                         .HasColumnType("nvarchar(300)")
                         .HasColumnName("texto");
 
-                    b.HasKey("CodigoLembrete");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoToDoItem");
 
                     b.ToTable("Lembrete", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.ToDoItems.ToDoItem", b =>
+            modelBuilder.Entity("Domain.Entities.ToDoItems.ToDoItem", b =>
                 {
-                    b.Property<int>("CodigoToDoItem")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("idtodoitem");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CodigoToDoItem"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Categoria")
                         .HasColumnType("int")
@@ -81,12 +77,12 @@ namespace Repository.Migrations
                         .HasColumnType("int")
                         .HasColumnName("idtodoitempai");
 
-                    b.Property<DateTime>("DataCriacao")
-                        .HasColumnType("datetime2")
+                    b.Property<DateTimeOffset>("DataCriacao")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("data_criacao");
 
-                    b.Property<DateTime>("DataVencimento")
-                        .HasColumnType("datetime2")
+                    b.Property<DateTimeOffset>("DataVencimento")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("data_vencimento");
 
                     b.Property<string>("Descricao")
@@ -109,16 +105,16 @@ namespace Repository.Migrations
                         .HasColumnType("nvarchar(200)")
                         .HasColumnName("titulo");
 
-                    b.HasKey("CodigoToDoItem");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodigoToDoItemPai");
 
                     b.ToTable("ToDoItem", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Lembretes.Lembrete", b =>
+            modelBuilder.Entity("Domain.Entities.Lembretes.Lembrete", b =>
                 {
-                    b.HasOne("Domain.ToDoItems.ToDoItem", "ToDoItem")
+                    b.HasOne("Domain.Entities.ToDoItems.ToDoItem", "ToDoItem")
                         .WithMany("Lembretes")
                         .HasForeignKey("CodigoToDoItem")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -127,9 +123,9 @@ namespace Repository.Migrations
                     b.Navigation("ToDoItem");
                 });
 
-            modelBuilder.Entity("Domain.ToDoItems.ToDoItem", b =>
+            modelBuilder.Entity("Domain.Entities.ToDoItems.ToDoItem", b =>
                 {
-                    b.HasOne("Domain.ToDoItems.ToDoItem", "ToDoItemPai")
+                    b.HasOne("Domain.Entities.ToDoItems.ToDoItem", "ToDoItemPai")
                         .WithMany("SubTarefas")
                         .HasForeignKey("CodigoToDoItemPai")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -137,7 +133,7 @@ namespace Repository.Migrations
                     b.Navigation("ToDoItemPai");
                 });
 
-            modelBuilder.Entity("Domain.ToDoItems.ToDoItem", b =>
+            modelBuilder.Entity("Domain.Entities.ToDoItems.ToDoItem", b =>
                 {
                     b.Navigation("Lembretes");
 

@@ -1,26 +1,22 @@
 ﻿using Domain.Common;
-using Domain.Common.ValueObjects;
 using Domain.Entities.ToDoItems;
 using Domain.Exceptions;
 
 namespace Domain.Entities.Lembretes
 {
-    public class Lembrete : IEntityGuid
+    public class Lembrete : IEntityInt
     {
-        public Guid Id { get; set; }
-        public int CodigoToDoItem { get; set; }
+        public int Id { get; private set; }
 
-        public ToDoItem ToDoItem { get; set; }
+        public int CodigoToDoItem { get; private set; }
+        public ToDoItem ToDoItem { get; private set; }
 
-        public DateTimeOffset DataDeVencimento { get; set; }
-        public int DiasAntesDoVencimento { get; set; }
-        public bool FoiAgendado { get; set; }
-        public UtcDateTime DataDeAgendamento { get; set; }
-        public UtcDateTime? DataDeExecucaoDoAgendamento { get; set; }
+        public DateTimeOffset DataVencimento { get; private set; }
+        public DateTimeOffset DataDisparo { get; private set; }
 
-        public string Texto { get; set; } = string.Empty;
+        public string Texto { get; private set; }
 
-        public LembreteStatus Status { get; set; }
+        public LembreteStatus Status { get; private set; }
 
         public enum LembreteStatus
         {
@@ -31,42 +27,35 @@ namespace Domain.Entities.Lembretes
 
         protected Lembrete() { }
 
-        public Lembrete(ToDoItem toDoItem, DateTimeOffset dataDeVencimento, string texto)
+        public Lembrete(
+            int idtoDoItem,
+            DateTimeOffset dataVencimento,
+            int diasAntes,
+            string texto)
         {
-            Id = Guid.NewGuid();
-            ToDoItem = toDoItem;
-            CodigoToDoItem = toDoItem.Id;
-            DataDeVencimento = dataDeVencimento;
+            CodigoToDoItem = idtoDoItem;
+            DataVencimento = dataVencimento;
+            DataDisparo = dataVencimento.AddDays(-diasAntes);
             Texto = texto;
-
             Status = LembreteStatus.Pendente;
-        }
-
-        public void MarcarComoAgendado()
-        {
-            if (FoiAgendado)
-                return;
-
-            FoiAgendado = true;
-            DataDeAgendamento = UtcDateTime.Now();
         }
 
         public void Executar()
         {
-            if (Status == LembreteStatus.Executado)
+            if (Status != LembreteStatus.Pendente)
                 return;
 
             Status = LembreteStatus.Executado;
-            DataDeExecucaoDoAgendamento = UtcDateTime.Now();
         }
 
         public void Cancelar()
         {
             if (Status == LembreteStatus.Executado)
-                throw new DomainException("LEMBRETE_ALREADY_SENT", "Lembrete já foi enviado.");
+                throw new DomainException(
+                    "LEMBRETE_ALREADY_SENT",
+                    "Lembrete já foi enviado.");
 
             Status = LembreteStatus.Cancelado;
         }
-
     }
 }

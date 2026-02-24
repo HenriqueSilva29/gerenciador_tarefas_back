@@ -24,31 +24,21 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("Domain.Entities.Lembretes.Lembrete", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("int")
                         .HasColumnName("idLembrete");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CodigoToDoItem")
                         .HasColumnType("int");
 
-                    b.Property<DateTimeOffset>("DataDeAgendamento")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnName("data_de_agendamento");
-
-                    b.Property<DateTimeOffset?>("DataDeExecucaoDoAgendamento")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnName("data_de_execucao_do_agendamento");
-
-                    b.Property<DateTimeOffset>("DataDeVencimento")
+                    b.Property<DateTimeOffset>("DataDisparo")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("DiasAntesDoVencimento")
-                        .HasColumnType("int")
-                        .HasColumnName("diasAntesDoVencimento");
-
-                    b.Property<bool>("FoiAgendado")
-                        .HasColumnType("bit");
+                    b.Property<DateTimeOffset>("DataVencimento")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<int>("Status")
                         .HasColumnType("int")

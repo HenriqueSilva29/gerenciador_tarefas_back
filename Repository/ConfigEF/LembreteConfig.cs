@@ -3,7 +3,7 @@ using Domain.Entities.Lembretes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Repository.ConfigEF.LembreteConfigs
+namespace Repository.ConfigEF
 {
     public class LembreteConfig : IEntityTypeConfiguration<Lembrete>
     {
@@ -22,10 +22,6 @@ namespace Repository.ConfigEF.LembreteConfigs
                    .HasForeignKey(l => l.CodigoToDoItem)
                    .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Property(l => l.DiasAntesDoVencimento)
-                .IsRequired(true)
-                .HasColumnName("diasAntesDoVencimento");
-
             builder.Property(l => l.Texto)
                 .HasMaxLength(300)
                 .IsRequired()
@@ -34,22 +30,6 @@ namespace Repository.ConfigEF.LembreteConfigs
             builder.Property(l => l.Status)
                 .IsRequired(true)
                 .HasColumnName("status");
-
-            builder.Property(l => l.DataDeAgendamento)
-                .IsRequired(true)
-                .HasColumnName("data_de_agendamento")
-                .HasConversion(
-                    utc => utc.Value,
-                    value => UtcDateTime.From(value)
-                  );
-
-            builder.Property(l => l.DataDeExecucaoDoAgendamento)
-                .IsRequired(false)
-                .HasColumnName("data_de_execucao_do_agendamento")
-                .HasConversion(
-                    utc => utc.HasValue ? utc.Value.Value : (DateTimeOffset?)null,
-                    value => value.HasValue ? UtcDateTime.From(value.Value) : null
-                );
         }
     }
 }

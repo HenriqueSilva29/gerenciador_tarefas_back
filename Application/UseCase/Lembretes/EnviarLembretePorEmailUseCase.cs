@@ -1,36 +1,41 @@
-﻿using Application.Dtos.LembreteDtos;
-using Application.Emails;
+﻿using Application.Emails;
 using Application.Interfaces.Email;
 using Application.Interfaces.UseCases;
+using Domain.Entities.Lembretes;
 using Microsoft.Extensions.Logging;
+using Repository.Repositorys.LembreteRep;
+using System.Diagnostics;
 
-namespace Application.UseCase.Lembrete
+namespace Application.UseCase.Lembretes
 {
     public class EnviarLembretePorEmailUseCase : IEnviarLembretePorEmailUseCase
     {
         private readonly ILogger<EnviarLembretePorEmailUseCase> _logger;
         private readonly LembreteEmailCompose _lembreteEmailCompose;
         private readonly IEmail _email;
-
+        private readonly IRepLembrete _repLembrete;
 
         public EnviarLembretePorEmailUseCase
         (   
             ILogger<EnviarLembretePorEmailUseCase> logger, 
             LembreteEmailCompose lembreteEmailCompose,
-            IEmail email
+            IEmail email,
+            IRepLembrete repLembrete
         )
         {
             _logger = logger;
             _lembreteEmailCompose = lembreteEmailCompose;
             _email = email;
+            _repLembrete = repLembrete;
         }
 
-        public async Task ExecuteAsync(LembreteMensagemDto message)
+        public async Task ExecuteAsync(int lembreteId)
         {
+            var lembrete = await _repLembrete.RecuperarPorId(lembreteId);
 
             _logger.LogInformation("Iniciando montagem do email");
 
-            var email =  _lembreteEmailCompose.Compose(message);
+            var email =  _lembreteEmailCompose.Compose(lembrete);
 
             await _email.SendAsync(email);
 

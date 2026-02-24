@@ -2,6 +2,6 @@
 {
     public interface IRabbitEventPublisher
     {
-        Task PublishAsync<T>(string eventType, T data);
+        Task PublishAsync<T>(T @event);
     }
 }

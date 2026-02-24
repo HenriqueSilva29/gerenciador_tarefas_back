@@ -1,6 +1,6 @@
 ﻿using Application.Dtos.FiltroDtos;
 using Application.Dtos.ToDoItemDtos;
-using Application.Interfaces.Schedulers;
+using Application.Interfaces.UseCases;
 using Application.Mappers;
 using Application.Services.ServToDoItems;
 using Application.Utils.Filtro;
@@ -9,30 +9,25 @@ using Application.Utils.Paginacao;
 using Application.Utils.Queryable;
 using Application.Utils.Transacao;
 using Domain.Common.ValueObjects;
-using Domain.Entities.Lembretes;
 using Domain.Entities.ToDoItems;
-using Repository.Repositorys.LembreteRep;
 using Repository.ToDoItemRep;
 
 namespace Application.Services.ToDoItemServices
 {
     public class ServToDoItem : IServToDoItem
-        {
-            private readonly IRepToDoItem _rep;
-            private readonly IRepLembrete _repLembrete;
-            private readonly IUnitOfWork _unitOfWork;
-            private readonly IBackgroundLembreteJobScheduler _jobScheduler;
+    {
+        private readonly IRepToDoItem _rep;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ICriarLembreteUseCase _criarLembrete;
 
         public ServToDoItem(IRepToDoItem rep,
                             IUnitOfWork unitOfWork,
-                            IBackgroundLembreteJobScheduler jobScheduler,
-                            IRepLembrete repLembrete
+                            ICriarLembreteUseCase criarLembrete
                             ) : base()
             {
                 _rep = rep;
-                _jobScheduler = jobScheduler;
                 _unitOfWork = unitOfWork;
-                _repLembrete = repLembrete;
+                _criarLembrete = criarLembrete;
             }
 
             public async Task CriarTarefa(AdicionarToDoItemDto dto)
@@ -46,9 +41,9 @@ namespace Application.Services.ToDoItemServices
 
                 await _unitOfWork.CommitTransactionAsync();
 
-                if (dto.AvisarQueVaiVencer)
+                if (dto.AvisarVencimento)
                 {
-                    await CriarLembreteDeAviso(toDoItem, dto);
+                    await _criarLembrete.CriarLembrete(toDoItem.Id, dto.DataVencimento, dto.DiasAntesDoVencimento);
                 }          
 
             }
@@ -117,29 +112,5 @@ namespace Application.Services.ToDoItemServices
                 return await query.PaginarAsync(parametros.Pagina,parametros.QuantidadePorPagina);
             }
 
-            private async Task CriarLembreteDeAviso(ToDoItem toDoItem, AdicionarToDoItemDto dto)
-            {
-                _unitOfWork.BeginTransactionAsync();
-
-                var lembrete = new Lembrete(
-                                       toDoItem,
-                                       dto.DataVencimento,
-                                       "Seu vencimento está próximo"
-                                   );            
-
-                await _repLembrete.Adicionar(lembrete);
-
-                await _unitOfWork.CommitTransactionAsync();
-
-                await _jobScheduler.AgendarLembreteDeAvisoAsync(lembrete.Id, lembrete.DataDeVencimento, dto.DiasAntesDoVencimento);
-
-                lembrete.MarcarComoAgendado();
-
-                _unitOfWork.BeginTransactionAsync();
-
-                 await _repLembrete.Atualizar(lembrete);
-
-                await _unitOfWork.CommitTransactionAsync();
-        }
         }
     }
