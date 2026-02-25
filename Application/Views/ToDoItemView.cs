@@ -1,4 +1,4 @@
-﻿using static Domain.Entities.ToDoItems.ToDoItem;
+﻿using static Domain.Entities.ToDoItem;
 
 namespace Application.Views
 {

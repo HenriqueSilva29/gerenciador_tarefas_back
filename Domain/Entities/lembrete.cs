@@ -1,10 +1,9 @@
 ﻿using Domain.Common;
-using Domain.Entities.ToDoItems;
 using Domain.Exceptions;
 
-namespace Domain.Entities.Lembretes
+namespace Domain.Entities
 {
-    public class Lembrete : IEntityInt
+    public class Lembrete : IEntityId<int>
     {
         public int Id { get; private set; }
 

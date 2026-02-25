@@ -1,11 +1,10 @@
 ﻿using Domain.Common;
 using Domain.Common.ValueObjects;
-using Domain.Entities.Lembretes;
 using Domain.Exceptions;
 
-namespace Domain.Entities.ToDoItems
+namespace Domain.Entities
 {
-    public class ToDoItem : IEntityInt
+    public class ToDoItem : IEntityId<int>
     {
         public ToDoItem()
         {

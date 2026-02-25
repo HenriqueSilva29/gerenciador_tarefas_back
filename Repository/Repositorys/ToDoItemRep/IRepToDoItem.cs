@@ -1,11 +1,9 @@
-﻿using Domain.Entities.ToDoItems;
+﻿using Domain.Entities;
 using Repository.Repositorys;
-using Repository.Repositorys.IntRep;
-using System.Linq.Expressions;
 
 namespace Repository.ToDoItemRep
 {
-    public interface IRepToDoItem : IRepInt<ToDoItem>
+    public interface IRepToDoItem : IRepository<ToDoItem, int>
     {
         // Métodos reutilizáveis devem serem inseridos no rep genérico
     }

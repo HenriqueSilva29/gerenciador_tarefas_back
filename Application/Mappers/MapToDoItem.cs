@@ -1,7 +1,7 @@
 ﻿using Application.Dtos.ToDoItemDtos;
 using Application.Views;
 using Domain.Common.ValueObjects;
-using Domain.Entities.ToDoItems;
+using Domain.Entities;
 
 namespace Application.Mappers
 {

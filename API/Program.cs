@@ -9,7 +9,6 @@ using Hangfire.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Repository.ContextEFs;
-using Repository.Repositorys;
 using Repository.Repositorys.LembreteRep;
 using Repository.ToDoItemRep;
 using Infra.Mensageria.RabbitMQ.Publicadores;
@@ -45,7 +44,6 @@ builder.Services.AddHangfireServer( options =>
     options.ServerName = "API-Hangfire-Server";
     });
 
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IRepToDoItem, RepToDoItem>();
 builder.Services.AddScoped<IRepLembrete, RepLembrete>();
 

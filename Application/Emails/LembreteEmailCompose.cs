@@ -1,5 +1,5 @@
 ﻿using Application.Dtos.LembreteDtos;
-using Domain.Entities.Lembretes;
+using Domain.Entities;
 
 namespace Application.Emails
 {

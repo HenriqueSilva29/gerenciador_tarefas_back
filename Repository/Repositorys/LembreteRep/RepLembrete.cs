@@ -1,16 +1,15 @@
-﻿using Domain.Entities.Lembretes;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Repository.ContextEFs;
-using Repository.Repositorys.GuidRep;
-using Repository.Repositorys.IntRep;
 
 namespace Repository.Repositorys.LembreteRep
 {
-    public class RepLembrete : RepInt<Lembrete>, IRepLembrete
+    public class RepLembrete : Repository<Lembrete, int>, IRepLembrete
     {
         public RepLembrete(ContextEF context) : base(context)
         {
         }
+
         public async Task<List<Lembrete>> ObterPendentesParaDisparo(
             DateTimeOffset agora)
         {

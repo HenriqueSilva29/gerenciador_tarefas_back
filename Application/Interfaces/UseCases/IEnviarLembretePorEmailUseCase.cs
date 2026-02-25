@@ -1,6 +1,4 @@
-﻿using Domain.Entities.Lembretes;
-
-namespace Application.Interfaces.UseCases
+﻿namespace Application.Interfaces.UseCases
 {
     public interface IEnviarLembretePorEmailUseCase
     {

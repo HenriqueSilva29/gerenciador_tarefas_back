@@ -1,10 +1,8 @@
-﻿using Domain.Entities.Lembretes;
-using Repository.Repositorys.GuidRep;
-using Repository.Repositorys.IntRep;
+﻿using Domain.Entities;
 
 namespace Repository.Repositorys.LembreteRep
 {
-    public interface IRepLembrete : IRepInt<Lembrete>
+    public interface IRepLembrete : IRepository<Lembrete, int>
     {
         public Task<List<Lembrete>> ObterPendentesParaDisparo(DateTimeOffset agora);
     }

@@ -3,7 +3,7 @@ using Application.Dtos.FiltroDtos;
 using Application.Dtos.ToDoItemDtos;
 using Application.Services.ServToDoItems;
 using Application.Utils.Paginacao;
-using Domain.Entities.ToDoItems;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers

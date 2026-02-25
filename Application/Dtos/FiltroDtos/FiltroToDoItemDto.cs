@@ -1,9 +1,9 @@
 ﻿using Application.Dtos.Filtros;
 using Application.Dtos.PaginacaoDtos;
 using Application.Utils.Ordenacao;
-using Domain.Entities.ToDoItems;
+using Domain.Entities;
 using System.Linq.Expressions;
-using static Domain.Entities.ToDoItems.ToDoItem;
+using static Domain.Entities.ToDoItem;
 
 namespace Application.Dtos.FiltroDtos
 {

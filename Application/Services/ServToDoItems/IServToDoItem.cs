@@ -2,7 +2,7 @@
 using Application.Dtos.ToDoItemDtos;
 using Application.Utils.Paginacao;
 using Application.Views;
-using Domain.Entities.ToDoItems;
+using Domain.Entities;
 
 namespace Application.Services.ServToDoItems
 {

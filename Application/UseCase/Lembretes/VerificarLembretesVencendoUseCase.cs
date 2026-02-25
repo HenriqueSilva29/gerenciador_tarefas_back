@@ -33,7 +33,7 @@ namespace Application.UseCase.Lembretes
 
                 lembrete.Executar();
 
-                await _rep.Atualizar(lembrete);
+                _rep.Atualizar(lembrete);
 
                 await _unitOfWork.CommitTransactionAsync();
 

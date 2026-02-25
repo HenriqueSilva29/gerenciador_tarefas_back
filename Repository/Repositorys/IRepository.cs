@@ -1,11 +1,14 @@
-﻿namespace Repository.Repositorys
+﻿using Domain.Common;
+
+namespace Repository.Repositorys
 {
-    public interface IRepository<T> where T : class
+    public interface IRepository<T, TId> where T : IEntityId<TId>
     {
         IQueryable<T> AsQueryable();
         IEnumerable<T> AsEnumerable();
-        Task Adicionar(T entity);
-        Task Atualizar(T entity);
-        Task Remover(T entity);
+        Task<T?> RecuperarPorId(TId id);
+        void Adicionar(T entity);
+        void Atualizar(T entity);
+        void Remover(T entity);
     }
 }

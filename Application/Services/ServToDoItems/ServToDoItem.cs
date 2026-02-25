@@ -9,7 +9,7 @@ using Application.Utils.Paginacao;
 using Application.Utils.Queryable;
 using Application.Utils.Transacao;
 using Domain.Common.ValueObjects;
-using Domain.Entities.ToDoItems;
+using Domain.Entities;
 using Repository.ToDoItemRep;
 
 namespace Application.Services.ToDoItemServices
@@ -37,7 +37,7 @@ namespace Application.Services.ToDoItemServices
 
                 var toDoItem = MapToDoItem.AdicionarToDoItemDto(dto);
 
-                await _rep.Adicionar(toDoItem);
+                _rep.Adicionar(toDoItem);
 
                 await _unitOfWork.CommitTransactionAsync();
 
@@ -58,7 +58,7 @@ namespace Application.Services.ToDoItemServices
 
                 ToDoItem = MapToDoItem.AtualizarToDoItemDto(ToDoItem, dto);
 
-                await _rep.Atualizar(ToDoItem);
+                _rep.Atualizar(ToDoItem);
 
                 await _unitOfWork.CommitTransactionAsync();
             }
@@ -71,7 +71,7 @@ namespace Application.Services.ToDoItemServices
 
                 if (toDoItem is null) throw new Exception("Registro não encontrado");
 
-                await _rep.Remover(toDoItem);
+                _rep.Remover(toDoItem);
 
                 await _unitOfWork.CommitTransactionAsync();
             }
@@ -97,7 +97,7 @@ namespace Application.Services.ToDoItemServices
 
                 toDoItem.DefinirPrioridade(dto.Prioridade);
 
-                await _rep.Atualizar(toDoItem);
+                _rep.Atualizar(toDoItem);
 
                 await _unitOfWork.CommitTransactionAsync();
             }

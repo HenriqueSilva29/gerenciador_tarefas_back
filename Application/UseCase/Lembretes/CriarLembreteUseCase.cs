@@ -1,8 +1,7 @@
 ﻿using Application.Interfaces.UseCases;
 using Application.Utils.Transacao;
-using Domain.Entities.Lembretes;
+using Domain.Entities;
 using Repository.Repositorys.LembreteRep;
-using Repository.ToDoItemRep;
 
 namespace Application.UseCase.Lembretes
 {
@@ -32,7 +31,7 @@ namespace Application.UseCase.Lembretes
                 "Seu vencimento está próximo"
             );
 
-            await _repLembrete.Adicionar(lembrete);
+            _repLembrete.Adicionar(lembrete);
 
             await _unitOfWork.CommitTransactionAsync();
 ;

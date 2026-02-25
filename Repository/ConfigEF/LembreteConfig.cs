@@ -1,5 +1,5 @@
 ﻿using Domain.Common.ValueObjects;
-using Domain.Entities.Lembretes;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
