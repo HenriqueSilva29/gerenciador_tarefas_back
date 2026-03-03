@@ -1,9 +1,9 @@
 ﻿using Application.Dtos.Filtros;
 using Application.Dtos.PaginacaoDtos;
 using Application.Utils.Ordenacao;
-using Domain.Entities.ToDoItems;
+using Domain.Entities;
 using System.Linq.Expressions;
-using static Domain.Entities.ToDoItems.ToDoItem;
+using static Domain.Entities.ToDoItem;
 
 namespace Application.Dtos.FiltroDtos
 {
@@ -47,7 +47,7 @@ namespace Application.Dtos.FiltroDtos
                 filtros.Add("Titulo", x => x.Titulo.Contains(Titulo));
 
             if (!string.IsNullOrEmpty(Descricao))
-                filtros.Add("Prioridade", x => x.Descricao == Descricao);
+                filtros.Add("Descricao", x => x.Descricao == Descricao);
 
             if (DataCriacao.HasValue)
                 filtros.Add("DataCriacao", x => x.DataCriacao.Value >= DataCriacao.Value);
@@ -59,7 +59,7 @@ namespace Application.Dtos.FiltroDtos
                 filtros.Add("Prioridade", x => x.Prioridade == Prioridade.Value);
 
             if (Categoria.HasValue)
-                filtros.Add("Prioridade", x => x.Categoria == Categoria.Value);
+                filtros.Add("Categoria", x => x.Categoria == Categoria.Value);
 
             return filtros;
         }

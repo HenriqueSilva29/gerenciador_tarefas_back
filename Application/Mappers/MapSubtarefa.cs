@@ -1,6 +1,6 @@
 ﻿using Application.Dtos.SubtarefaDtos;
 using Domain.Common.ValueObjects;
-using Domain.Entities.ToDoItems;
+using Domain.Entities;
 
 namespace Application.Mappers
 {

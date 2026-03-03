@@ -22,33 +22,23 @@ namespace Repository.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Entities.Lembretes.Lembrete", b =>
+            modelBuilder.Entity("Domain.Entities.Lembrete", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("int")
                         .HasColumnName("idLembrete");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CodigoToDoItem")
                         .HasColumnType("int");
 
-                    b.Property<DateTimeOffset>("DataDeAgendamento")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnName("data_de_agendamento");
-
-                    b.Property<DateTimeOffset?>("DataDeExecucaoDoAgendamento")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnName("data_de_execucao_do_agendamento");
-
-                    b.Property<DateTimeOffset>("DataDeVencimento")
+                    b.Property<DateTimeOffset>("DataDisparo")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("DiasAntesDoVencimento")
-                        .HasColumnType("int")
-                        .HasColumnName("diasAntesDoVencimento");
-
-                    b.Property<bool>("FoiAgendado")
-                        .HasColumnType("bit");
+                    b.Property<DateTimeOffset>("DataVencimento")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<int>("Status")
                         .HasColumnType("int")
@@ -67,7 +57,7 @@ namespace Repository.Migrations
                     b.ToTable("Lembrete", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.ToDoItems.ToDoItem", b =>
+            modelBuilder.Entity("Domain.Entities.ToDoItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -119,9 +109,43 @@ namespace Repository.Migrations
                     b.ToTable("ToDoItem", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Lembretes.Lembrete", b =>
+            modelBuilder.Entity("Domain.Entities.Usuario", b =>
                 {
-                    b.HasOne("Domain.Entities.ToDoItems.ToDoItem", "ToDoItem")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("idusuario");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("role");
+
+                    b.Property<string>("SenhaHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("senha_hash");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Usuario", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Lembrete", b =>
+                {
+                    b.HasOne("Domain.Entities.ToDoItem", "ToDoItem")
                         .WithMany("Lembretes")
                         .HasForeignKey("CodigoToDoItem")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -130,9 +154,9 @@ namespace Repository.Migrations
                     b.Navigation("ToDoItem");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ToDoItems.ToDoItem", b =>
+            modelBuilder.Entity("Domain.Entities.ToDoItem", b =>
                 {
-                    b.HasOne("Domain.Entities.ToDoItems.ToDoItem", "ToDoItemPai")
+                    b.HasOne("Domain.Entities.ToDoItem", "ToDoItemPai")
                         .WithMany("SubTarefas")
                         .HasForeignKey("CodigoToDoItemPai")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -140,7 +164,7 @@ namespace Repository.Migrations
                     b.Navigation("ToDoItemPai");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ToDoItems.ToDoItem", b =>
+            modelBuilder.Entity("Domain.Entities.ToDoItem", b =>
                 {
                     b.Navigation("Lembretes");
 

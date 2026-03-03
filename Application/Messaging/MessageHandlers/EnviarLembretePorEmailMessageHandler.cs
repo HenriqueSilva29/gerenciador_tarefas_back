@@ -1,9 +1,9 @@
-﻿using Application.Dtos.LembreteDtos;
-using Application.Interfaces.Messaging;
-using Application.Interfaces.UseCases;
+﻿using Application.Interfaces.Messaging;
+using Application.Interfaces.UseCases.Lembretes;
+using Repository.Repositorys.LembreteRep;
 
 public class EnviarLembretePorEmailMessageHandler
-    : IMessageHandler<LembreteMensagemDto>
+    : IMessageHandler<LembreteVencimentoAtingidoEvent>
 {
     public EnviarLembretePorEmailMessageHandler(IEnviarLembretePorEmailUseCase useCase)
     {
@@ -12,6 +12,9 @@ public class EnviarLembretePorEmailMessageHandler
 
     private readonly IEnviarLembretePorEmailUseCase _useCase;
 
-    public Task HandleAsync(LembreteMensagemDto message, CancellationToken cancellationToken)
-        => _useCase.ExecuteAsync(message);
+    public async Task HandleAsync(LembreteVencimentoAtingidoEvent evento)
+    {
+        await _useCase.ExecuteAsync(evento.LembreteId);
+    }
+        
 }

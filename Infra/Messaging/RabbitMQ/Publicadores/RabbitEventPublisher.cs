@@ -1,5 +1,6 @@
 ﻿using Application.Messaging;
 using Infra.Mensageria.RabbitMQ.Channels;
+using Infra.Messaging.RabbitMQ;
 using Infra.Messaging.RabbitMQ.Publicadores;
 using RabbitMQ.Client;
 using System.Text;
@@ -11,31 +12,45 @@ namespace Infra.Mensageria.RabbitMQ.Publicadores
     {
         private readonly IRabbitChannelFactory _channelFactory;
 
+        private static readonly Dictionary<Type, string> RoutingMap = new()
+    {
+        {
+            typeof(LembreteVencimentoAtingidoEvent),
+            RoutingKeys.LembreteVencimentoAtingidoV1
+        }
+    };
+
         public RabbitEventPublisher(IRabbitChannelFactory channelFactory)
         {
             _channelFactory = channelFactory;
         }
 
-        public async Task PublishAsync<T>(string eventType, T data)
+        public async Task PublishAsync<T>(T @event)
         {
+            var eventType = typeof(T);
+
+            if (!RoutingMap.TryGetValue(eventType, out var routingKey))
+                throw new InvalidOperationException(
+                    $"RoutingKey não configurada para {eventType.Name}");
+
+
             var envelope = new MessageEnvelope
             {
-                Type = eventType,
+                Type = eventType.Name,
                 CorrelationId = Guid.NewGuid().ToString(),
                 CreatedAt = DateTime.UtcNow,
-                Payload = JsonSerializer.Serialize(data)
+                Payload = JsonSerializer.Serialize(@event)
             };
 
-            var json = JsonSerializer.Serialize(envelope);
-            var body = Encoding.UTF8.GetBytes(json);
+            var body = Encoding.UTF8.GetBytes(
+                JsonSerializer.Serialize(envelope));
 
             using var channel = await _channelFactory.CreateChannelAsync();
 
             await channel.BasicPublishAsync(
                 exchange: "app.events",
-                routingKey: eventType,
-                body: body
-            );
+                routingKey: routingKey,
+                body: body);
         }
 
     }

@@ -20,7 +20,7 @@ namespace Application.Services.ServSubTarefas
             
             var toDoItem = MapSubtarefa.AdicionarSubtarefa(dto);
 
-            await _rep.Adicionar(toDoItem);
+            _rep.Adicionar(toDoItem);
 
             await _unitOfWork.CommitTransactionAsync();
         }

@@ -3,7 +3,7 @@ using Application.Dtos.FiltroDtos;
 using Application.Dtos.ToDoItemDtos;
 using Application.Services.ServToDoItems;
 using Application.Utils.Paginacao;
-using Domain.Entities.ToDoItems;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -29,7 +29,7 @@ namespace API.Controllers
         [HttpPost("criar-tarefa")]
         public async Task<ActionResult> CriarTarefa([FromBody] AdicionarToDoItemDto todoItemDto)
         {
-                await aplic.CriarTarefa(todoItemDto);
+                await aplic.AdicionarTarefa(todoItemDto);
                 return Ok();  
         }
 
@@ -56,7 +56,7 @@ namespace API.Controllers
 
 
         [HttpPost("{id}/atualizar-prioridade")]
-        public async Task<ActionResult> AtualizarPrioridade(int id, [FromBody] AtualizarPrioridadeDto dto)
+        public async Task<ActionResult> AtualizarPrioridade(int id, [FromBody] AtualizarPrioridadeToDoItemDto dto)
         {
             await aplic.AtualizarPrioridade(id, dto);
             return NoContent();

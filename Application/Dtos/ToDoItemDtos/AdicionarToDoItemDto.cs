@@ -1,4 +1,4 @@
-﻿using static Domain.Entities.ToDoItems.ToDoItem;
+﻿using static Domain.Entities.ToDoItem;
 
 namespace Application.Dtos.ToDoItemDtos
 {
@@ -11,7 +11,7 @@ namespace Application.Dtos.ToDoItemDtos
         public EnumPrioridadeToDoItem Prioridade { get; set; }
         public EnumCategoriaToDoItem Categoria { get; set; }
 
-        public bool AvisarQueVaiVencer { get; set; }
+        public bool AvisarVencimento { get; set; }
         public int DiasAntesDoVencimento { get; set; }
     }
 }

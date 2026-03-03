@@ -1,4 +1,5 @@
-﻿using RabbitMQ.Client;
+﻿using Infra.Messaging.RabbitMQ;
+using RabbitMQ.Client;
 
 namespace Infra.Mensageria.RabbitMQ.Topology
 {
@@ -8,7 +9,7 @@ namespace Infra.Mensageria.RabbitMQ.Topology
         {        
             await channel.ExchangeDeclareAsync(
                 exchange: "app.events",
-                type: ExchangeType.Topic,
+                type: ExchangeType.Direct,
                 durable: true
             );
     
@@ -22,7 +23,7 @@ namespace Infra.Mensageria.RabbitMQ.Topology
             await channel.QueueBindAsync(
                 queue: "email.queue",
                 exchange: "app.events",
-                routingKey: "lembrete.email"
+                routingKey: RoutingKeys.LembreteVencimentoAtingidoV1
             );
 
         }
