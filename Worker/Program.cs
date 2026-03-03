@@ -11,7 +11,6 @@ using Application.Interfaces.Messaging;
 using Infra.Mensageria.RabbitMQ.Channels;
 using Infra.Mensageria.RabbitMQ.Connections;
 using Infra.Mensageria.RabbitMQ.Topology;
-using Application.Interfaces.UseCases;
 using Application.Emails;
 using Application.Interfaces.Email;
 using Infra.Emails;
@@ -19,6 +18,7 @@ using Application.UseCase.Lembretes;
 using Hangfire;
 using Hangfire.SqlServer;
 using Infra.BackgroundJobs.Hangfire.Jobs.Lembretes;
+using Application.Interfaces.UseCases.Lembretes;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureLogging(logging =>

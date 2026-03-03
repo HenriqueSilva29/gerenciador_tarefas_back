@@ -1,5 +1,5 @@
 ﻿using Application.Interfaces.Messaging;
-using Application.Interfaces.UseCases;
+using Application.Interfaces.UseCases.Lembretes;
 using Repository.Repositorys.LembreteRep;
 
 public class EnviarLembretePorEmailMessageHandler

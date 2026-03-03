@@ -1,5 +1,6 @@
 ﻿using Application.Messaging;
 using Infra.Mensageria.RabbitMQ.Channels;
+using Infra.Messaging.RabbitMQ;
 using Infra.Messaging.RabbitMQ.Publicadores;
 using RabbitMQ.Client;
 using System.Text;
@@ -15,7 +16,7 @@ namespace Infra.Mensageria.RabbitMQ.Publicadores
     {
         {
             typeof(LembreteVencimentoAtingidoEvent),
-            "lembrete.vencimento.atingido.v1"
+            RoutingKeys.LembreteVencimentoAtingidoV1
         }
     };
 

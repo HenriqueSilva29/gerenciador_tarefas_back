@@ -1,4 +1,4 @@
-﻿namespace Application.Interfaces.UseCases
+﻿namespace Application.Interfaces.UseCases.Lembretes
 {
     public interface ICriarLembreteUseCase
     {

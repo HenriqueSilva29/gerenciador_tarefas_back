@@ -21,8 +21,20 @@ using Application.Interfaces.Email;
 using Infra.Emails;
 using Serilog;
 using Infra.Messaging.RabbitMQ.Publicadores;
-using Application.Interfaces.UseCases;
 using Application.UseCase.Lembretes;
+using Repository.Repositorys.UsuarioRep;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Application.Interfaces.UseCases.Lembretes;
+using Application.Services.ServAutenticacaos;
+using Application.Interfaces.UseCases.Autenticacaos;
+using Application.UseCase.Autenticacaos;
+using Infra.Autenticacao;
+using Application.Interfaces.UseCases.Usuarios;
+using Application.UseCase.Usuarios;
+using Application.Interfaces.UseCases.ToDoItems;
+using Application.UseCase.ToDoItems;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,27 +56,42 @@ builder.Services.AddHangfireServer( options =>
     options.ServerName = "API-Hangfire-Server";
     });
 
+//Repositorios
 builder.Services.AddScoped<IRepToDoItem, RepToDoItem>();
 builder.Services.AddScoped<IRepLembrete, RepLembrete>();
+builder.Services.AddScoped<IRepUsuario, RepUsuario>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+//Servicos
 builder.Services.AddScoped<IServToDoItem, ServToDoItem>();
 builder.Services.AddScoped<IServSubtarefa, ServSubtarefa>();
+builder.Services.AddScoped<IServAutenticacao, ServAutenticacao>();
 
+//Mensageria
 builder.Services.AddScoped<IRabbitEventPublisher, RabbitEventPublisher>();
-
 builder.Services.AddScoped<IRabbitConnection, RabbitConnection>();
 builder.Services.AddScoped<IRabbitChannelFactory, RabbitChannelFactory>();
 builder.Services.AddScoped<IRabbitTopologyInitializer, RabbitTopologyInitializer>();
-
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-builder.Services.AddScoped<LembreteEmailCompose>();
-builder.Services.AddScoped<IEmail,Email>();
-
 builder.Services.AddScoped<IMessageDispatcher, MessageDispatcher>();
+builder.Services.AddScoped<LembreteEmailCompose>();
 
+//Infra
+builder.Services.AddScoped<IEmail,Email>();
+builder.Services.AddScoped<IGerarTokenUseCase, GerarToken>();
+builder.Services.AddScoped<IVerificarSenhaUseCase, VerificarSenha>();
+
+//Casos de uso
+builder.Services.AddScoped<IAdicionarToDoItemUseCase, AdicionarToDoItemUseCase>();
+builder.Services.AddScoped<IAtualizarPrioridadeToDoItemUseCase, AtualizarPrioridadeToDoItemUseCase>();
+builder.Services.AddScoped<IAtualizarToDoItemUseCase, AtualizarToDoItemUseCase>();
+builder.Services.AddScoped<IListarToDoItemUseCase, ListarToDoItem>();
+builder.Services.AddScoped<IListarToDoItemVencidosUseCase, ListarToDoItemVencidos>();
+builder.Services.AddScoped<IRemoverToDoItemUseCase, RemoverToDoItemUseCase>();
 builder.Services.AddScoped<ICriarLembreteUseCase, CriarLembreteUseCase>();
-builder.Services.AddScoped<IVerificarLembretesVencendoUseCase, VerificarLembretesVencendoUseCase>();
+builder.Services.AddScoped<IVerificarLembretesPertoDoVencimentoUseCase, VerificarLembretesPertoDoVencimentoUseCase>();
+builder.Services.AddScoped<ILoginUseCase, LoginUseCase>();
+builder.Services.AddScoped<IRegistrarUsuarioUseCase, RegistrarUsuarioUseCase>();
+builder.Services.AddScoped<IHashSenhaUseCase, HashSenha>(); 
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -80,13 +107,31 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.MaxDepth = 32;
     });
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+builder.Host.UseSerilog();
+
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.Console()
     .WriteTo.File("logs/rabbit-log-.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
-
-builder.Host.UseSerilog();
 
 var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
 logger.LogInformation("TESTE SERILOG");
@@ -116,6 +161,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapRazorPages();

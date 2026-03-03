@@ -1,15 +1,13 @@
-﻿
-
-using Application.Interfaces.UseCases;
+﻿using Application.Interfaces.UseCases.Lembretes;
 
 namespace Infra.BackgroundJobs.Hangfire.Jobs.Lembretes
 {
     public class VerificarLembretesVencendoJob
     {
-        private readonly IVerificarLembretesVencendoUseCase _useCase;
+        private readonly IVerificarLembretesPertoDoVencimentoUseCase _useCase;
 
         public VerificarLembretesVencendoJob(
-            IVerificarLembretesVencendoUseCase useCase)
+            IVerificarLembretesPertoDoVencimentoUseCase useCase)
         {
             _useCase = useCase;
         }

@@ -1,4 +1,4 @@
-﻿using Application.Interfaces.UseCases;
+﻿using Application.Interfaces.UseCases.Lembretes;
 using Application.Utils.Transacao;
 using Domain.Entities;
 using Repository.Repositorys.LembreteRep;

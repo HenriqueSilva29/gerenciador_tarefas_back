@@ -2,7 +2,7 @@
 
 namespace Application.Dtos.ToDoItemDtos
 {
-    public class AtualizarPrioridadeDto
+    public class AtualizarPrioridadeToDoItemDto
     {
         public EnumPrioridadeToDoItem Prioridade { get; set; }
     }

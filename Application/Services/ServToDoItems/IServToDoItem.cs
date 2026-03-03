@@ -8,11 +8,11 @@ namespace Application.Services.ServToDoItems
 {
     public interface IServToDoItem
     {
-        Task CriarTarefa(AdicionarToDoItemDto dto);
+        Task AdicionarTarefa(AdicionarToDoItemDto dto);
         Task AtualizarTarefa(int id, AtualizarToDoItemDto dto);
         Task RemoverTarefa(int id);
         Task<PaginacaoHelper<ToDoItem>> ListarTarefas(FiltroToDoItemDto parametros);
         Task<PaginacaoHelper<ToDoItem>> RecuperarTarefasVencidas(int pagina, int quantidade);
-        Task AtualizarPrioridade(int id, AtualizarPrioridadeDto dto);
+        Task AtualizarPrioridade(int id, AtualizarPrioridadeToDoItemDto dto);
     }
 }

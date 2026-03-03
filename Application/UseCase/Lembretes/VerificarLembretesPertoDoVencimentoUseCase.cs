@@ -1,17 +1,17 @@
-﻿using Application.Interfaces.UseCases;
+﻿using Application.Interfaces.UseCases.Lembretes;
 using Application.Utils.Transacao;
 using Infra.Messaging.RabbitMQ.Publicadores;
 using Repository.Repositorys.LembreteRep;
 
 namespace Application.UseCase.Lembretes
 {
-    public class VerificarLembretesVencendoUseCase : IVerificarLembretesVencendoUseCase
+    public class VerificarLembretesPertoDoVencimentoUseCase : IVerificarLembretesPertoDoVencimentoUseCase
     {
         private readonly IRepLembrete _rep;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRabbitEventPublisher _publisher;
 
-        public VerificarLembretesVencendoUseCase(
+        public VerificarLembretesPertoDoVencimentoUseCase(
             IRepLembrete rep,
             IUnitOfWork unitOfWork,
             IRabbitEventPublisher publisher)

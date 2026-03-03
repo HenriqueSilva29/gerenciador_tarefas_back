@@ -1,6 +1,6 @@
 ﻿using Application.Emails;
 using Application.Interfaces.Email;
-using Application.Interfaces.UseCases;
+using Application.Interfaces.UseCases.Lembretes;
 using Microsoft.Extensions.Logging;
 using Repository.Repositorys.LembreteRep;
 

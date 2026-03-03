@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.RabbitMQ
+namespace Infra.Messaging.RabbitMQ
 {
     public static class RoutingKeys
     {

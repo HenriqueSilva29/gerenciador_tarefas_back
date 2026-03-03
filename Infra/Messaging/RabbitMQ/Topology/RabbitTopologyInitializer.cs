@@ -1,4 +1,4 @@
-﻿using Application.RabbitMQ;
+﻿using Infra.Messaging.RabbitMQ;
 using RabbitMQ.Client;
 
 namespace Infra.Mensageria.RabbitMQ.Topology
