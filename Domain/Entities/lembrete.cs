@@ -7,8 +7,8 @@ namespace Domain.Entities
     {
         public int Id { get; private set; }
 
-        public int CodigoToDoItem { get; private set; }
-        public ToDoItem ToDoItem { get; private set; }
+        public int CodigoTarefa { get; private set; }
+        public Tarefa Tarefa { get; private set; }
 
         public DateTimeOffset DataVencimento { get; private set; }
         public DateTimeOffset DataDisparo { get; private set; }
@@ -27,12 +27,12 @@ namespace Domain.Entities
         protected Lembrete() { }
 
         public Lembrete(
-            int idtoDoItem,
+            int idTarefa,
             DateTimeOffset dataVencimento,
             int diasAntes,
             string texto)
         {
-            CodigoToDoItem = idtoDoItem;
+            CodigoTarefa = idTarefa;
             DataVencimento = dataVencimento;
             DataDisparo = dataVencimento.AddDays(-diasAntes);
             Texto = texto;

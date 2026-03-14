@@ -1,11 +1,9 @@
-﻿using Application.Dtos.Usuarios;
+﻿using Application.Dtos.UsuarioDtos;
 using Application.Interfaces.UseCases.Autenticacaos;
 using Application.Interfaces.UseCases.Usuarios;
-using Application.Mappers;
 using Application.Utils.Transacao;
 using Domain.Entities;
 using Repository.Repositorys.UsuarioRep;
-using System.Runtime.CompilerServices;
 
 namespace Application.UseCase.Usuarios
 {

@@ -6,9 +6,9 @@ namespace Application.Mappers
 {
     public static class MapSubtarefa
     {
-        public static ToDoItem AdicionarSubtarefa(AdicionarSubtarefaDto dto)
+        public static Tarefa AdicionarSubtarefa(AdicionarSubtarefaDto dto)
         {
-            var toDoItem = new ToDoItem()
+            var Tarefa = new Tarefa()
             {
                 Titulo = dto.Titulo,
                 Descricao = dto.Descricao,
@@ -17,10 +17,10 @@ namespace Application.Mappers
                 Status = dto.Status,
                 Prioridade = dto.Prioridade,
                 Categoria = dto.Categoria,
-                CodigoToDoItemPai = dto.CodigoToDoItemPai,
+                CodigoTarefaPai = dto.CodigoTarefaPai,
             };
 
-            return toDoItem;
+            return Tarefa;
         }
     }
 }

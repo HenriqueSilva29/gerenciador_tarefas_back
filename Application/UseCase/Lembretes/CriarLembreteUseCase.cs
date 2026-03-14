@@ -20,20 +20,18 @@ namespace Application.UseCase.Lembretes
             _repLembrete = repLembrete;
         }
 
-        public async Task CriarLembrete(int id, DateTimeOffset dataVencimento, int diasAntesDoVencimento)
+        public void CriarLembrete(Tarefa tarefa, DateTimeOffset dataVencimento, int diasAntesDoVencimento)
         {
-            await _unitOfWork.BeginTransactionAsync();
-
             var lembrete = new Lembrete(
-                id,
+                tarefa.Id,
                 dataVencimento,
                 diasAntesDoVencimento,
                 "Seu vencimento está próximo"
             );
 
-            _repLembrete.Adicionar(lembrete);
+            tarefa.Lembretes.Add( lembrete );
 
-            await _unitOfWork.CommitTransactionAsync();
+            _repLembrete.Adicionar(lembrete);
 ;
         }
 

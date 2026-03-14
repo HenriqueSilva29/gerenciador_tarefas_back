@@ -1,8 +1,8 @@
 using API.Middlewares;
 using Application.Interfaces.Messaging;
 using Application.Services.ServSubTarefas;
-using Application.Services.ServToDoItems;
-using Application.Services.ToDoItemServices;
+using Application.Services.ServTarefas;
+using Application.Services.TarefaServices;
 using Application.Utils.Transacao;
 using Hangfire;
 using Hangfire.SqlServer;
@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Repository.ContextEFs;
 using Repository.Repositorys.LembreteRep;
-using Repository.ToDoItemRep;
+using Repository.TarefaRep;
 using Infra.Mensageria.RabbitMQ.Publicadores;
 using Infra.Mensageria.RabbitMQ.Connections;
 using Infra.Mensageria.RabbitMQ.Channels;
@@ -33,8 +33,8 @@ using Application.UseCase.Autenticacaos;
 using Infra.Autenticacao;
 using Application.Interfaces.UseCases.Usuarios;
 using Application.UseCase.Usuarios;
-using Application.Interfaces.UseCases.ToDoItems;
-using Application.UseCase.ToDoItems;
+using Application.Interfaces.UseCases.Tarefas;
+using Application.UseCase.Tarefas;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,13 +57,13 @@ builder.Services.AddHangfireServer( options =>
     });
 
 //Repositorios
-builder.Services.AddScoped<IRepToDoItem, RepToDoItem>();
+builder.Services.AddScoped<IRepTarefa, RepTarefa>();
 builder.Services.AddScoped<IRepLembrete, RepLembrete>();
 builder.Services.AddScoped<IRepUsuario, RepUsuario>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 //Servicos
-builder.Services.AddScoped<IServToDoItem, ServToDoItem>();
+builder.Services.AddScoped<IServTarefa, ServTarefa>();
 builder.Services.AddScoped<IServSubtarefa, ServSubtarefa>();
 builder.Services.AddScoped<IServAutenticacao, ServAutenticacao>();
 
@@ -81,12 +81,12 @@ builder.Services.AddScoped<IGerarTokenUseCase, GerarToken>();
 builder.Services.AddScoped<IVerificarSenhaUseCase, VerificarSenha>();
 
 //Casos de uso
-builder.Services.AddScoped<IAdicionarToDoItemUseCase, AdicionarToDoItemUseCase>();
-builder.Services.AddScoped<IAtualizarPrioridadeToDoItemUseCase, AtualizarPrioridadeToDoItemUseCase>();
-builder.Services.AddScoped<IAtualizarToDoItemUseCase, AtualizarToDoItemUseCase>();
-builder.Services.AddScoped<IListarToDoItemUseCase, ListarToDoItem>();
-builder.Services.AddScoped<IListarToDoItemVencidosUseCase, ListarToDoItemVencidos>();
-builder.Services.AddScoped<IRemoverToDoItemUseCase, RemoverToDoItemUseCase>();
+builder.Services.AddScoped<IAdicionarTarefaUseCase, AdicionarTarefaUseCase>();
+builder.Services.AddScoped<IAtualizarPrioridadeTarefaUseCase, AtualizarPrioridadeTarefaUseCase>();
+builder.Services.AddScoped<IAtualizarTarefaUseCase, AtualizarTarefaUseCase>();
+builder.Services.AddScoped<IListarTarefaUseCase, ListarTarefa>();
+builder.Services.AddScoped<IListarTarefasVencidasUseCase, ListarTarefasVencidas>();
+builder.Services.AddScoped<IRemoverTarefaUseCase, RemoverTarefaUseCase>();
 builder.Services.AddScoped<ICriarLembreteUseCase, CriarLembreteUseCase>();
 builder.Services.AddScoped<IVerificarLembretesPertoDoVencimentoUseCase, VerificarLembretesPertoDoVencimentoUseCase>();
 builder.Services.AddScoped<ILoginUseCase, LoginUseCase>();

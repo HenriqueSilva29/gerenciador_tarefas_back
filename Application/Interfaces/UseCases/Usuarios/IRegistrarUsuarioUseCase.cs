@@ -1,4 +1,4 @@
-﻿using Application.Dtos.Usuarios;
+﻿using Application.Dtos.UsuarioDtos;
 
 namespace Application.Interfaces.UseCases.Usuarios
 {

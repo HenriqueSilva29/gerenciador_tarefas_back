@@ -17,9 +17,9 @@ namespace Repository.ConfigEF
                 .HasColumnName("idLembrete")
                 .ValueGeneratedOnAdd();
 
-            builder.HasOne(l => l.ToDoItem)
+            builder.HasOne(l => l.Tarefa)
                    .WithMany(t => t.Lembretes)
-                   .HasForeignKey(l => l.CodigoToDoItem)
+                   .HasForeignKey(l => l.CodigoTarefa)
                    .OnDelete(DeleteBehavior.Cascade);
 
             builder.Property(l => l.Texto)

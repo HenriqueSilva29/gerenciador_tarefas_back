@@ -1,5 +1,5 @@
 ﻿using Application.Dtos.SubtarefaDtos;
-using Application.Dtos.ToDoItemDtos;
+using Application.Dtos.TarefaDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;

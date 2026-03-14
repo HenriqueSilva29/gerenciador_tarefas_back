@@ -1,7 +1,9 @@
-﻿namespace Application.Interfaces.UseCases.Lembretes
+﻿using Domain.Entities;
+
+namespace Application.Interfaces.UseCases.Lembretes
 {
     public interface ICriarLembreteUseCase
     {
-        public Task CriarLembrete(int id, DateTimeOffset dataVencimento, int diasAntesDoVencimento);
+        public void CriarLembrete(Tarefa entidade, DateTimeOffset dataVencimento, int diasAntesDoVencimento);
     }
 }

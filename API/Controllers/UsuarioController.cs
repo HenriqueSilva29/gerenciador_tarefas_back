@@ -1,6 +1,5 @@
-﻿using Application.Dtos.Usuarios;
+﻿using Application.Dtos.UsuarioDtos;
 using Application.Interfaces.UseCases.Usuarios;
-using Application.UseCase.Usuarios;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
