@@ -16,8 +16,8 @@ namespace Repository.ConfigEF
                 .HasColumnName("idusuario")
                 .ValueGeneratedOnAdd();
 
-            builder.Property(x => x.Email)
-                .HasColumnName("email")
+            builder.Property(x => x.Nome)
+                .HasColumnName("nome")
                 .IsRequired()
                 .HasMaxLength(200);
 
@@ -30,7 +30,7 @@ namespace Repository.ConfigEF
                 .IsRequired()
                 .HasMaxLength(50);
 
-            builder.HasIndex(x => x.Email)
+            builder.HasIndex(x => x.Nome)
                 .IsUnique();
 
         } 

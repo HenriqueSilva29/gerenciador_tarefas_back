@@ -1,5 +1,5 @@
 ﻿using Application.Dtos.FiltroDtos;
-using Application.Dtos.TarefaDtos;
+using Application.Dtos.Tarefas;
 using Application.Interfaces.UseCases.Tarefas;
 using Application.Services.ServTarefas;
 using Application.Utils.Paginacao;
@@ -15,6 +15,7 @@ namespace Application.Services.TarefaServices
         private readonly IRemoverTarefaUseCase _removerTarefa;
         private readonly IListarTarefaUseCase _listarTarefa;
         private readonly IListarTarefasVencidasUseCase _ListarTarefasVencidas;
+        private readonly IRecuperarTarefaPorIdUseCase _recuperarTarefaPorId;
 
         public ServTarefa(
             IAdicionarTarefaUseCase adicionarTarefa,
@@ -22,7 +23,8 @@ namespace Application.Services.TarefaServices
             IRemoverTarefaUseCase removerTarefa,
             IListarTarefaUseCase listarTarefa,
             IListarTarefasVencidasUseCase ListarTarefasVencidas,
-            IAtualizarTarefaUseCase atualizarTarefa) : base()
+            IAtualizarTarefaUseCase atualizarTarefa,
+            IRecuperarTarefaPorIdUseCase recuperarTarefaPorId) : base()
         {
             _adicionarTarefa = adicionarTarefa;
             _atualizarPrioridadeTarefa = atualizarPrioridadeTarefa;
@@ -30,15 +32,18 @@ namespace Application.Services.TarefaServices
             _listarTarefa = listarTarefa;
             _ListarTarefasVencidas = ListarTarefasVencidas;
             _atualizarTarefa = atualizarTarefa;
+            _recuperarTarefaPorId = recuperarTarefaPorId;
         }
 
-        public async Task AdicionarTarefa(AdicionarTarefaDto dto)
-            => await _adicionarTarefa.Executar(dto);
+        public async Task<TarefaResponse> AdicionarTarefa(CreateTarefaRequest dto)
+        { 
+            return await _adicionarTarefa.Executar(dto); 
+        }
 
-        public async Task AtualizarTarefa(int id, AtualizarTarefaDto dto)
+        public async Task AtualizarTarefa(int id, UpdateTarefaRequest dto)
             => await _atualizarTarefa.Executar(id,dto);
 
-        public async Task AtualizarPrioridade(int id, AtualizarPrioridadeTarefaDto dto)
+        public async Task AtualizarPrioridade(int id, UpdatePrioridadeTarefaRequest dto)
             => await _atualizarPrioridadeTarefa.Executar(id, dto);
 
         public async Task RemoverTarefa(int id)
@@ -47,7 +52,13 @@ namespace Application.Services.TarefaServices
         public async Task<PaginacaoHelper<Tarefa>> RecuperarTarefasVencidas(int pagina, int quantidade)
             => await _ListarTarefasVencidas.Executar(pagina, quantidade );
 
-        public async Task<PaginacaoHelper<Tarefa>> ListarTarefas(FiltroTarefaDto parametros)
+        public async Task<PaginacaoHelper<Tarefa>> ListarTarefas(TarefaFiltroRequest parametros)
             => await _listarTarefa.Executar(parametros);
+
+        public async Task<TarefaResponse> ObterPorId(int id)
+        {
+            return await _recuperarTarefaPorId.Executar(id);
+        }
+
     }
 }

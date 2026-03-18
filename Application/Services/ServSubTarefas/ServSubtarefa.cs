@@ -1,4 +1,4 @@
-﻿using Application.Dtos.SubtarefaDtos;
+﻿using Application.Dtos.Subtarefas;
 using Application.Mappers;
 using Application.Utils.Transacao;
 using Repository.TarefaRep;
@@ -14,7 +14,7 @@ namespace Application.Services.ServSubTarefas
             _rep = rep;
             _unitOfWork = unitOfWork;
         }
-        public async Task AdicionarSubtarefa(AdicionarSubtarefaDto dto)
+        public async Task AdicionarSubtarefa(AdicionarSubtarefaRequest dto)
         {
             await _unitOfWork.BeginTransactionAsync();
             

@@ -1,6 +1,6 @@
-﻿using API.Errors;
-using Application.Dtos.FiltroDtos;
-using Application.Dtos.TarefaDtos;
+﻿using Application.Dtos.FiltroDtos;
+using Application.Dtos.Filtros;
+using Application.Dtos.Tarefas;
 using Application.Services.ServTarefas;
 using Application.Utils.Paginacao;
 using Domain.Entities;
@@ -20,27 +20,28 @@ namespace API.Controllers
         }
 
         [HttpGet("listar-tarefas")]
-        public async Task<ActionResult<PaginacaoHelper<Tarefa>>> Listar([FromQuery] FiltroTarefaDto filtroTarefaDto)
+        public async Task<ActionResult<PaginacaoHelper<TarefaResponse>>> Listar([FromQuery] TarefaFiltroRequest filtro)
         {
-            var filteredItems = await aplic.ListarTarefas(filtroTarefaDto);
-            return Ok(filteredItems);
+            var result = await aplic.ListarTarefas(filtro);
+            return Ok(result);
         }
 
         [HttpPost("criar-tarefa")]
-        public async Task<ActionResult> CriarTarefa([FromBody] AdicionarTarefaDto TarefaDto)
+        public async Task<ActionResult<TarefaResponse>> Criar([FromBody] CreateTarefaRequest request)
         {
-                await aplic.AdicionarTarefa(TarefaDto);
-                return Ok();  
+            var result = await aplic.AdicionarTarefa(request);
+
+            return CreatedAtAction(nameof(ObterPorId), new { id = result.Id }, result);
         }
 
-        [HttpPut("{id}/atualizar-tarefa")]
-        public async Task<ActionResult> Atualizar([FromQuery] int id, [FromBody] AtualizarTarefaDto TarefaDto)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Atualizar(int id, [FromBody] UpdateTarefaRequest request)
         {
-            await aplic.AtualizarTarefa(id, TarefaDto);
+            await aplic.AtualizarTarefa(id, request);
             return NoContent();
         }
 
-        [HttpDelete("{id}/remover-tarefa")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> Remover(int id)
         {
             await aplic.RemoverTarefa(id);
@@ -56,10 +57,21 @@ namespace API.Controllers
 
 
         [HttpPost("{id}/atualizar-prioridade")]
-        public async Task<ActionResult> AtualizarPrioridade(int id, [FromBody] AtualizarPrioridadeTarefaDto dto)
+        public async Task<ActionResult> AtualizarPrioridade(int id, [FromBody] UpdatePrioridadeTarefaRequest dto)
         {
             await aplic.AtualizarPrioridade(id, dto);
             return NoContent();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TarefaResponse>> ObterPorId(int id)
+        {
+            var tarefa = await aplic.ObterPorId(id);
+
+            if (tarefa == null)
+                return NotFound();
+
+            return Ok(tarefa);
         }
     }
 }

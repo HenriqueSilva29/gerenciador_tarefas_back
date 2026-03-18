@@ -1,6 +1,5 @@
 ﻿using Domain.Common;
 using Domain.Common.ValueObjects;
-using Domain.Events.Tarefas;
 using Domain.Exceptions;
 
 namespace Domain.Entities

@@ -19,6 +19,8 @@ using Hangfire;
 using Hangfire.SqlServer;
 using Infra.BackgroundJobs.Hangfire.Jobs.Lembretes;
 using Application.Interfaces.UseCases.Lembretes;
+using Infra.Messaging.RabbitMQ.Topology;
+using Infra.Messaging.RabbitMQ.Topology.Topologies;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureLogging(logging =>
@@ -28,11 +30,11 @@ var host = Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((hostContext, services) =>
     {
-        // 🔥 MOSTRA O AMBIENTE LOGO NA INICIALIZAÇÃO
         Console.WriteLine("======================================");
-        Console.WriteLine($"AMBIENTE ATUAL: {hostContext.HostingEnvironment.EnvironmentName}");
+        Console.WriteLine($"Iniciando Worker...");
         Console.WriteLine("======================================");
 
+        services.AddHostedService<RabbitInitializerHostedService>();
         services.AddHostedService<Worker>();
 
         services.AddDbContext<ContextEF>(options =>
@@ -40,16 +42,15 @@ var host = Host.CreateDefaultBuilder(args)
                 hostContext.Configuration.GetConnectionString("DefaultConnection"),
                 x => x.MigrationsAssembly("Repository")));
 
-        // 🔹 Unit of Work
+        // Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-        // 🔹 Repositório
+        // Repositório
         services.AddScoped<IRepLembrete, RepLembrete>();
 
-        // 🔹 RabbitMQ
+        // RabbitMQ
         services.AddSingleton<IRabbitConnection, RabbitConnection>();
         services.AddSingleton<IRabbitChannelFactory, RabbitChannelFactory>();
-        services.AddSingleton<IRabbitTopologyInitializer, RabbitTopologyInitializer>();
         services.AddSingleton<IMessageConsumer, NotificarEmailConsumer>();
 
         services.AddScoped<IMessageHandler<LembreteVencimentoAtingidoEvent>, EnviarLembretePorEmailMessageHandler>();
@@ -58,6 +59,9 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddScoped<IEmail, Email>();
 
         services.AddScoped<IMessageDispatcher, MessageDispatcher>();
+
+        services.AddScoped<IRabbitTopologyInitializer, RabbitTopologyInitializer>();
+        services.AddScoped<IRabbitTopology, EmailLembreteTopology>();
 
         services.AddHangfire(config =>
         {
@@ -76,7 +80,6 @@ var host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
-// 🔥 AQUI é o lugar certo
 using (var scope = host.Services.CreateScope())
 {
     var recurringJobManager = scope.ServiceProvider

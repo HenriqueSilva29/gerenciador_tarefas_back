@@ -1,31 +1,30 @@
-﻿using Infra.Messaging.RabbitMQ;
+﻿using Infra.Messaging.RabbitMQ.Topology;
 using RabbitMQ.Client;
 
 namespace Infra.Mensageria.RabbitMQ.Topology
 {
     public class RabbitTopologyInitializer : IRabbitTopologyInitializer
     {
+        readonly IEnumerable<IRabbitTopology> _topologies;
+        public RabbitTopologyInitializer
+        (
+            IEnumerable<IRabbitTopology> topologies
+        )
+        {
+            _topologies = topologies;
+        }
+
         public async Task InitializeAsync(IChannel channel)
-        {        
-            await channel.ExchangeDeclareAsync(
-                exchange: "app.events",
-                type: ExchangeType.Direct,
-                durable: true
-            );
-    
-            await channel.QueueDeclareAsync(
-                queue: "email.queue",
-                durable: true,
-                exclusive: false,
-                autoDelete: false
-            );
+        {
+            if (!_topologies.Any())
+            {
+                throw new Exception("Nenhuma topologia RabbitMQ registrada");
+            }
 
-            await channel.QueueBindAsync(
-                queue: "email.queue",
-                exchange: "app.events",
-                routingKey: RoutingKeys.LembreteVencimentoAtingidoV1
-            );
-
+            foreach (var topology in _topologies)
+            {
+                await topology.ConfigureAsync(channel);
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Application.Dtos.SubtarefaDtos;
+﻿using Application.Dtos.Subtarefas;
 using Application.Services.ServSubTarefas;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +16,7 @@ namespace API.Controllers
         }
 
         [HttpPost("adicionar")]
-        public async Task<ActionResult> AdicionarSubtarefa([FromBody] AdicionarSubtarefaDto dto)
+        public async Task<ActionResult> AdicionarSubtarefa([FromBody] AdicionarSubtarefaRequest dto)
         {
             try
             {

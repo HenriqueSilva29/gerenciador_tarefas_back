@@ -1,4 +1,4 @@
-﻿using Application.Dtos.Autenticacao;
+﻿using Application.Dtos.Autenticacaos;
 using Application.Interfaces.UseCases.Autenticacaos;
 using Repository.Repositorys.UsuarioRep;
 
@@ -20,9 +20,9 @@ namespace Application.UseCase.Autenticacaos
             _verificarSenha =verificarSenha;
         }
 
-        public async Task<string> Executar(RequestAutenticacaoDto request)
+        public async Task<string> Executar(RequestAutenticacaoRequest request)
         {
-            var usuario = await _rep.ObterUsuarioPorEmail(request.Email);
+            var usuario = await _rep.ObterUsuarioPorNome(request.Nome);
 
             if (usuario == null)
                 throw new ApplicationException("Usuário ou senha inválidos");

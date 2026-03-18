@@ -8,10 +8,10 @@ namespace Repository.Repositorys.UsuarioRep
     {
         public RepUsuario(ContextEF context) : base(context) { }
 
-        public async Task<Usuario?> ObterUsuarioPorEmail(string email)
+        public async Task<Usuario?> ObterUsuarioPorNome(string nome)
         {
             return await AsQueryable()
-                .FirstOrDefaultAsync(u => u.Email == email);
+                .FirstOrDefaultAsync(u => u.Nome == nome);
 
         }
     }

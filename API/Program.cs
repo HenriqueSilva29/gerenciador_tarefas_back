@@ -35,6 +35,8 @@ using Application.Interfaces.UseCases.Usuarios;
 using Application.UseCase.Usuarios;
 using Application.Interfaces.UseCases.Tarefas;
 using Application.UseCase.Tarefas;
+using Infra.Messaging.RabbitMQ.Topology;
+using Application.UseCase.ToDoItems;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,7 +54,7 @@ builder.Services.AddHangfire(config =>
         });
 });
 builder.Services.AddHangfireServer( options => 
-    {
+    { 
     options.ServerName = "API-Hangfire-Server";
     });
 
@@ -91,7 +93,8 @@ builder.Services.AddScoped<ICriarLembreteUseCase, CriarLembreteUseCase>();
 builder.Services.AddScoped<IVerificarLembretesPertoDoVencimentoUseCase, VerificarLembretesPertoDoVencimentoUseCase>();
 builder.Services.AddScoped<ILoginUseCase, LoginUseCase>();
 builder.Services.AddScoped<IRegistrarUsuarioUseCase, RegistrarUsuarioUseCase>();
-builder.Services.AddScoped<IHashSenhaUseCase, HashSenha>(); 
+builder.Services.AddScoped<IHashSenhaUseCase, HashSenha>();
+builder.Services.AddScoped<IRecuperarTarefaPorIdUseCase, RecuperarTarefaPorIdUseCase>();
 
 builder.Services.AddSwaggerGen(c =>
 {

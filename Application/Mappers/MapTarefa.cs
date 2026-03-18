@@ -1,4 +1,4 @@
-﻿using Application.Dtos.TarefaDtos;
+﻿using Application.Dtos.Tarefas;
 using Application.Views;
 using Domain.Common.ValueObjects;
 using Domain.Entities;
@@ -7,7 +7,7 @@ namespace Application.Mappers
 {
     public static class MapTarefa
     {
-        public static Tarefa Mapear(Tarefa Tarefa, AdicionarTarefaDto dto)
+        public static Tarefa Mapear(Tarefa Tarefa, CreateTarefaRequest dto)
         {
             Tarefa.Titulo = dto.Titulo;
             Tarefa.Descricao = dto.Descricao;
@@ -20,7 +20,7 @@ namespace Application.Mappers
             return Tarefa;
         }
 
-        public static Tarefa ToTarefa(AdicionarTarefaDto dto)
+        public static Tarefa ToTarefa(CreateTarefaRequest dto)
         {
             return new Tarefa
             {
@@ -33,7 +33,7 @@ namespace Application.Mappers
             };
         }
 
-        public static Tarefa AtualizarTarefaDto(Tarefa Tarefa, AtualizarTarefaDto dto)
+        public static Tarefa AtualizarTarefaDto(Tarefa Tarefa, UpdateTarefaRequest dto)
         {
             Tarefa.Titulo = dto.Titulo;
             Tarefa.Descricao = dto.Descricao;

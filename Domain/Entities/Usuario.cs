@@ -4,13 +4,13 @@ namespace Domain.Entities
     public class Usuario : IEntityId<int>
     {
         public int Id { get; }
-        public string Email { get; set; }
+        public string Nome { get; set; }
         public string SenhaHash { get; private set; }
         public string Role { get; private set; }
 
-        public Usuario(string email, string senhaHash, string role = "User")
+        public Usuario(string nome, string senhaHash, string role = "User")
         {
-            Email = email;
+            Nome = nome;
             SenhaHash = senhaHash;
             Role = role;
         }

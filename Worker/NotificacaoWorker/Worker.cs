@@ -17,7 +17,7 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Iniciando Worker...");
+        _logger.LogInformation("startando consumidores...");
 
         foreach (var consumer in _consumers)
         {

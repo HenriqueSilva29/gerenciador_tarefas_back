@@ -1,15 +1,9 @@
-﻿using Application.Dtos.SubtarefaDtos;
-using Application.Dtos.TarefaDtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Application.Dtos.Subtarefas;
 
 namespace Application.Services.ServSubTarefas
 {
     public interface IServSubtarefa
     {
-        Task AdicionarSubtarefa(AdicionarSubtarefaDto dto);
+        Task AdicionarSubtarefa(AdicionarSubtarefaRequest dto);
     }
 }

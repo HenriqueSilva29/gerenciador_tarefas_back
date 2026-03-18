@@ -1,4 +1,4 @@
-﻿using Application.Dtos.UsuarioDtos;
+﻿using Application.Dtos.Usuarios;
 using Application.Interfaces.UseCases.Autenticacaos;
 using Application.Interfaces.UseCases.Usuarios;
 using Application.Utils.Transacao;
@@ -19,18 +19,18 @@ namespace Application.UseCase.Usuarios
             _hashSenha = hashSenha;
         }
 
-        public async Task Executar(RegistrarUsuarioDto dto)
+        public async Task Executar(RegistrarUsuarioRequest dto)
         {
             await _unitOfWork.BeginTransactionAsync();
 
-            var usuarioExistente = await _rep.ObterUsuarioPorEmail(dto.Email);
+            var usuarioExistente = await _rep.ObterUsuarioPorNome(dto.Nome);
 
             if (usuarioExistente is not null)
-                throw new ApplicationException("Email já cadastrado na base de dados");
+                throw new ApplicationException("Usuário já cadastrado na base de dados");
 
             var senhaHash = _hashSenha.Executar(dto.Senha);
 
-            var usuario = new Usuario(dto.Email, senhaHash);
+            var usuario = new Usuario(dto.Nome, senhaHash);
 
             _rep.Adicionar(usuario);
 

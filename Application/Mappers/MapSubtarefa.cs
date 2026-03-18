@@ -1,4 +1,4 @@
-﻿using Application.Dtos.SubtarefaDtos;
+﻿using Application.Dtos.Subtarefas;
 using Domain.Common.ValueObjects;
 using Domain.Entities;
 
@@ -6,7 +6,7 @@ namespace Application.Mappers
 {
     public static class MapSubtarefa
     {
-        public static Tarefa AdicionarSubtarefa(AdicionarSubtarefaDto dto)
+        public static Tarefa AdicionarSubtarefa(AdicionarSubtarefaRequest dto)
         {
             var Tarefa = new Tarefa()
             {
