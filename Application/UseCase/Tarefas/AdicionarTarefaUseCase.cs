@@ -1,24 +1,27 @@
 ﻿using Application.Dtos.Tarefas;
+using Application.Events.Tarefas;
 using Application.Interfaces.UseCases.Lembretes;
 using Application.Interfaces.UseCases.Tarefas;
 using Application.Mappers;
 using Application.Utils.Transacao;
+using Infra.Messaging.RabbitMQ.Publicadores;
+using Repository.Repositorys.ParamGeralRep;
 using Repository.TarefaRep;
 
 public class AdicionarTarefaUseCase : IAdicionarTarefaUseCase
 {
     private readonly IRepTarefa _rep;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ICriarLembreteUseCase _criarLembrete;
+    private readonly IRabbitEventPublisher _publisher;
 
     public AdicionarTarefaUseCase(
         IRepTarefa rep,
         IUnitOfWork unitOfWork,
-        ICriarLembreteUseCase criarLembrete)
+        IRabbitEventPublisher publisher)
     {
         _rep = rep;
         _unitOfWork = unitOfWork;
-        _criarLembrete = criarLembrete;
+        _publisher = publisher;
     }
 
     public async Task<TarefaResponse> Executar(CreateTarefaRequest dto)
@@ -29,16 +32,9 @@ public class AdicionarTarefaUseCase : IAdicionarTarefaUseCase
 
         _rep.Adicionar(Tarefa);
 
-        if (dto.AvisarVencimento)
-        {
-             _criarLembrete.CriarLembrete(
-                Tarefa,
-                dto.DataVencimento,
-                dto.DiasAntesDoVencimento
-            );
-        }
-
         await _unitOfWork.CommitTransactionAsync();
+
+        await _publisher.PublishAsync(new TarefaCriadaEvent(Tarefa.Id));
 
         return new TarefaResponse { Id = Tarefa.Id};
 

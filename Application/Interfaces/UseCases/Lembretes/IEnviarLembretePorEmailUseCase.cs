@@ -2,6 +2,6 @@
 {
     public interface IEnviarLembretePorEmailUseCase
     {
-        Task ExecuteAsync(int lembreteId);
+        Task ExecuteAsync(int idtarefa);
     }
 }

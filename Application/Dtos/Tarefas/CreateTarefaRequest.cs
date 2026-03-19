@@ -10,8 +10,5 @@ namespace Application.Dtos.Tarefas
         public EnumStatusTarefa Status { get; set; }
         public EnumPrioridadeTarefa Prioridade { get; set; }
         public EnumCategoriaTarefa Categoria { get; set; }
-
-        public bool AvisarVencimento { get; set; }
-        public int DiasAntesDoVencimento { get; set; }
     }
 }

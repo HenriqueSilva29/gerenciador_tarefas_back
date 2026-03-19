@@ -19,6 +19,7 @@ namespace Repository.ContextEFs
             modelBuilder.ApplyConfiguration(new LembreteConfig());
             modelBuilder.ApplyConfiguration(new UsuarioConfig());
             modelBuilder.ApplyConfiguration(new AuditoriaConfig());
+            modelBuilder.ApplyConfiguration(new ParamGeralConfig());
 
             //modelBuilder.ApplyConfigurationsFromAssembly(typeof(ContextEF).Assembly); -- Esse codigo aplica todas as config acimas de uma só vez.
         }

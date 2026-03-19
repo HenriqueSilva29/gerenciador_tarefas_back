@@ -14,7 +14,7 @@ public class EnviarLembretePorEmailMessageHandler
 
     public async Task HandleAsync(LembreteVencimentoAtingidoEvent evento)
     {
-        await _useCase.ExecuteAsync(evento.LembreteId);
+        await _useCase.ExecuteAsync(evento.idLembrete);
     }
         
 }

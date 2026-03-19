@@ -1,4 +1,5 @@
-﻿using Application.Messaging;
+﻿using Application.Events.Tarefas;
+using Application.Messaging;
 using Infra.Mensageria.RabbitMQ.Channels;
 using Infra.Messaging.RabbitMQ;
 using Infra.Messaging.RabbitMQ.Publicadores;
@@ -12,13 +13,11 @@ namespace Infra.Mensageria.RabbitMQ.Publicadores
     {
         private readonly IRabbitChannelFactory _channelFactory;
 
-        private static readonly Dictionary<Type, string> RoutingMap = new()
-    {
+        private readonly Dictionary<Type, string> RoutingMap = new()
         {
-            typeof(LembreteVencimentoAtingidoEvent),
-            RoutingKeys.LembreteVencimentoAtingidoV1
-        }
-    };
+            {typeof(LembreteVencimentoAtingidoEvent),RoutingKeys.LembreteVencimentoAtingidoV1},
+            {typeof(TarefaCriadaEvent),RoutingKeys.TarefaCriada}
+        };
 
         public RabbitEventPublisher(IRabbitChannelFactory channelFactory)
         {

@@ -6,7 +6,6 @@ using Application.Utils.Transacao;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Repository.ContextEFs;
-using Infra.Mensageria.RabbitMQ.Consumidores;
 using Application.Interfaces.Messaging;
 using Infra.Mensageria.RabbitMQ.Channels;
 using Infra.Mensageria.RabbitMQ.Connections;
@@ -20,7 +19,14 @@ using Hangfire.SqlServer;
 using Infra.BackgroundJobs.Hangfire.Jobs.Lembretes;
 using Application.Interfaces.UseCases.Lembretes;
 using Infra.Messaging.RabbitMQ.Topology;
-using Infra.Messaging.RabbitMQ.Topology.Topologies;
+using Infra.Messaging.RabbitMQ.Consumidores.Lembretes;
+using Infra.Messaging.RabbitMQ.Topology.Topologies.Lembretes;
+using Infra.Messaging.RabbitMQ.Topology.Topologies.Tarefas;
+using Application.Events.Tarefas;
+using Application.Messaging.MessageHandlers;
+using Infra.Messaging.RabbitMQ.Consumidores.Tarefas;
+using Repository.TarefaRep;
+using Repository.Repositorys.ParamGeralRep;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureLogging(logging =>
@@ -47,21 +53,34 @@ var host = Host.CreateDefaultBuilder(args)
 
         // Repositório
         services.AddScoped<IRepLembrete, RepLembrete>();
+        services.AddScoped<IRepTarefa, RepTarefa>();
+        services.AddScoped<IRepParamGeral, RepParamGeral>();
 
         // RabbitMQ
         services.AddSingleton<IRabbitConnection, RabbitConnection>();
         services.AddSingleton<IRabbitChannelFactory, RabbitChannelFactory>();
-        services.AddSingleton<IMessageConsumer, NotificarEmailConsumer>();
 
+        //Consumidores
+        services.AddSingleton<IMessageConsumer, EnviarLembreteVencidoPorEmailConsumer>();
+        services.AddSingleton<IMessageConsumer, TarefaCriadaGerarLembreteConsumer>();
+
+        //Evento
         services.AddScoped<IMessageHandler<LembreteVencimentoAtingidoEvent>, EnviarLembretePorEmailMessageHandler>();
+        services.AddScoped<IMessageHandler<TarefaCriadaEvent>, TarefaCriadaGerarLembreteMessageHandler>();
+
+        //UseCase
         services.AddScoped<IEnviarLembretePorEmailUseCase, EnviarLembretePorEmailUseCase>();
-        services.AddScoped<LembreteEmailCompose>();
-        services.AddScoped<IEmail, Email>();
+        services.AddScoped<ITarefaCriadaGerarLembreteUseCase,TarefaCriadaGerarLembreteUseCase>();
 
         services.AddScoped<IMessageDispatcher, MessageDispatcher>();
 
+        //Topologia
         services.AddScoped<IRabbitTopologyInitializer, RabbitTopologyInitializer>();
-        services.AddScoped<IRabbitTopology, EmailLembreteTopology>();
+        services.AddScoped<IRabbitTopology, NotificacaoEmailLembreteVencimentoTopology>();
+        services.AddScoped<IRabbitTopology, TarefaCriadaGerarLembreteTopology>();
+
+        services.AddScoped<LembreteEmailCompose>();
+        services.AddScoped<IEmail, Email>();
 
         services.AddHangfire(config =>
         {

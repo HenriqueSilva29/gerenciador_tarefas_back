@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository.ContextEFs;
 
@@ -11,9 +12,11 @@ using Repository.ContextEFs;
 namespace Repository.Migrations
 {
     [DbContext(typeof(ContextEF))]
-    partial class ContextEFModelSnapshot : ModelSnapshot
+    [Migration("20260318184644_TableParamGeral")]
+    partial class TableParamGeral
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -121,15 +124,11 @@ namespace Repository.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("AvisarVencimento")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(false)
                         .HasColumnName("avisar_vencimento");
 
                     b.Property<int>("DiasAntesDoVencimento")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasDefaultValue(0)
                         .HasColumnName("dias_antes_do_vencimento");
 
                     b.HasKey("Id");

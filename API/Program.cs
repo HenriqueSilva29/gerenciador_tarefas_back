@@ -37,6 +37,7 @@ using Application.Interfaces.UseCases.Tarefas;
 using Application.UseCase.Tarefas;
 using Infra.Messaging.RabbitMQ.Topology;
 using Application.UseCase.ToDoItems;
+using Repository.Repositorys.ParamGeralRep;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +64,7 @@ builder.Services.AddScoped<IRepTarefa, RepTarefa>();
 builder.Services.AddScoped<IRepLembrete, RepLembrete>();
 builder.Services.AddScoped<IRepUsuario, RepUsuario>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IRepParamGeral, RepParamGeral>();
 
 //Servicos
 builder.Services.AddScoped<IServTarefa, ServTarefa>();
@@ -89,7 +91,7 @@ builder.Services.AddScoped<IAtualizarTarefaUseCase, AtualizarTarefaUseCase>();
 builder.Services.AddScoped<IListarTarefaUseCase, ListarTarefa>();
 builder.Services.AddScoped<IListarTarefasVencidasUseCase, ListarTarefasVencidas>();
 builder.Services.AddScoped<IRemoverTarefaUseCase, RemoverTarefaUseCase>();
-builder.Services.AddScoped<ICriarLembreteUseCase, CriarLembreteUseCase>();
+builder.Services.AddScoped<ITarefaCriadaGerarLembreteUseCase, TarefaCriadaGerarLembreteUseCase>();
 builder.Services.AddScoped<IVerificarLembretesPertoDoVencimentoUseCase, VerificarLembretesPertoDoVencimentoUseCase>();
 builder.Services.AddScoped<ILoginUseCase, LoginUseCase>();
 builder.Services.AddScoped<IRegistrarUsuarioUseCase, RegistrarUsuarioUseCase>();
