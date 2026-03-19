@@ -49,8 +49,16 @@ namespace Infra.Mensageria.RabbitMQ.Publicadores
             await channel.BasicPublishAsync(
                 exchange: "app.events",
                 routingKey: routingKey,
-                body: body);
-        }
+                mandatory: false,
+                basicProperties: new BasicProperties
+                {
+                    Persistent = true,
+                    ContentType = "application/json",
+                    MessageId = Guid.NewGuid().ToString()
+                },
+                body: body
+            );
 
+        }
     }
 }
