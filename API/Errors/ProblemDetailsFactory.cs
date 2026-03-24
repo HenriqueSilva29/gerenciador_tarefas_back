@@ -1,5 +1,6 @@
 ﻿using Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using System.Buffers.Text;
 
 namespace API.Errors
 {
@@ -7,26 +8,34 @@ namespace API.Errors
     {
         public static ProblemDetails Create(Exception exception, HttpContext context)
         {
-            return exception switch
+            if (exception is ExceptionBase ex)
             {
-                DomainException domainEx => CreateDomainProblem(domainEx, context),
-                ArgumentException argEx => CreateBadRequestProblem(argEx, context),
-                KeyNotFoundException keyEx => CreateNotFoundProblem(keyEx, context),
-                _ => CreateInternalServerError(exception, context)
-            };
+                return CreateFromBaseException(ex, context);
+            }
+
+            if (exception is ArgumentException argEx)
+            {
+                return CreateBadRequestProblem(argEx, context);
+            }
+
+            return CreateInternalServerError(context);
         }
 
-        private static ProblemDetails CreateDomainProblem(
-            DomainException exception,
+        private static ProblemDetails CreateFromBaseException(
+            ExceptionBase exception,
             HttpContext context)
         {
             return new ProblemDetails
             {
-                Type = "domain-error",
-                Title = "Erro de regra de negócio",
-                Status = StatusCodes.Status400BadRequest,
+                Type = exception.Code,
+                Title = exception.Title,
+                Status = exception.StatusCode,
                 Detail = exception.Message,
-                Instance = context.Request.Path
+                Instance = context.Request.Path,
+                Extensions =
+                    {
+                        ["traceId"] = context.TraceIdentifier
+                    }
             };
         }
 
@@ -44,31 +53,15 @@ namespace API.Errors
             };
         }
 
-        private static ProblemDetails CreateNotFoundProblem(
-            Exception exception,
-            HttpContext context)
+        private static ProblemDetails CreateInternalServerError(HttpContext context)
         {
             return new ProblemDetails
             {
-                Type = "not-found",
-                Title = "Recurso não encontrado",
-                Status = StatusCodes.Status404NotFound,
-                Detail = exception.Message,
-                Instance = context.Request.Path
-            };
-        }
-
-        private static ProblemDetails CreateInternalServerError(
-            Exception exception,
-            HttpContext context)
-        {
-            return new ProblemDetails
-            {
-                Type = "internal-server-error",
                 Title = "Erro interno no servidor",
                 Status = StatusCodes.Status500InternalServerError,
                 Detail = "Ocorreu um erro inesperado.",
-                Instance = context.Request.Path
+                Instance = context.Request.Path,
+                Type = "internal-server-error"
             };
         }
     }

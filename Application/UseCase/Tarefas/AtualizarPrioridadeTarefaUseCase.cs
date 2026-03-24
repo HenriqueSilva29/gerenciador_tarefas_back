@@ -1,6 +1,9 @@
 ﻿using Application.Dtos.Tarefas;
 using Application.Interfaces.UseCases.Tarefas;
 using Application.Utils.Transacao;
+using Domain.Enums;
+using Domain.Exceptions;
+using Microsoft.AspNetCore.Http;
 using Repository.TarefaRep;
 
 namespace Application.UseCase.Tarefas
@@ -25,7 +28,7 @@ namespace Application.UseCase.Tarefas
             var Tarefa = await _rep.RecuperarPorId(id);
 
             if (Tarefa == null)
-                throw new ApplicationException("Tarefa não encontrada.");
+                throw new ExceptionApplication(EnumCodigosDeExcecao.RegistroNaoEncontrado, "Tarefa não encontrada no banco de dados", StatusCodes.Status409Conflict);
 
             Tarefa.DefinirPrioridade(dto.Prioridade);
 

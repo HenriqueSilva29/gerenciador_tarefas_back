@@ -1,5 +1,7 @@
 ﻿using Domain.Common;
+using Domain.Enums;
 using Domain.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace Domain.Entities
 {
@@ -50,9 +52,10 @@ namespace Domain.Entities
         public void Cancelar()
         {
             if (Status == LembreteStatus.Executado)
-                throw new DomainException(
-                    "LEMBRETE_ALREADY_SENT",
-                    "Lembrete já foi enviado.");
+                throw new ExceptionDomain(
+                    EnumCodigosDeExcecao.LembreteJaEnviado,
+                    "Lembrete já foi enviado",
+                    StatusCodes.Status409Conflict);
 
             Status = LembreteStatus.Cancelado;
         }

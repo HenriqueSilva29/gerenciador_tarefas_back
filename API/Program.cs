@@ -141,6 +141,17 @@ Log.Logger = new LoggerConfiguration()
 var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
 logger.LogInformation("TESTE SERILOG");
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -163,6 +174,8 @@ app.UseHangfireDashboard("/hangfire",
     });
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseCors("AllowFrontend");
 
 app.UseRouting();
 app.UseMiddleware<ExceptionMiddleware>();

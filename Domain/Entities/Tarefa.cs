@@ -1,6 +1,8 @@
 ﻿using Domain.Common;
 using Domain.Common.ValueObjects;
+using Domain.Enums;
 using Domain.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace Domain.Entities
 {
@@ -83,9 +85,10 @@ namespace Domain.Entities
         public void ConcluirTarefa()
         {
             if (!PodeConcluirTarefa())
-                throw new DomainException(
-                    "SUBTASK_NOT_COMPLETED",
-                    "Não é possivel concluir tarefa pois existem subtarefas não concluídas");
+                throw new ExceptionDomain(
+                    EnumCodigosDeExcecao.PossuiSubtarefaNaoFinalizada,
+                    "Necessário finalizar as subtarefas pendentes",
+                    StatusCodes.Status409Conflict);
 
             Status = EnumStatusTarefa.Concluida;
         }
@@ -98,9 +101,10 @@ namespace Domain.Entities
         public bool ValidaPrioridadeParaSubtarefa()
         {
             if (PossuiSubtarefaComPrioridadeMaior())
-                throw new DomainException(
-                    "SUBTASK_NOT_COMPLETED",
-                    "Subtarefa foi definida com prioridade maior que tarefa pai");
+                throw new ExceptionDomain(
+                    EnumCodigosDeExcecao.PossuiSubtarefaComPrioridadeMaiorQueTarefaPai,
+                    "Subtarefa foi definida com prioridade maior que tarefa pai",
+                    StatusCodes.Status409Conflict);
 
             return true;
         }

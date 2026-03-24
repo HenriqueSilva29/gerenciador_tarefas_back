@@ -14,9 +14,11 @@ namespace API.Controllers
         }
 
         [HttpPost("registrar")]
-        public async Task RegistrarUsuario(RegistrarUsuarioRequest dto)
+        public async Task<IActionResult> RegistrarUsuario([FromBody] RegistrarUsuarioRequest dto)
         {
-            await _registrarUsuarioUseCase.Executar(dto);
+            var result = await _registrarUsuarioUseCase.Executar(dto);
+
+            return Created($"/usuarios/{result.id}", new { result.id });
         }
     }
 }
