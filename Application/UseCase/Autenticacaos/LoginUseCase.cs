@@ -1,5 +1,8 @@
-﻿using Application.Dtos.Autenticacao;
+﻿using Application.Dtos.Autenticacaos;
 using Application.Interfaces.UseCases.Autenticacaos;
+using Domain.Enums;
+using Domain.Exceptions;
+using Microsoft.AspNetCore.Http;
 using Repository.Repositorys.UsuarioRep;
 
 namespace Application.UseCase.Autenticacaos
@@ -20,17 +23,17 @@ namespace Application.UseCase.Autenticacaos
             _verificarSenha =verificarSenha;
         }
 
-        public async Task<string> Executar(RequestAutenticacaoDto request)
+        public async Task<string> Executar(RequestAutenticacaoRequest request)
         {
             var usuario = await _rep.ObterUsuarioPorEmail(request.Email);
 
             if (usuario == null)
-                throw new ApplicationException("Usuário ou senha inválidos");
+                throw new ExceptionApplication(EnumCodigosDeExcecao.CredenciaisInvalidas, "Email ou senha inválidos", StatusCodes.Status409Conflict);
 
             var senhaValida = _verificarSenha.Executar(usuario, request.Senha);
 
             if (!senhaValida)
-                throw new ApplicationException("Usuário ou senha inválidos");
+                throw new ExceptionApplication(EnumCodigosDeExcecao.CredenciaisInvalidas, "Email ou senha inválidos", StatusCodes.Status409Conflict);
 
             var token = _gerarToken.Executar(usuario);
 

@@ -1,9 +1,9 @@
-﻿using Application.Dtos.Autenticacao;
+﻿using Application.Dtos.Autenticacaos;
 
 namespace Application.Interfaces.UseCases.Autenticacaos
 {
     public interface ILoginUseCase
     {
-        public Task<string> Executar(RequestAutenticacaoDto request);
+        public Task<string> Executar(RequestAutenticacaoRequest request);
     }
 }

@@ -1,10 +1,9 @@
-﻿using Application.Dtos.Autenticacao;
-using Microsoft.AspNetCore.Mvc;
+﻿using Application.Dtos.Autenticacaos;
 
 namespace Application.Services.ServAutenticacaos
 {
     public interface IServAutenticacao
     {
-        public Task<string> Login(RequestAutenticacaoDto request);
+        public Task<string> Login(RequestAutenticacaoRequest request);
     }
 }

@@ -1,7 +1,9 @@
-﻿namespace Application.Interfaces.UseCases.Lembretes
+﻿using Domain.Entities;
+
+namespace Application.Interfaces.UseCases.Lembretes
 {
     public interface IEnviarLembretePorEmailUseCase
     {
-        Task ExecuteAsync(int lembreteId);
+        Task ExecuteAsync(Lembrete entity, string emailDestinatario);
     }
 }

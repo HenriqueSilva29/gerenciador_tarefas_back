@@ -4,6 +4,6 @@ namespace Application.Interfaces.UseCases.Usuarios
 {
     public interface IRegistrarUsuarioUseCase
     {
-        public Task Executar(RegistrarUsuarioDto dto);
+        public Task<UsuarioResponse> Executar(RegistrarUsuarioRequest dto);
     }
 }

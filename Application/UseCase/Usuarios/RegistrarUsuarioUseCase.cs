@@ -1,11 +1,12 @@
 ﻿using Application.Dtos.Usuarios;
 using Application.Interfaces.UseCases.Autenticacaos;
 using Application.Interfaces.UseCases.Usuarios;
-using Application.Mappers;
 using Application.Utils.Transacao;
 using Domain.Entities;
+using Domain.Enums;
+using Domain.Exceptions;
+using Microsoft.AspNetCore.Http;
 using Repository.Repositorys.UsuarioRep;
-using System.Runtime.CompilerServices;
 
 namespace Application.UseCase.Usuarios
 {
@@ -21,14 +22,14 @@ namespace Application.UseCase.Usuarios
             _hashSenha = hashSenha;
         }
 
-        public async Task Executar(RegistrarUsuarioDto dto)
+        public async Task<UsuarioResponse> Executar(RegistrarUsuarioRequest dto)
         {
             await _unitOfWork.BeginTransactionAsync();
 
             var usuarioExistente = await _rep.ObterUsuarioPorEmail(dto.Email);
 
             if (usuarioExistente is not null)
-                throw new ApplicationException("Email já cadastrado na base de dados");
+                throw new ExceptionApplication(EnumCodigosDeExcecao.RegistroNaoEncontrado, "Usuário já cadastrado na base de dados",StatusCodes.Status409Conflict);
 
             var senhaHash = _hashSenha.Executar(dto.Senha);
 
@@ -37,6 +38,8 @@ namespace Application.UseCase.Usuarios
             _rep.Adicionar(usuario);
 
             await _unitOfWork.CommitTransactionAsync();
+
+            return new UsuarioResponse { id = usuario.Id };
         }
     }
 }

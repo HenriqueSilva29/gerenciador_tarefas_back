@@ -1,4 +1,4 @@
-﻿using Application.Dtos.Autenticacao;
+﻿using Application.Dtos.Autenticacaos;
 using Application.Interfaces.UseCases.Autenticacaos;
 
 namespace Application.Services.ServAutenticacaos
@@ -13,8 +13,8 @@ namespace Application.Services.ServAutenticacaos
             _loginUseCase = loginUseCase;
         }
 
-        public async Task<string> Login(RequestAutenticacaoDto request) 
-            => await _loginUseCase.Executar(request);
+        public Task<string> Login(RequestAutenticacaoRequest request) 
+            =>  _loginUseCase.Executar(request);
 
     }
 }

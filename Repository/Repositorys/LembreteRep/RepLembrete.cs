@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Repository.ContextEFs;
+using static Domain.Entities.Lembrete;
 
 namespace Repository.Repositorys.LembreteRep
 {
@@ -15,7 +16,7 @@ namespace Repository.Repositorys.LembreteRep
         {
             return await AsQueryable()
                 .Where(l =>
-                    l.Status == Lembrete.LembreteStatus.Pendente &&
+                    l.Status == EnumLembreteStatus.Pendente &&
                     l.DataDisparo <= agora)
                 .ToListAsync();
         }

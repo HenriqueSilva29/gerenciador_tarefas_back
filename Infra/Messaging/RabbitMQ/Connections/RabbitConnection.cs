@@ -24,10 +24,7 @@ namespace Infra.Mensageria.RabbitMQ.Connections
             var uriString = _factory.Uri;
 
             _logger.LogInformation("======================================");
-            _logger.LogInformation("Tentando conectar no RabbitMQ...");
-            _logger.LogInformation("URI configurada: {Uri}", uriString);
-
-
+            _logger.LogInformation("Conexão RabbitMQ configurada");
         }
 
         public async Task<IConnection> GetConnectionAsync()
@@ -36,6 +33,9 @@ namespace Infra.Mensageria.RabbitMQ.Connections
                 return _connection;
 
             _connection = await _factory.CreateConnectionAsync();
+
+            _logger.LogInformation("Conexão RabbitMQ criada");
+
             return _connection;
         }
 

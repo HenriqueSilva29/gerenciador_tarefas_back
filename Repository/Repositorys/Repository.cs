@@ -8,7 +8,7 @@ namespace Repository.Repositorys
     public class Repository<T, TId> : IRepository<T, TId>
     where T : class, IEntityId<TId>
     {
-        private readonly ContextEF _context;
+        public readonly ContextEF _context;
         private readonly DbSet<T> _dbSet;
 
         public Repository(ContextEF context)
@@ -43,7 +43,7 @@ namespace Repository.Repositorys
              _dbSet.Remove(entity);
         }
 
-        public async Task<T?> RecuperarPorId(TId id)
+        public async Task<T?> RecuperarPorIdAsync(TId id)
         {
             return await _dbSet.FirstOrDefaultAsync(x => x.Id!.Equals(id));
         }

@@ -1,5 +1,7 @@
 ﻿using Domain.Common;
+using Domain.Enums;
 using Domain.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace Domain.Entities
 {
@@ -7,17 +9,15 @@ namespace Domain.Entities
     {
         public int Id { get; private set; }
 
-        public int CodigoToDoItem { get; private set; }
-        public ToDoItem ToDoItem { get; private set; }
-
-        public DateTimeOffset DataVencimento { get; private set; }
+        public int CodigoTarefa { get; private set; }
+        public Tarefa Tarefa { get;  set; }
         public DateTimeOffset DataDisparo { get; private set; }
 
-        public string Texto { get; private set; }
+        public string Descricao { get; set; }
 
-        public LembreteStatus Status { get; private set; }
+        public EnumLembreteStatus Status { get; set; }
 
-        public enum LembreteStatus
+        public enum EnumLembreteStatus
         {
             Pendente = 0,
             Executado = 1,
@@ -27,34 +27,30 @@ namespace Domain.Entities
         protected Lembrete() { }
 
         public Lembrete(
-            int idtoDoItem,
-            DateTimeOffset dataVencimento,
-            int diasAntes,
-            string texto)
+            int idTarefa,
+            DateTimeOffset dataDisparo)
         {
-            CodigoToDoItem = idtoDoItem;
-            DataVencimento = dataVencimento;
-            DataDisparo = dataVencimento.AddDays(-diasAntes);
-            Texto = texto;
-            Status = LembreteStatus.Pendente;
+            CodigoTarefa = idTarefa;
+            DataDisparo = dataDisparo;
         }
 
         public void Executar()
         {
-            if (Status != LembreteStatus.Pendente)
+            if (Status != EnumLembreteStatus.Pendente)
                 return;
 
-            Status = LembreteStatus.Executado;
+            Status = EnumLembreteStatus.Executado;
         }
 
         public void Cancelar()
         {
-            if (Status == LembreteStatus.Executado)
-                throw new DomainException(
-                    "LEMBRETE_ALREADY_SENT",
-                    "Lembrete já foi enviado.");
+            if (Status == EnumLembreteStatus.Executado)
+                throw new ExceptionDomain(
+                    EnumCodigosDeExcecao.LembreteJaEnviado,
+                    "Lembrete já foi enviado",
+                    StatusCodes.Status409Conflict);
 
-            Status = LembreteStatus.Cancelado;
+            Status = EnumLembreteStatus.Cancelado;
         }
     }
 }

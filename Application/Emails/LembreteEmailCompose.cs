@@ -5,13 +5,19 @@ namespace Application.Emails
 {
     public class LembreteEmailCompose
     {
-        public EmailMessage Compose(Lembrete entity)
+        public EmailMessage Compose(Lembrete entity, string emailDestinatario)
         {
-             return new EmailMessage
+            return new EmailMessage
             {
-                To = "Não existe ainda",
-                Subject = $"Lembrete: {entity.Texto}",
-                Body = $"Olá! A tarefa está perto de vencer!"
+                To = emailDestinatario,
+                Subject = $"Lembrete: {entity.Descricao}",
+                Body = $"""
+                <h2>Lembrete de tarefa</h2>
+                <p>Sua tarefa está próxima do horário previsto.</p>
+                <p><strong>Descrição:</strong> {entity.Descricao}</p>
+                <p><strong>Disparo:</strong> {entity.DataDisparo:dd/MM/yyyy HH:mm}</p>
+                """,
+                IsHtml = true
             };
         }
     }

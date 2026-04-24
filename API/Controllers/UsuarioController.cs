@@ -1,6 +1,5 @@
 ﻿using Application.Dtos.Usuarios;
 using Application.Interfaces.UseCases.Usuarios;
-using Application.UseCase.Usuarios;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -15,9 +14,11 @@ namespace API.Controllers
         }
 
         [HttpPost("registrar")]
-        public async Task RegistrarUsuario(RegistrarUsuarioDto dto)
+        public async Task<IActionResult> RegistrarUsuario([FromBody] RegistrarUsuarioRequest dto)
         {
-            await _registrarUsuarioUseCase.Executar(dto);
+            var result = await _registrarUsuarioUseCase.Executar(dto);
+
+            return Created($"/usuarios/{result.id}", new { result.id });
         }
     }
 }
