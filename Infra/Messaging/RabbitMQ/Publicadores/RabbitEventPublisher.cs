@@ -15,7 +15,6 @@ namespace Infra.Mensageria.RabbitMQ.Publicadores
 
         private readonly Dictionary<Type, string> RoutingMap = new()
         {
-            {typeof(LembreteVencimentoAtingidoEvent),RoutingKeys.LembreteVencimentoAtingidoV1},
             {typeof(TarefaCriadaEvent),RoutingKeys.TarefaCriada}
         };
 

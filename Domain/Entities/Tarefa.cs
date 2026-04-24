@@ -21,7 +21,10 @@ namespace Domain.Entities
         public string Descricao { get; set; }
         public UtcDateTime DataCriacao { get; set; }
         public UtcDateTime DataVencimento { get; set; }
-        public EnumStatusTarefa Status { get; set; }
+        public DateOnly DataTarefa { get; set; }
+        public TimeOnly HoraInicio { get; set; }
+        public TimeOnly HoraFim { get; set; }
+        public EnumStatusTarefa Status { get; private set ; }
         public EnumPrioridadeTarefa Prioridade { get; set; }
         public EnumCategoriaTarefa Categoria { get; set; }
 
@@ -62,6 +65,22 @@ namespace Domain.Entities
             Adiada = 7
         }
 
+        public enum TipoEventoHistoricoTarefa
+        {
+            TarefaCriada,
+            TarefaAtualizada,
+            TarefaConcluida,
+            TarefaReaberta,
+            TarefaExcluida,
+            SubtarefaCriada,
+            SubtarefaAtualizada,
+            SubtarefaConcluida,
+            SubtarefaReaberta,
+            SubtarefaExcluida,
+            SubtarefaVinculada,
+            SubtarefaDesvinculada
+        }
+
         public void CancelarTarefa()
         {
             Status = EnumStatusTarefa.Cancelada;
@@ -80,6 +99,11 @@ namespace Domain.Entities
         public bool PodeConcluirTarefa()
         {
             return !PossuiSubtarefaNaoConcluida();
+        }
+
+        public void AtualizarStatus(EnumStatusTarefa status)
+        {
+            this.Status = status;
         }
 
         public void ConcluirTarefa()

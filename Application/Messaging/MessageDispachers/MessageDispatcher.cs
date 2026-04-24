@@ -18,7 +18,7 @@ public class MessageDispatcher : IMessageDispatcher
         var Types = new Dictionary<string, Type>()
         {
             {nameof(TarefaCriadaEvent), typeof(TarefaCriadaEvent)},
-            {nameof(LembreteVencimentoAtingidoEvent), typeof(LembreteVencimentoAtingidoEvent)}
+
         };
 
         var envelope = JsonSerializer.Deserialize<MessageEnvelope>(json);

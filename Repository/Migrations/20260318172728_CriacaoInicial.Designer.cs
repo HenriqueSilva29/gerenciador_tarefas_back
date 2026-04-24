@@ -175,11 +175,11 @@ namespace Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Nome")
+                    b.Property<string>("email")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)")
-                        .HasColumnName("nome");
+                        .HasColumnName("email");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -194,7 +194,7 @@ namespace Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Nome")
+                    b.HasIndex("email")
                         .IsUnique();
 
                     b.ToTable("Usuario", (string)null);

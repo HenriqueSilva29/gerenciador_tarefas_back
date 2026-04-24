@@ -6,7 +6,7 @@ namespace Repository.Repositorys
     {
         IQueryable<T> AsQueryable();
         IEnumerable<T> AsEnumerable();
-        Task<T?> RecuperarPorId(TId id);
+        Task<T?> RecuperarPorIdAsync(TId id);
         void Adicionar(T entity);
         void Atualizar(T entity);
         void Remover(T entity);

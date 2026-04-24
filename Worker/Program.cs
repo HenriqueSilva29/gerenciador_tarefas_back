@@ -12,23 +12,30 @@ using Infra.Mensageria.RabbitMQ.Connections;
 using Infra.Mensageria.RabbitMQ.Topology;
 using Application.Emails;
 using Application.Interfaces.Email;
-using Infra.Emails;
 using Application.UseCase.Lembretes;
 using Hangfire;
 using Hangfire.SqlServer;
 using Infra.BackgroundJobs.Hangfire.Jobs.Lembretes;
 using Application.Interfaces.UseCases.Lembretes;
 using Infra.Messaging.RabbitMQ.Topology;
-using Infra.Messaging.RabbitMQ.Consumidores.Lembretes;
-using Infra.Messaging.RabbitMQ.Topology.Topologies.Lembretes;
 using Infra.Messaging.RabbitMQ.Topology.Topologies.Tarefas;
 using Application.Events.Tarefas;
 using Application.Messaging.MessageHandlers;
 using Infra.Messaging.RabbitMQ.Consumidores.Tarefas;
 using Repository.TarefaRep;
 using Repository.Repositorys.ParamGeralRep;
+using Infra.Notifications;
+using System.Text;
 
 var host = Host.CreateDefaultBuilder(args)
+    .ConfigureAppConfiguration((hostContext, config) =>
+    {
+        config.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+        config.AddJsonFile(
+            $"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.Local.json",
+            optional: true,
+            reloadOnChange: true);
+    })
     .ConfigureLogging(logging =>
     {
         logging.ClearProviders();
@@ -36,6 +43,8 @@ var host = Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((hostContext, services) =>
     {
+        ValidateRequiredConfiguration(hostContext.Configuration);
+
         Console.WriteLine("======================================");
         Console.WriteLine($"Iniciando Worker...");
         Console.WriteLine("======================================");
@@ -61,23 +70,23 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<IRabbitChannelFactory, RabbitChannelFactory>();
 
         //Consumidores
-        services.AddSingleton<IMessageConsumer, EnviarLembreteVencidoPorEmailConsumer>();
-        services.AddSingleton<IMessageConsumer, TarefaCriadaGerarLembreteConsumer>();
+        services.AddSingleton<IMessageConsumer, GerarLembreteConsumer>();
 
         //Evento
-        services.AddScoped<IMessageHandler<LembreteVencimentoAtingidoEvent>, EnviarLembretePorEmailMessageHandler>();
-        services.AddScoped<IMessageHandler<TarefaCriadaEvent>, TarefaCriadaGerarLembreteMessageHandler>();
+        services.AddScoped<IMessageHandler<TarefaCriadaEvent>, GerarLembreteMessageHandler>();
 
         //UseCase
         services.AddScoped<IEnviarLembretePorEmailUseCase, EnviarLembretePorEmailUseCase>();
-        services.AddScoped<ITarefaCriadaGerarLembreteUseCase,TarefaCriadaGerarLembreteUseCase>();
+        services.AddScoped<IGerarLembreteUseCase,TarefaCriadaGerarLembreteUseCase>();
+        services.AddScoped<IAgendarLembreteJobScheduler, AgendarLembreteJobScheduler>();
+        services.AddScoped<IAgendarLembreteUseCase, AgendarLembreteUseCase>();
+        services.AddScoped<IDispararLembreteUseCase, DispararLembreteUseCase>();
 
         services.AddScoped<IMessageDispatcher, MessageDispatcher>();
 
         //Topologia
         services.AddScoped<IRabbitTopologyInitializer, RabbitTopologyInitializer>();
-        services.AddScoped<IRabbitTopology, NotificacaoEmailLembreteVencimentoTopology>();
-        services.AddScoped<IRabbitTopology, TarefaCriadaGerarLembreteTopology>();
+        services.AddScoped<IRabbitTopology, GerarLembreteTopology>();
 
         services.AddScoped<LembreteEmailCompose>();
         services.AddScoped<IEmail, Email>();
@@ -91,24 +100,53 @@ var host = Host.CreateDefaultBuilder(args)
                     QueuePollInterval = TimeSpan.FromSeconds(60)
                 });
         });
+
         services.AddHangfireServer(options =>
         {
             options.ServerName = "API-Hangfire-Server";
         });
 
+        services.Configure<EmailOptions>(
+            hostContext.Configuration.GetSection("Email"));
+
     })
     .Build();
 
-using (var scope = host.Services.CreateScope())
-{
-    var recurringJobManager = scope.ServiceProvider
-        .GetRequiredService<IRecurringJobManager>();
-
-    recurringJobManager.AddOrUpdate<VerificarLembretesVencendoJob>(
-        "verificar-lembretes",
-        job => job.Execute(),
-        "*/5 * * * *"
-    );
-}
-
 host.Run();
+
+static void ValidateRequiredConfiguration(IConfiguration configuration)
+{
+    var missingKeys = new List<string>();
+
+    Require("ConnectionStrings:DefaultConnection");
+    Require("RabbitMQ:Uri");
+    Require("Email:Host");
+    Require("Email:Port");
+    Require("Email:UserName");
+    Require("Email:Password");
+    Require("Email:FromEmail");
+    Require("Email:FromName");
+
+    if (missingKeys.Count > 0)
+    {
+        var message = new StringBuilder()
+            .AppendLine("Configuracao obrigatoria ausente para iniciar o Worker.")
+            .AppendLine("Revise os arquivos appsettings.Local.json / appsettings.{Environment}.Local.json.")
+            .AppendLine("Chaves ausentes:");
+
+        foreach (var key in missingKeys)
+        {
+            message.AppendLine($"- {key}");
+        }
+
+        throw new InvalidOperationException(message.ToString());
+    }
+
+    void Require(string key)
+    {
+        if (string.IsNullOrWhiteSpace(configuration[key]))
+        {
+            missingKeys.Add(key);
+        }
+    }
+}

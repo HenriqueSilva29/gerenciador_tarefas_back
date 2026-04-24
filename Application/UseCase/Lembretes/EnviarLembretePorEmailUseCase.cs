@@ -1,8 +1,8 @@
 ﻿using Application.Emails;
 using Application.Interfaces.Email;
 using Application.Interfaces.UseCases.Lembretes;
+using Domain.Entities;
 using Microsoft.Extensions.Logging;
-using Repository.Repositorys.LembreteRep;
 
 namespace Application.UseCase.Lembretes
 {
@@ -11,29 +11,24 @@ namespace Application.UseCase.Lembretes
         private readonly ILogger<EnviarLembretePorEmailUseCase> _logger;
         private readonly LembreteEmailCompose _lembreteEmailCompose;
         private readonly IEmail _email;
-        private readonly IRepLembrete _repLembrete;
 
         public EnviarLembretePorEmailUseCase
         (   
             ILogger<EnviarLembretePorEmailUseCase> logger, 
             LembreteEmailCompose lembreteEmailCompose,
-            IEmail email,
-            IRepLembrete repLembrete
+            IEmail email
         )
         {
             _logger = logger;
             _lembreteEmailCompose = lembreteEmailCompose;
             _email = email;
-            _repLembrete = repLembrete;
         }
 
-        public async Task ExecuteAsync(int lembreteId)
+        public async Task ExecuteAsync(Lembrete lembrete, string emailDestinatario)
         {
-            var lembrete = await _repLembrete.RecuperarPorId(lembreteId);
-
             _logger.LogInformation("Iniciando montagem do email");
 
-            var email =  _lembreteEmailCompose.Compose(lembrete);
+            var email =  _lembreteEmailCompose.Compose(lembrete, emailDestinatario);
 
             await _email.SendAsync(email);
 

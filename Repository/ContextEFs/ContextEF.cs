@@ -3,6 +3,7 @@ using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Repository.ConfigEF;
+using Repository.ConfigEF.Query;
 using System.Text.Json;
 
 namespace Repository.ContextEFs
@@ -20,6 +21,7 @@ namespace Repository.ContextEFs
             modelBuilder.ApplyConfiguration(new UsuarioConfig());
             modelBuilder.ApplyConfiguration(new AuditoriaConfig());
             modelBuilder.ApplyConfiguration(new ParamGeralConfig());
+            modelBuilder.ApplyConfiguration(new HistoricoTarefaItemQueryConfig());
 
             //modelBuilder.ApplyConfigurationsFromAssembly(typeof(ContextEF).Assembly); -- Esse codigo aplica todas as config acimas de uma só vez.
         }
@@ -42,6 +44,12 @@ namespace Repository.ContextEFs
                             .First(p => p.Metadata.IsPrimaryKey());
 
                         temp.Auditoria.IdEntidade = (int)pk.CurrentValue;
+
+                        if (temp.Entry.State == EntityState.Unchanged && temp.Auditoria.Acao == EntityState.Added.ToString())
+                        {
+                            temp.Auditoria.Alteracoes = ObterAlteracoesAposInsert(temp.Entry);
+                        }
+
                     }
 
                     Set<Auditoria>().AddRange(auditoriasTemp.Select(a => a.Auditoria));
@@ -78,9 +86,11 @@ namespace Repository.ContextEFs
                 {
                     Entidade = entry.Entity.GetType().Name,
                     Acao = entry.State.ToString(),
-                    IdUsuario = "TEMP", // depois pegamos do contexto
+                    IdUsuario = "TEMP",
                     Data = UtcDateTime.Now(),
-                    Alteracoes = ObterAlteracoes(entry)
+                    Alteracoes = entry.State == EntityState.Added
+                    ? string.Empty
+                    : ObterAlteracoes(entry),
                 };
 
                 auditorias.Add(new AuditoriaTemp
@@ -93,12 +103,15 @@ namespace Repository.ContextEFs
             return auditorias;
         }
 
-        private string ObterAlteracoes(EntityEntry entry)
+        private string ObterAlteracoes(EntityEntry entry, bool incluirPk = false)
         {
             var alteracoes = new Dictionary<string, object?>();
 
             foreach (var property in entry.Properties)
             {
+                if (!incluirPk && property.Metadata.IsPrimaryKey())
+                    continue;
+
                 var antes = property.OriginalValue;
                 var depois = property.CurrentValue;
 
@@ -122,5 +135,21 @@ namespace Repository.ContextEFs
 
             return JsonSerializer.Serialize(alteracoes);
         }
+
+        private string ObterAlteracoesAposInsert(EntityEntry entry)
+        {
+            var alteracoes = new Dictionary<string, object?>();
+
+            foreach (var property in entry.Properties)
+            {
+                if (property.Metadata.IsPrimaryKey())
+                    continue; // recomendação
+
+                alteracoes[property.Metadata.Name] = property.CurrentValue;
+            }
+
+            return JsonSerializer.Serialize(alteracoes);
+        }
+
     }
 }

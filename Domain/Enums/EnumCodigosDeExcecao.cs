@@ -7,5 +7,6 @@
         public const string PossuiSubtarefaComPrioridadeMaiorQueTarefaPai = "POSSUI_SUBTAREFA_COM_PRIORIDADE_MAIOR_QUE_TAREFA_PAI";
         public const string UsuarioJaCadastrado = "USUARIO_JA_CADASTRADO";
         public const string RegistroNaoEncontrado = "REGISTRO_NAO_ENCONTRADO";
+        public const string CredenciaisInvalidas = "CREDENCIAIS_INVALIDAS";
     }
 }

@@ -19,7 +19,7 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(RequestAutenticacaoRequest request)
         {
-            var token = _aplic.Login(request);
+            var token = await _aplic.Login(request);
 
             return Ok(new { token });
         }

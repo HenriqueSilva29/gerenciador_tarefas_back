@@ -86,23 +86,22 @@ namespace Repository.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CodigoTarefa")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("CodigoTarefa");
 
                     b.Property<DateTimeOffset>("DataDisparo")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("DataDisparo");
 
-                    b.Property<DateTimeOffset>("DataVencimento")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)")
+                        .HasColumnName("descricao");
 
                     b.Property<int>("Status")
                         .HasColumnType("int")
                         .HasColumnName("status");
-
-                    b.Property<string>("Texto")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)")
-                        .HasColumnName("texto");
 
                     b.HasKey("Id");
 
@@ -120,17 +119,99 @@ namespace Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("AvisarVencimento")
+                    b.Property<bool>("ArquivamentoAutomaticoTarefasConcluidas")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false)
-                        .HasColumnName("avisar_vencimento");
+                        .HasColumnName("arquivamento_automatico_tarefas_concluidas");
 
-                    b.Property<int>("DiasAntesDoVencimento")
+                    b.Property<bool>("ArquivarTarefasConcluidas")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("arquivar_tarefas_concluidas");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("email");
+
+                    b.Property<TimeSpan>("HorarioResumoDiario")
+                        .HasColumnType("time")
+                        .HasColumnName("horario_resumo_diario");
+
+                    b.Property<int>("ListagemPadraoDeTarefas")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0)
-                        .HasColumnName("dias_antes_do_vencimento");
+                        .HasColumnName("listagem_padrao_de_tarefas");
+
+                    b.Property<bool>("NotificarTarefasAntesDoInicio")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("notificar_tarefas_antes_do_inicio");
+
+                    b.Property<int>("PrimeiroDiaDaSemana")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasColumnName("primeiro_dia_da_semana");
+
+                    b.Property<int>("QuantidadeDateTimeAntesDoInicio")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1)
+                        .HasColumnName("quantidade_datetime_antes_do_inicio");
+
+                    b.Property<int>("QuantidadeDiasParaArquivamento")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1)
+                        .HasColumnName("quantidade_dias_para_arquivamento");
+
+                    b.Property<bool>("ReceberNotificacaoPorEmail")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("receber_notificacao_por_email");
+
+                    b.Property<bool>("ReceberNotificacaoPorWhatsApp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("receber_notificacao_por_whatsapp");
+
+                    b.Property<bool>("ReceberResumoDiario")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("receber_resumo_diario");
+
+                    b.Property<bool>("ReforcarlembreteNoProprioDia")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("reforcar_lembrete_no_proprio_dia");
+
+                    b.Property<int>("TelaInicial")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasColumnName("tela_inicial");
+
+                    b.Property<string>("Telefone")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("telefone");
+
+                    b.Property<int>("Unidade")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(2)
+                        .HasColumnName("unidade_antes_do_inicio");
 
                     b.HasKey("Id");
 
@@ -158,6 +239,10 @@ namespace Repository.Migrations
                         .HasColumnType("datetimeoffset")
                         .HasColumnName("data_criacao");
 
+                    b.Property<DateTime>("DataTarefa")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("data_tarefa");
+
                     b.Property<DateTimeOffset>("DataVencimento")
                         .HasColumnType("datetimeoffset")
                         .HasColumnName("data_vencimento");
@@ -167,6 +252,14 @@ namespace Repository.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("descricao");
+
+                    b.Property<TimeSpan>("HoraFim")
+                        .HasColumnType("time")
+                        .HasColumnName("hora_fim");
+
+                    b.Property<TimeSpan>("HoraInicio")
+                        .HasColumnType("time")
+                        .HasColumnName("hora_inicio");
 
                     b.Property<int>("Prioridade")
                         .HasColumnType("int")
@@ -198,11 +291,11 @@ namespace Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Nome")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)")
-                        .HasColumnName("nome");
+                        .HasColumnName("email");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -217,10 +310,60 @@ namespace Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Nome")
+                    b.HasIndex("Email")
                         .IsUnique();
 
                     b.ToTable("Usuario", (string)null);
+                });
+
+            modelBuilder.Entity("Repository.QueryModels.Tarefas.HistoricoTarefaItemQueryModel", b =>
+                {
+                    b.Property<string>("Acao")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("acao");
+
+                    b.Property<string>("Alteracoes")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("alteracoes");
+
+                    b.Property<DateTimeOffset>("DataOcorrencia")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("dataocorrencia");
+
+                    b.Property<string>("EscopoEvento")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("escopo_evento");
+
+                    b.Property<int>("IdAuditoria")
+                        .HasColumnType("int")
+                        .HasColumnName("idauditoria");
+
+                    b.Property<int>("IdTarefaPrincipal")
+                        .HasColumnType("int")
+                        .HasColumnName("id_tarefa_principal");
+
+                    b.Property<int>("IdTarefaRelacionada")
+                        .HasColumnType("int")
+                        .HasColumnName("id_tarefa_relacionada");
+
+                    b.Property<string>("IdUsuario")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("idusuario");
+
+                    b.Property<string>("TipoEvento")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("tipo_evento");
+
+                    b.Property<string>("TituloRelacionado")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("titulo_relacionado");
+
+                    b.ToTable((string)null);
+
+                    b.ToView(null, (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Lembrete", b =>

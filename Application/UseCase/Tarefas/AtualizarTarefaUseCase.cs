@@ -25,7 +25,7 @@ namespace Application.UseCase.Tarefas
         {
             await _unitOfWork.BeginTransactionAsync();
 
-            var Tarefa = await _rep.RecuperarPorId(id);
+            var Tarefa = await _rep.RecuperarPorIdAsync(id);
 
             if (Tarefa is null) throw new ExceptionApplication(EnumCodigosDeExcecao.RegistroNaoEncontrado, "Tarefa não encontrada no banco de dados", StatusCodes.Status409Conflict);
 

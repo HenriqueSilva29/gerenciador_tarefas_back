@@ -26,14 +26,14 @@ namespace Application.UseCase.Usuarios
         {
             await _unitOfWork.BeginTransactionAsync();
 
-            var usuarioExistente = await _rep.ObterUsuarioPorNome(dto.Nome);
+            var usuarioExistente = await _rep.ObterUsuarioPorEmail(dto.Email);
 
             if (usuarioExistente is not null)
                 throw new ExceptionApplication(EnumCodigosDeExcecao.RegistroNaoEncontrado, "Usuário já cadastrado na base de dados",StatusCodes.Status409Conflict);
 
             var senhaHash = _hashSenha.Executar(dto.Senha);
 
-            var usuario = new Usuario(dto.Nome, senhaHash);
+            var usuario = new Usuario(dto.Email, senhaHash);
 
             _rep.Adicionar(usuario);
 

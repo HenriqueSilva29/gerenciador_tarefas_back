@@ -60,7 +60,7 @@ namespace Repository.Migrations
                 {
                     idusuario = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    nome = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     senhahash = table.Column<string>(name: "senha_hash", type: "nvarchar(max)", nullable: false),
                     role = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
@@ -118,9 +118,9 @@ namespace Repository.Migrations
                 column: "idtarefapai");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Usuario_nome",
+                name: "IX_Usuario_email",
                 table: "Usuario",
-                column: "nome",
+                column: "email",
                 unique: true);
         }
 

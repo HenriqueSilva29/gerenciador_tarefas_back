@@ -13,8 +13,8 @@ namespace Application.Services.ServAutenticacaos
             _loginUseCase = loginUseCase;
         }
 
-        public async Task<string> Login(RequestAutenticacaoRequest request) 
-            => await _loginUseCase.Executar(request);
+        public Task<string> Login(RequestAutenticacaoRequest request) 
+            =>  _loginUseCase.Executar(request);
 
     }
 }

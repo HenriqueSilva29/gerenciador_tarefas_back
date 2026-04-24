@@ -20,7 +20,7 @@ namespace Application.UseCase.ToDoItems
 
         public async Task<TarefaResponse> Executar(int id)
         {
-            var tarefa = await _rep.RecuperarPorId(id);
+            var tarefa = await _rep.RecuperarPorIdAsync(id);
 
             if (tarefa == null)
                  throw new ExceptionApplication(EnumCodigosDeExcecao.RegistroNaoEncontrado, $"Tarefa não encontrada no banco de dados. Id: {id}", StatusCodes.Status409Conflict);

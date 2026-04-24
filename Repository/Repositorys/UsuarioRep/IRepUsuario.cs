@@ -4,6 +4,6 @@ namespace Repository.Repositorys.UsuarioRep
 {
     public interface IRepUsuario : IRepository<Usuario, int>
     {
-        Task<Usuario?> ObterUsuarioPorNome(string nome);
+        Task<Usuario?> ObterUsuarioPorEmail(string email);
     }
 }

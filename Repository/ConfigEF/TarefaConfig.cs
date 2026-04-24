@@ -63,6 +63,30 @@ namespace Repository.ConfigEF
                     utc => utc.Value,
                     utc => UtcDateTime.From(utc)
                 );
+
+            builder.Property(t => t.DataTarefa)
+                .IsRequired()
+                .HasColumnName("data_tarefa")
+                .HasConversion(
+                    data => data.ToDateTime(TimeOnly.MinValue),
+                    data => DateOnly.FromDateTime(data)
+                );
+
+            builder.Property(t => t.HoraInicio)
+                .IsRequired()
+                .HasColumnName("hora_inicio")
+                .HasConversion(
+                    hora => hora.ToTimeSpan(),
+                    hora => TimeOnly.FromTimeSpan(hora)
+                );
+
+            builder.Property(t => t.HoraFim)
+                .IsRequired()
+                .HasColumnName("hora_fim")
+                .HasConversion(
+                    hora => hora.ToTimeSpan(),
+                    hora => TimeOnly.FromTimeSpan(hora)
+                );
         }
     }
 }

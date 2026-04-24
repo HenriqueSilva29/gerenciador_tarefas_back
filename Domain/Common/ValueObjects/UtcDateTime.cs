@@ -7,11 +7,27 @@ namespace Domain.Common.ValueObjects
 
         public UtcDateTime(DateTimeOffset value)
         {
+            if (value.Offset != TimeSpan.Zero)
+                throw new ArgumentException("Must be UTC");
+
             Value = value;
         }
 
+        public UtcDateTime Subtract(TimeSpan time)
+        {
+            return new UtcDateTime(Value - time);
+        }
+
         public static UtcDateTime From(DateTimeOffset value)
-           => new(value);
+           => new UtcDateTime(value.ToUniversalTime());
+
+        public static UtcDateTime From(DateOnly date, TimeOnly time)
+        {
+            var dateTime = date.ToDateTime(time);
+            var utc = DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
+
+            return new UtcDateTime(new DateTimeOffset(utc));
+        }
 
         public static UtcDateTime Now()
             => new(DateTimeOffset.UtcNow);

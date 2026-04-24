@@ -1,10 +1,10 @@
-﻿using Application.Dtos.FiltroDtos;
-using Application.Dtos.Filtros;
+﻿using Application.Dtos.Filtros.Tarefas;
 using Application.Dtos.Tarefas;
+using Application.Dtos.Tarefas.Subtarefas;
 using Application.Services.ServTarefas;
 using Application.Utils.Paginacao;
-using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Repository.QueryModels.Tarefas;
 
 namespace API.Controllers
 {
@@ -35,36 +35,37 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Atualizar(int id, [FromBody] UpdateTarefaRequest request)
+        public async Task<ActionResult> Atualizar([FromRoute] int id, [FromBody] UpdateTarefaRequest request)
         {
             await aplic.AtualizarTarefa(id, request);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Remover(int id)
+        public async Task<ActionResult> Remover([FromRoute] int id)
         {
             await aplic.RemoverTarefa(id);
             return NoContent();
         }
 
-        [HttpGet("tarefas-vencidas")]
-        public async Task<ActionResult> RecuperarTarefasVencidas(int pagina, int quantidade)
-        {
-                var tarefas = await aplic.RecuperarTarefasVencidas(pagina, quantidade);
-                return Ok(tarefas);
-        }
-
 
         [HttpPost("{id}/atualizar-prioridade")]
-        public async Task<ActionResult> AtualizarPrioridade(int id, [FromBody] UpdatePrioridadeTarefaRequest dto)
+        public async Task<ActionResult> AtualizarPrioridade([FromRoute] int id, [FromBody] UpdatePrioridadeTarefaRequest request)
         {
-            await aplic.AtualizarPrioridade(id, dto);
+            await aplic.AtualizarPrioridade(id, request);
             return NoContent();
         }
 
+        [HttpPut("{id}/status")]
+        public async Task<ActionResult> AtualizarStatus([FromRoute] int id, [FromBody] UpdateStatusTarefaRequest request)
+        {
+            await aplic.AtualizarStatus(id, request);
+            return NoContent();
+        }
+
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<TarefaResponse>> ObterPorId(int id)
+        public async Task<ActionResult<TarefaResponse>> ObterPorId([FromRoute] int id)
         {
             var tarefa = await aplic.ObterPorId(id);
 
@@ -72,6 +73,25 @@ namespace API.Controllers
                 return NotFound();
 
             return Ok(tarefa);
+        }
+
+        [HttpPost("subtarefa")]
+        public async Task<ActionResult<SubtarefaResponse>> Criar(AdicionarSubtarefaRequest request)
+        {
+            var result = await aplic.AdicionarSubtarefa(request);
+
+            return CreatedAtAction(nameof(ObterPorId), new { id = result.Id }, result);
+        }
+
+        [HttpGet("{id}/historico")]
+        public async Task<ActionResult<HistoricoTarefaItemQueryModel>> Historico([FromRoute] int id)
+        {
+            var historico = await aplic.RecuperarHistoricoPorId(id);
+
+            if (historico == null)
+                return NotFound();
+
+            return Ok(historico);
         }
     }
 }

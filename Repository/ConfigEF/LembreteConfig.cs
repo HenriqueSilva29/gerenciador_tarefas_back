@@ -17,18 +17,27 @@ namespace Repository.ConfigEF
                 .HasColumnName("idLembrete")
                 .ValueGeneratedOnAdd();
 
+            builder.Property(l => l.CodigoTarefa)
+                .IsRequired()
+                .HasColumnName("CodigoTarefa");
+
             builder.HasOne(l => l.Tarefa)
                    .WithMany(t => t.Lembretes)
                    .HasForeignKey(l => l.CodigoTarefa)
                    .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Property(l => l.Texto)
+            builder.Property(l => l.DataDisparo)
+                .IsRequired()
+                .HasColumnName("DataDisparo");
+
+            builder.Property(l => l.Descricao)
                 .HasMaxLength(300)
                 .IsRequired()
-                .HasColumnName("texto");
+                .HasColumnName("descricao");
 
             builder.Property(l => l.Status)
-                .IsRequired(true)
+                .IsRequired()
+                .HasConversion<int>()
                 .HasColumnName("status");
         }
     }

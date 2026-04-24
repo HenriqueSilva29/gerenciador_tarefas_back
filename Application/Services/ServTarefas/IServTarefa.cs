@@ -1,9 +1,8 @@
-﻿using Application.Dtos.FiltroDtos;
+﻿using Application.Dtos.Filtros.Tarefas;
 using Application.Dtos.Tarefas;
+using Application.Dtos.Tarefas.Subtarefas;
 using Application.Utils.Paginacao;
-using Application.Views;
 using Domain.Entities;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Application.Services.ServTarefas
 {
@@ -13,8 +12,10 @@ namespace Application.Services.ServTarefas
         Task AtualizarTarefa(int id, UpdateTarefaRequest dto);
         Task RemoverTarefa(int id);
         Task<PaginacaoHelper<Tarefa>> ListarTarefas(TarefaFiltroRequest parametros);
-        Task<PaginacaoHelper<Tarefa>> RecuperarTarefasVencidas(int pagina, int quantidade);
         Task AtualizarPrioridade(int id, UpdatePrioridadeTarefaRequest dto);
         Task<TarefaResponse> ObterPorId(int id);
+        Task<SubtarefaResponse> AdicionarSubtarefa(AdicionarSubtarefaRequest dto);
+        Task AtualizarStatus(int id, UpdateStatusTarefaRequest dto);
+        Task<HistoricoTarefaResponse> RecuperarHistoricoPorId(int id);
     }
 }
