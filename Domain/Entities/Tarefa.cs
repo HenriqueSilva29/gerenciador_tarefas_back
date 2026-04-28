@@ -27,6 +27,8 @@ namespace Domain.Entities
         public EnumStatusTarefa Status { get; private set ; }
         public EnumPrioridadeTarefa Prioridade { get; set; }
         public EnumCategoriaTarefa Categoria { get; set; }
+        public int? CodigoUsuario { get; set; }
+        public Usuario? Usuario { get; set; }
 
         //autorreferente
         public int? CodigoTarefaPai { get; set; }

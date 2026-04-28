@@ -15,7 +15,7 @@ namespace Application.UseCase.Lembretes
         public async Task ExecuteAsync(int id, UtcDateTime dataDisparo)
         {
             BackgroundJob.Schedule(
-            () => _dispararLembreteUseCase.Execute(id),
+            () => _dispararLembreteUseCase.ExecuteAsync(id),
             dataDisparo
             );
         }

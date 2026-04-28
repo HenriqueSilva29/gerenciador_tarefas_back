@@ -64,20 +64,13 @@ namespace Application.Services.TarefaServices
             => _listarTarefa.Executar(parametros);
 
         public Task<TarefaResponse> ObterPorId(int id)
-        {
-            return _recuperarTarefaPorId.Executar(id);
-        }
+            => _recuperarTarefaPorId.Executar(id);
 
         public Task<SubtarefaResponse> AdicionarSubtarefa(AdicionarSubtarefaRequest dto)
-        {
-            return _adicionarSubtarefa.Executar(dto);
-        }
-
+            =>  _adicionarSubtarefa.Executar(dto);
 
         public Task<HistoricoTarefaResponse> RecuperarHistoricoPorId(int id)
-        {
-            return _recuperarHistoricoTarefaUseCase.Executar(id);
-        }
+            => _recuperarHistoricoTarefaUseCase.Executar(id);
 
     }
 }

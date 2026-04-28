@@ -1,4 +1,5 @@
-﻿using Application.Events.Tarefas;
+using Application.Events.Notificacoes;
+using Application.Events.Tarefas;
 using Application.Interfaces.Messaging;
 using Application.Messaging;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,15 +11,15 @@ public class MessageDispatcher : IMessageDispatcher
 
     public MessageDispatcher(IServiceProvider provider)
     {
-        _provider = provider; 
+        _provider = provider;
     }
 
     public async Task DispatchAsync(string json)
     {
-        var Types = new Dictionary<string, Type>()
+        var types = new Dictionary<string, Type>()
         {
-            {nameof(TarefaCriadaEvent), typeof(TarefaCriadaEvent)},
-
+            { nameof(TarefaCriadaEvent), typeof(TarefaCriadaEvent) },
+            { nameof(NotificacaoCriadaEvent), typeof(NotificacaoCriadaEvent) },
         };
 
         var envelope = JsonSerializer.Deserialize<MessageEnvelope>(json);
@@ -26,7 +27,7 @@ public class MessageDispatcher : IMessageDispatcher
         if (envelope == null)
             throw new Exception("Envelope inválido");
 
-        if(!Types.TryGetValue(envelope.Type, out var eventType))
+        if (!types.TryGetValue(envelope.Type, out var eventType))
         {
             throw new ApplicationException($"Tipo não mapeado: {envelope.Type} ");
         }
@@ -34,11 +35,9 @@ public class MessageDispatcher : IMessageDispatcher
         var evento = JsonSerializer.Deserialize(envelope.Payload, eventType);
 
         var handlerType = typeof(IMessageHandler<>).MakeGenericType(eventType);
-
         var handler = _provider.GetRequiredService(handlerType);
-
         var method = handlerType.GetMethod("HandleAsync");
 
-        await (Task)method.Invoke(handler, new[] { evento });
+        await (Task)method!.Invoke(handler, new[] { evento })!;
     }
 }

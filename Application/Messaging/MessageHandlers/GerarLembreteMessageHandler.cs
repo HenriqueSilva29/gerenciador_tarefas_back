@@ -12,9 +12,9 @@ namespace Application.Messaging.MessageHandlers
         {
             _useCase = useCase;
         }
-        public async Task HandleAsync(TarefaCriadaEvent evento)
-        {
-            await _useCase.ExecuteAsync(evento);
-        }
+
+        public Task HandleAsync(TarefaCriadaEvent evento)
+            => _useCase.ExecuteAsync(evento);
+  
     }
 }

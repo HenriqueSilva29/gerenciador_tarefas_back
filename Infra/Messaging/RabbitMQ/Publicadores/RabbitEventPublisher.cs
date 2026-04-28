@@ -1,4 +1,6 @@
-﻿using Application.Events.Tarefas;
+using Application.Events.Notificacoes;
+using Application.Events.Tarefas;
+using Application.Interfaces.Messaging;
 using Application.Messaging;
 using Infra.Mensageria.RabbitMQ.Channels;
 using Infra.Messaging.RabbitMQ;
@@ -15,7 +17,8 @@ namespace Infra.Mensageria.RabbitMQ.Publicadores
 
         private readonly Dictionary<Type, string> RoutingMap = new()
         {
-            {typeof(TarefaCriadaEvent),RoutingKeys.TarefaCriada}
+            { typeof(TarefaCriadaEvent), RoutingKeys.TarefaCriada },
+            { typeof(NotificacaoCriadaEvent), RoutingKeys.NotificacaoCriada }
         };
 
         public RabbitEventPublisher(IRabbitChannelFactory channelFactory)
@@ -29,8 +32,7 @@ namespace Infra.Mensageria.RabbitMQ.Publicadores
 
             if (!RoutingMap.TryGetValue(eventType, out var routingKey))
                 throw new InvalidOperationException(
-                    $"RoutingKey não configurada para {eventType.Name}");
-
+                    $"RoutingKey nao configurada para {eventType.Name}");
 
             var envelope = new MessageEnvelope
             {
@@ -46,7 +48,7 @@ namespace Infra.Mensageria.RabbitMQ.Publicadores
             using var channel = await _channelFactory.CreateChannelAsync();
 
             await channel.BasicPublishAsync(
-                exchange: "app.events",
+                exchange: RabbitTopologyNames.EventsExchange,
                 routingKey: routingKey,
                 mandatory: false,
                 basicProperties: new BasicProperties
@@ -57,7 +59,6 @@ namespace Infra.Mensageria.RabbitMQ.Publicadores
                 },
                 body: body
             );
-
         }
     }
 }

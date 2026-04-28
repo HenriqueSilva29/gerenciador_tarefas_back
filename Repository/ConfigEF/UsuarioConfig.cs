@@ -30,6 +30,10 @@ namespace Repository.ConfigEF
                 .IsRequired()
                 .HasMaxLength(50);
 
+            builder.Property(x => x.Nome)
+                .HasColumnName("nome")
+                .HasMaxLength(100);
+
             builder.HasIndex(x => x.Email)
                 .IsUnique();
 

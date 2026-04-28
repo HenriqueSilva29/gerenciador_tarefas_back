@@ -3,11 +3,13 @@ using Application.Dtos.Tarefas;
 using Application.Dtos.Tarefas.Subtarefas;
 using Application.Services.ServTarefas;
 using Application.Utils.Paginacao;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repository.QueryModels.Tarefas;
 
 namespace API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TarefaController : ControllerBase

@@ -12,7 +12,6 @@ namespace Application.Emails
                 To = emailDestinatario,
                 Subject = $"Lembrete: {entity.Descricao}",
                 Body = $"""
-                <h2>Lembrete de tarefa</h2>
                 <p>Sua tarefa está próxima do horário previsto.</p>
                 <p><strong>Descrição:</strong> {entity.Descricao}</p>
                 <p><strong>Disparo:</strong> {entity.DataDisparo:dd/MM/yyyy HH:mm}</p>

@@ -1,5 +1,4 @@
 ﻿using Application.Events.Tarefas;
-using Domain.Entities;
 
 namespace Application.Interfaces.UseCases.Lembretes
 {

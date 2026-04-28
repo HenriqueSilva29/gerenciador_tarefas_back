@@ -87,7 +87,7 @@ namespace Repository.Migrations
 
                     b.Property<int>("CodigoTarefa")
                         .HasColumnType("int")
-                        .HasColumnName("CodigoTarefa");
+                        .HasColumnName("idtarefa");
 
                     b.Property<DateTimeOffset>("DataDisparo")
                         .HasColumnType("datetimeoffset")
@@ -108,6 +108,56 @@ namespace Repository.Migrations
                     b.HasIndex("CodigoTarefa");
 
                     b.ToTable("Lembrete", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Notificacao", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("idnotificacao");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CodigoUsuario")
+                        .HasColumnType("int")
+                        .HasColumnName("idusuario");
+
+                    b.Property<DateTimeOffset>("DataCriacao")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("data_criacao");
+
+                    b.Property<DateTimeOffset?>("DataLeitura")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("data_leitura");
+
+                    b.Property<bool>("Lida")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("lida");
+
+                    b.Property<string>("Mensagem")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("mensagem");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("int")
+                        .HasColumnName("tipo");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)")
+                        .HasColumnName("titulo");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CodigoUsuario");
+
+                    b.ToTable("Notificacao", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.ParamGeral", b =>
@@ -235,6 +285,10 @@ namespace Repository.Migrations
                         .HasColumnType("int")
                         .HasColumnName("idtarefapai");
 
+                    b.Property<int?>("CodigoUsuario")
+                        .HasColumnType("int")
+                        .HasColumnName("idusuario");
+
                     b.Property<DateTimeOffset>("DataCriacao")
                         .HasColumnType("datetimeoffset")
                         .HasColumnName("data_criacao");
@@ -279,6 +333,8 @@ namespace Repository.Migrations
 
                     b.HasIndex("CodigoTarefaPai");
 
+                    b.HasIndex("CodigoUsuario");
+
                     b.ToTable("Tarefa", (string)null);
                 });
 
@@ -296,6 +352,11 @@ namespace Repository.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)")
                         .HasColumnName("email");
+
+                    b.Property<string>("Nome")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("nome");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -377,6 +438,16 @@ namespace Repository.Migrations
                     b.Navigation("Tarefa");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Notificacao", b =>
+                {
+                    b.HasOne("Domain.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("CodigoUsuario")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("Domain.Entities.Tarefa", b =>
                 {
                     b.HasOne("Domain.Entities.Tarefa", "TarefaPai")
@@ -384,7 +455,14 @@ namespace Repository.Migrations
                         .HasForeignKey("CodigoTarefaPai")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("Domain.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("CodigoUsuario")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("TarefaPai");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Domain.Entities.Tarefa", b =>

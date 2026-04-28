@@ -41,11 +41,30 @@ using Application.Interfaces.UseCases.Tarefas.Subtarefas;
 using Repository.Repositorys.AuditoriaRep;
 using Infra.Notifications;
 using Infra.BackgroundJobs.Hangfire.Jobs.Lembretes;
-using Autofac.Core;
 using Application.Services.ServParamGerals;
 using Application.Interfaces.UseCases.ParamGerals;
 using Application.UseCase.ParamGerals;
-using System.Text;
+using Application.Services.ServNotificacoes;
+using API.Context;
+using Application.Interfaces.Context;
+using API.Hubs;
+using API.SignalR;
+using Application.Interfaces.Notificacoes;
+using Application.Interfaces.UseCases.Notificacoes;
+using Application.UseCase.Notificacoes;
+using Microsoft.AspNetCore.SignalR;
+using Repository.Repositorys.NotificacaoRep;
+using Application.Services.ServUsuarios;
+using Application.Interfaces.UseCases.UsuarioAutenticados;
+using Application.UseCase.UsuarioAutenticados;
+using Application.Services.ServUsuarioAutenticados;
+using Application.Services.UsuarioAutenticados;
+using Application.Events.Notificacoes;
+using Application.Messaging.MessageHandlers;
+using Infra.Messaging.RabbitMQ.Consumidores;
+using Infra.Messaging.RabbitMQ.Consumidores.Notificacoes;
+using Infra.Messaging.RabbitMQ.Topology.Topologies.Notificacoes;
+using Infra.Messaging.RabbitMQ.Topology.Topologies.Tarefas;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,10 +90,13 @@ builder.Services.AddHangfire(config =>
             QueuePollInterval = TimeSpan.FromSeconds(60)
         });
 });
-builder.Services.AddHangfireServer( options => 
-    { 
-    options.ServerName = "API-Hangfire-Server";
-    });
+//API
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IUsuarioContexto, UsuarioContexto>();
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<IUserIdProvider, SignalRUserIdProvider>();
+builder.Services.AddHostedService<RabbitInitializerHostedService>();
+builder.Services.AddHostedService<RabbitConsumerHostedService>();
 
 //Repositorios
 builder.Services.AddScoped<IRepTarefa, RepTarefa>();
@@ -83,24 +105,32 @@ builder.Services.AddScoped<IRepUsuario, RepUsuario>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IRepParamGeral, RepParamGeral>();
 builder.Services.AddScoped<IRepAuditoria, RepAuditoria>();
+builder.Services.AddScoped<IRepNotificacao, RepNotificacao>();
 
 //Servicos
 builder.Services.AddScoped<IServTarefa, ServTarefa>();
 builder.Services.AddScoped<IServAutenticacao, ServAutenticacao>();
 builder.Services.AddScoped<IServParamGeral, ServParamGeral>();
+builder.Services.AddScoped<IServUsuario, ServUsuario>();
+builder.Services.AddScoped<IServNotificacao, ServNotificacao>();
 
 //Mensageria
 builder.Services.AddScoped<IRabbitEventPublisher, RabbitEventPublisher>();
-builder.Services.AddScoped<IRabbitConnection, RabbitConnection>();
-builder.Services.AddScoped<IRabbitChannelFactory, RabbitChannelFactory>();
+builder.Services.AddSingleton<IRabbitConnection, RabbitConnection>();
+builder.Services.AddSingleton<IRabbitChannelFactory, RabbitChannelFactory>();
 builder.Services.AddScoped<IRabbitTopologyInitializer, RabbitTopologyInitializer>();
 builder.Services.AddScoped<IMessageDispatcher, MessageDispatcher>();
+builder.Services.AddSingleton<IMessageConsumer, NotificacaoCriadaConsumer>();
+builder.Services.AddScoped<IMessageHandler<NotificacaoCriadaEvent>, NotificacaoCriadaMessageHandler>();
+builder.Services.AddScoped<IRabbitTopology, GerarLembreteTopology>();
+builder.Services.AddScoped<IRabbitTopology, NotificacaoCriadaTopology>();
 builder.Services.AddScoped<LembreteEmailCompose>();
 
 //Infra
 builder.Services.AddScoped<IEmail,Email>();
 builder.Services.AddScoped<IGerarTokenUseCase, GerarToken>();
 builder.Services.AddScoped<IVerificarSenhaUseCase, VerificarSenha>();
+builder.Services.AddScoped<INotificacaoTempoReal, NotificacaoTempoReal>();
 
 //Casos de uso
 builder.Services.AddScoped<IAdicionarTarefaUseCase, AdicionarTarefaUseCase>();
@@ -122,7 +152,18 @@ builder.Services.AddScoped<IDispararLembreteUseCase, DispararLembreteUseCase>();
 builder.Services.AddScoped<IEnviarLembretePorEmailUseCase, EnviarLembretePorEmailUseCase>();
 builder.Services.AddScoped<IListarParamGeralUseCase, ListarParamGeralUseCase>();
 builder.Services.AddScoped<IAtualizarParamGeralUseCase, AtualizarParamGeralUseCase>();
-
+builder.Services.AddScoped<ICriarNotificacaoUseCase, CriarNotificacaoUseCase>();
+builder.Services.AddScoped<IListarNotificacoesUseCase, ListarNotificacoesUseCase>();
+builder.Services.AddScoped<IContarNotificacoesNaoLidasUseCase, ContarNotificacoesNaoLidasUseCase>();
+builder.Services.AddScoped<IMarcarNotificacaoComoLidaUseCase, MarcarNotificacaoComoLidaUseCase>();
+builder.Services.AddScoped<IMarcarTodasNotificacoesComoLidasUseCase, MarcarTodasNotificacoesComoLidasUseCase>();
+builder.Services.AddScoped<IExcluirNotificacaoUseCase, ExcluirNotificacaoUseCase>();
+builder.Services.AddScoped<IExcluirTodasNotificacoesUseCase, ExcluirTodasNotificacoesUseCase>();
+builder.Services.AddScoped<IAtualizarNomeUsuarioUseCase, AtualizarNomeUsuarioUseCase>();
+builder.Services.AddScoped<IRegistrarUsuarioUseCase, RegistrarUsuarioUseCase>();
+builder.Services.AddScoped<IObterIdUsuarioUseCase, ObterIdUsuarioUseCase>();
+builder.Services.AddScoped<IServUsuarioAutenticado, ServUsuarioAutenticado>();
+builder.Services.AddScoped<INotificarUsuarioUseCase, NotificarUsuarioUseCase>();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -152,6 +193,23 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+
+                if (!string.IsNullOrEmpty(accessToken) &&
+                    path.StartsWithSegments("/hubs/notificacoes"))
+                {
+                    context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization();
@@ -173,6 +231,7 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.WithOrigins("http://localhost:3000")
+                  .AllowCredentials()
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
@@ -208,6 +267,7 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<NotificacaoHub>("/hubs/notificacoes");
 app.MapRazorPages();
 
 

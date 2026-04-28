@@ -19,7 +19,7 @@ namespace Repository.ConfigEF
 
             builder.Property(l => l.CodigoTarefa)
                 .IsRequired()
-                .HasColumnName("CodigoTarefa");
+                .HasColumnName("idtarefa");
 
             builder.HasOne(l => l.Tarefa)
                    .WithMany(t => t.Lembretes)

@@ -26,6 +26,14 @@ namespace Repository.ConfigEF
             builder.Property(t => t.CodigoTarefaPai)
                  .HasColumnName("idtarefapai");
 
+            builder.Property(t => t.CodigoUsuario)
+                 .HasColumnName("idusuario");
+
+            builder.HasOne(t => t.Usuario)
+                .WithMany()
+                .HasForeignKey(t => t.CodigoUsuario)
+                .OnDelete(DeleteBehavior.NoAction);
+
             builder.Property(t => t.Titulo)
                 .IsRequired()
                 .HasMaxLength(200)

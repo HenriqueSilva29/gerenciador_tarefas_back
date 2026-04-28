@@ -22,7 +22,7 @@ namespace Application.UseCase.Usuarios
             _hashSenha = hashSenha;
         }
 
-        public async Task<UsuarioResponse> Executar(RegistrarUsuarioRequest dto)
+        public async Task<UsuarioResponse> ExecutarAsync(RegistrarUsuarioRequest dto)
         {
             await _unitOfWork.BeginTransactionAsync();
 

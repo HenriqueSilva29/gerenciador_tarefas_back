@@ -1,9 +1,8 @@
-﻿using Application.Events.Tarefas;
+using Application.Events.Tarefas;
 using Application.Interfaces.UseCases.Lembretes;
 using Application.Utils.Transacao;
 using Domain.Common.ValueObjects;
 using Domain.Entities;
-using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Repository.Repositorys.LembreteRep;
 using Repository.Repositorys.ParamGeralRep;
@@ -20,14 +19,12 @@ namespace Application.UseCase.Lembretes
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAgendarLembreteJobScheduler _agendarLembreteJobScheduler;
 
-        public TarefaCriadaGerarLembreteUseCase
-        (
+        public TarefaCriadaGerarLembreteUseCase(
              IUnitOfWork unitOfWork,
              IRepLembrete repLembrete,
              IRepTarefa repTarefa,
              IRepParamGeral repParamGeral,
-             IAgendarLembreteJobScheduler agendarLembreteJobScheduler
-        )
+             IAgendarLembreteJobScheduler agendarLembreteJobScheduler)
         {
             _unitOfWork = unitOfWork;
             _rep = repLembrete;
@@ -38,9 +35,10 @@ namespace Application.UseCase.Lembretes
 
         public async Task ExecuteAsync(TarefaCriadaEvent evento)
         {
-            var paramGeral =  await _repParamGeral.AsQueryable().FirstOrDefaultAsync();
+            var paramGeral = await _repParamGeral.AsQueryable().FirstOrDefaultAsync();
 
-            if (paramGeral.NotificarTarefasAntesDoInicio is false) return;
+            if (paramGeral is null || paramGeral.NotificarTarefasAntesDoInicio is false)
+                return;
 
             await _unitOfWork.BeginTransactionAsync();
 
@@ -55,16 +53,14 @@ namespace Application.UseCase.Lembretes
                 Descricao = tarefa.Descricao
             };
 
-            tarefa.Lembretes.Add( lembrete );
+            tarefa.Lembretes.Add(lembrete);
 
             _repTarefa.Atualizar(tarefa);
-
             _rep.Adicionar(lembrete);
-;
+
             await _unitOfWork.CommitTransactionAsync();
 
             await _agendarLembreteJobScheduler.ExecuteAsync(lembrete.Id, dataDisparo);
-
         }
 
         public UtcDateTime CalcularDataDisparo(DateOnly dataTarefa, TimeOnly horaInicio)
@@ -79,7 +75,6 @@ namespace Application.UseCase.Lembretes
             var dataDisparo = dateTimeTarefaUtc.Subtract(antecedencia);
 
             return dataDisparo;
-
         }
     }
 }
