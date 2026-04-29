@@ -1,4 +1,4 @@
-﻿namespace Application.Interfaces.Context
+namespace Application.Interfaces.Context
 {
     public interface IUsuarioContexto
     {

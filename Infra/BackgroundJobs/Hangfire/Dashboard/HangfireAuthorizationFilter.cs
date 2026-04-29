@@ -1,6 +1,6 @@
 ﻿using Hangfire.Dashboard;
 
-namespace Infra.Jobs.Hangfire.Dashboard
+namespace Infra.BackgroundJobs.Hangfire.Dashboard
 {
     public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
     {

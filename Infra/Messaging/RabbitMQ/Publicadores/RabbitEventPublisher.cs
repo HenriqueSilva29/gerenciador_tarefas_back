@@ -1,15 +1,16 @@
-using Application.Events.Notificacoes;
-using Application.Events.Tarefas;
+using Application.Funcionalidades.Notificacoes.Eventos;
+using Application.Funcionalidades.Tarefas.Eventos;
 using Application.Interfaces.Messaging;
 using Application.Messaging;
-using Infra.Mensageria.RabbitMQ.Channels;
+using Infra.Messaging.RabbitMQ.Channels;
 using Infra.Messaging.RabbitMQ;
 using Infra.Messaging.RabbitMQ.Publicadores;
+using Infra.Messaging.RabbitMQ.Topology;
 using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
 
-namespace Infra.Mensageria.RabbitMQ.Publicadores
+namespace Infra.Messaging.RabbitMQ.Publicadores
 {
     public class RabbitEventPublisher : IRabbitEventPublisher
     {
@@ -17,8 +18,8 @@ namespace Infra.Mensageria.RabbitMQ.Publicadores
 
         private readonly Dictionary<Type, string> RoutingMap = new()
         {
-            { typeof(TarefaCriadaEvent), RoutingKeys.TarefaCriada },
-            { typeof(NotificacaoCriadaEvent), RoutingKeys.NotificacaoCriada }
+            { typeof(TarefaCriadaEvento), RoutingKeys.TarefaCriada },
+            { typeof(NotificacaoCriadaEvento), RoutingKeys.NotificacaoCriada }
         };
 
         public RabbitEventPublisher(IRabbitChannelFactory channelFactory)

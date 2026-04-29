@@ -1,4 +1,4 @@
-﻿using Application.Utils.Paginacao;
+using Application.Utils.Paginacao;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Utils.Queryable

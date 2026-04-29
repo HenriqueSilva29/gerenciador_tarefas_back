@@ -1,7 +1,7 @@
-﻿using Infra.Messaging.RabbitMQ.Topology;
+using Infra.Messaging.RabbitMQ.Topology;
 using RabbitMQ.Client;
 
-namespace Infra.Mensageria.RabbitMQ.Topology
+namespace Infra.Messaging.RabbitMQ.Topology
 {
     public class RabbitTopologyInitializer : IRabbitTopologyInitializer
     {

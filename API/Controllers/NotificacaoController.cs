@@ -1,6 +1,6 @@
-using Application.Dtos.Filtros.Notificacoes;
-using Application.Dtos.Notificacoes;
-using Application.Services.ServNotificacoes;
+﻿using Application.Funcionalidades.Notificacoes.Filtros;
+using Application.Funcionalidades.Notificacoes.Dtos;
+using Application.Funcionalidades.Notificacoes.Servicos;
 using Application.Utils.Paginacao;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,15 +12,15 @@ namespace API.Controllers
     [ApiController]
     public class NotificacaoController : ControllerBase
     {
-        private readonly IServNotificacao _aplic;
+        private readonly IServicoNotificacao _aplic;
 
-        public NotificacaoController(IServNotificacao aplic)
+        public NotificacaoController(IServicoNotificacao aplic)
         {
             _aplic = aplic;
         }
 
         [HttpGet("listar")]
-        public async Task<ActionResult<PaginacaoHelper<NotificacaoResponse>>> Listar([FromQuery] NotificacaoFiltroRequest filtro)
+        public async Task<ActionResult<PaginacaoHelper<NotificacaoResposta>>> Listar([FromQuery] NotificacaoFiltroRequisicao filtro)
         {
             var result = await _aplic.Listar(filtro);
             return Ok(result);
@@ -64,3 +64,5 @@ namespace API.Controllers
         }
     }
 }
+
+

@@ -1,5 +1,6 @@
 using Application.Interfaces.Messaging;
-using Infra.Mensageria.RabbitMQ.Channels;
+using Infra.Messaging.RabbitMQ.Channels;
+using Infra.Messaging.RabbitMQ.Topology;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;

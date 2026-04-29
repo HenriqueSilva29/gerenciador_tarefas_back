@@ -1,8 +1,8 @@
-﻿using Infra.Mensageria.RabbitMQ.Connections;
+using Infra.Messaging.RabbitMQ.Connections;
 using Microsoft.EntityFrameworkCore.Metadata;
 using RabbitMQ.Client;
 
-namespace Infra.Mensageria.RabbitMQ.Channels
+namespace Infra.Messaging.RabbitMQ.Channels
 {
     public class RabbitChannelFactory : IRabbitChannelFactory
     {

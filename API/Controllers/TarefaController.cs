@@ -1,11 +1,11 @@
-﻿using Application.Dtos.Filtros.Tarefas;
-using Application.Dtos.Tarefas;
-using Application.Dtos.Tarefas.Subtarefas;
-using Application.Services.ServTarefas;
+﻿using Application.Funcionalidades.Tarefas.Filtros;
+using Application.Funcionalidades.Tarefas.Dtos;
+using Application.Funcionalidades.Tarefas.Dtos.Subtarefas;
+using Application.Funcionalidades.Tarefas.Servicos;
 using Application.Utils.Paginacao;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Repository.QueryModels.Tarefas;
+using Repository.ModelosConsulta.Tarefas;
 
 namespace API.Controllers
 {
@@ -14,22 +14,22 @@ namespace API.Controllers
     [ApiController]
     public class TarefaController : ControllerBase
     {
-        private readonly IServTarefa aplic;
+        private readonly IServicoTarefa aplic;
 
-        public TarefaController(IServTarefa servTarefa)
+        public TarefaController(IServicoTarefa servTarefa)
         {
             aplic = servTarefa;
         }
 
         [HttpGet("listar-tarefas")]
-        public async Task<ActionResult<PaginacaoHelper<TarefaResponse>>> Listar([FromQuery] TarefaFiltroRequest filtro)
+        public async Task<ActionResult<PaginacaoHelper<TarefaResposta>>> Listar([FromQuery] TarefaFiltroRequisicao filtro)
         {
             var result = await aplic.ListarTarefas(filtro);
             return Ok(result);
         }
 
         [HttpPost("criar-tarefa")]
-        public async Task<ActionResult<TarefaResponse>> Criar([FromBody] CreateTarefaRequest request)
+        public async Task<ActionResult<TarefaResposta>> Criar([FromBody] CriarTarefaRequisicao request)
         {
             var result = await aplic.AdicionarTarefa(request);
 
@@ -37,7 +37,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Atualizar([FromRoute] int id, [FromBody] UpdateTarefaRequest request)
+        public async Task<ActionResult> Atualizar([FromRoute] int id, [FromBody] AtualizarTarefaRequisicao request)
         {
             await aplic.AtualizarTarefa(id, request);
             return NoContent();
@@ -52,14 +52,14 @@ namespace API.Controllers
 
 
         [HttpPost("{id}/atualizar-prioridade")]
-        public async Task<ActionResult> AtualizarPrioridade([FromRoute] int id, [FromBody] UpdatePrioridadeTarefaRequest request)
+        public async Task<ActionResult> AtualizarPrioridade([FromRoute] int id, [FromBody] AtualizarPrioridadeTarefaRequisicao request)
         {
             await aplic.AtualizarPrioridade(id, request);
             return NoContent();
         }
 
         [HttpPut("{id}/status")]
-        public async Task<ActionResult> AtualizarStatus([FromRoute] int id, [FromBody] UpdateStatusTarefaRequest request)
+        public async Task<ActionResult> AtualizarStatus([FromRoute] int id, [FromBody] AtualizarStatusTarefaRequisicao request)
         {
             await aplic.AtualizarStatus(id, request);
             return NoContent();
@@ -67,7 +67,7 @@ namespace API.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TarefaResponse>> ObterPorId([FromRoute] int id)
+        public async Task<ActionResult<TarefaResposta>> ObterPorId([FromRoute] int id)
         {
             var tarefa = await aplic.ObterPorId(id);
 
@@ -78,7 +78,7 @@ namespace API.Controllers
         }
 
         [HttpPost("subtarefa")]
-        public async Task<ActionResult<SubtarefaResponse>> Criar(AdicionarSubtarefaRequest request)
+        public async Task<ActionResult<SubtarefaResposta>> Criar(AdicionarSubtarefaRequisicao request)
         {
             var result = await aplic.AdicionarSubtarefa(request);
 
@@ -86,7 +86,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}/historico")]
-        public async Task<ActionResult<HistoricoTarefaItemQueryModel>> Historico([FromRoute] int id)
+        public async Task<ActionResult<HistoricoTarefaItemConsultaModelo>> Historico([FromRoute] int id)
         {
             var historico = await aplic.RecuperarHistoricoPorId(id);
 
@@ -97,3 +97,7 @@ namespace API.Controllers
         }
     }
 }
+
+
+
+

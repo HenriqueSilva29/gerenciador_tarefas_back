@@ -1,8 +1,8 @@
-Ôªøusing Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
-namespace Infra.Mensageria.RabbitMQ.Connections
+namespace Infra.Messaging.RabbitMQ.Connections
 {
     public class RabbitConnection : IRabbitConnection
     {
@@ -24,7 +24,7 @@ namespace Infra.Mensageria.RabbitMQ.Connections
             var uriString = _factory.Uri;
 
             _logger.LogInformation("======================================");
-            _logger.LogInformation("Conex√£o RabbitMQ configurada");
+            _logger.LogInformation("Conex„o RabbitMQ configurada");
         }
 
         public async Task<IConnection> GetConnectionAsync()
@@ -34,7 +34,7 @@ namespace Infra.Mensageria.RabbitMQ.Connections
 
             _connection = await _factory.CreateConnectionAsync();
 
-            _logger.LogInformation("Conex√£o RabbitMQ criada");
+            _logger.LogInformation("Conex„o RabbitMQ criada");
 
             return _connection;
         }

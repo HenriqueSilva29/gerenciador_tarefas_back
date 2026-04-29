@@ -1,4 +1,4 @@
-﻿using Infra.Mensageria.RabbitMQ.Channels;
+using Infra.Messaging.RabbitMQ.Channels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 

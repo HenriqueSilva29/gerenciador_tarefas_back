@@ -1,10 +1,10 @@
-﻿using Application.Interfaces.UseCases.Autenticacaos;
-using Domain.Entities;
+﻿using Application.Funcionalidades.Autenticacao.Contratos.CasosDeUso;
+using Domain.Entidades;
 using Microsoft.AspNetCore.Identity;
 
 namespace Infra.Autenticacao
 {
-    public class VerificarSenha : IVerificarSenhaUseCase
+    public class VerificarSenha : IVerificarSenhaCasoDeUso
     {
         private readonly PasswordHasher<Usuario> _hasher = new();
 
@@ -15,3 +15,4 @@ namespace Infra.Autenticacao
         }
     }
 }
+

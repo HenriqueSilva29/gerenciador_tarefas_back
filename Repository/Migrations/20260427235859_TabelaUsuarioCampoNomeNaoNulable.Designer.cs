@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Repository.ContextEFs;
+using Repository.ContextosEF;
 
 #nullable disable
 
@@ -25,7 +25,7 @@ namespace Repository.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Entities.Auditoria", b =>
+            modelBuilder.Entity("Domain.Entidades.Auditoria", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -79,7 +79,7 @@ namespace Repository.Migrations
                     b.ToTable("auditoria", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Lembrete", b =>
+            modelBuilder.Entity("Domain.Entidades.Lembrete", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -118,7 +118,7 @@ namespace Repository.Migrations
                     b.ToTable("Lembrete", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Notificacao", b =>
+            modelBuilder.Entity("Domain.Entidades.Notificacao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -168,7 +168,7 @@ namespace Repository.Migrations
                     b.ToTable("Notificacao", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.ParamGeral", b =>
+            modelBuilder.Entity("Domain.Entidades.ParamGeral", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -276,7 +276,7 @@ namespace Repository.Migrations
                     b.ToTable("ParamGeral", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Tarefa", b =>
+            modelBuilder.Entity("Domain.Entidades.Tarefa", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -340,7 +340,7 @@ namespace Repository.Migrations
                     b.ToTable("Tarefa", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Usuario", b =>
+            modelBuilder.Entity("Domain.Entidades.Usuario", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -379,7 +379,7 @@ namespace Repository.Migrations
                     b.ToTable("Usuario", (string)null);
                 });
 
-            modelBuilder.Entity("Repository.QueryModels.Tarefas.HistoricoTarefaItemQueryModel", b =>
+            modelBuilder.Entity("Repository.ModelosConsulta.Tarefas.HistoricoTarefaItemConsultaModelo", b =>
                 {
                     b.Property<string>("Acao")
                         .IsRequired()
@@ -429,9 +429,9 @@ namespace Repository.Migrations
                     b.ToView(null, (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Lembrete", b =>
+            modelBuilder.Entity("Domain.Entidades.Lembrete", b =>
                 {
-                    b.HasOne("Domain.Entities.Tarefa", "Tarefa")
+                    b.HasOne("Domain.Entidades.Tarefa", "Tarefa")
                         .WithMany("Lembretes")
                         .HasForeignKey("CodigoTarefa")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -440,9 +440,9 @@ namespace Repository.Migrations
                     b.Navigation("Tarefa");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Notificacao", b =>
+            modelBuilder.Entity("Domain.Entidades.Notificacao", b =>
                 {
-                    b.HasOne("Domain.Entities.Usuario", "Usuario")
+                    b.HasOne("Domain.Entidades.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("CodigoUsuario")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -450,9 +450,9 @@ namespace Repository.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Tarefa", b =>
+            modelBuilder.Entity("Domain.Entidades.Tarefa", b =>
                 {
-                    b.HasOne("Domain.Entities.Tarefa", "TarefaPai")
+                    b.HasOne("Domain.Entidades.Tarefa", "TarefaPai")
                         .WithMany("SubTarefas")
                         .HasForeignKey("CodigoTarefaPai")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -460,7 +460,7 @@ namespace Repository.Migrations
                     b.Navigation("TarefaPai");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Tarefa", b =>
+            modelBuilder.Entity("Domain.Entidades.Tarefa", b =>
                 {
                     b.Navigation("Lembretes");
 
@@ -470,3 +470,5 @@ namespace Repository.Migrations
         }
     }
 }
+
+

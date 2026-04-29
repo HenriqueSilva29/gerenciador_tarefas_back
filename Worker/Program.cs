@@ -1,38 +1,36 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Repository.Repositorys.LembreteRep;
+using Repository.Repositorios.Lembretes;
 using Application.Utils.Transacao;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Repository.ContextEFs;
+using Repository.ContextosEF;
 using Application.Interfaces.Messaging;
-using Infra.Mensageria.RabbitMQ.Channels;
-using Infra.Mensageria.RabbitMQ.Connections;
-using Infra.Mensageria.RabbitMQ.Publicadores;
-using Infra.Mensageria.RabbitMQ.Topology;
+using Infra.Messaging.RabbitMQ.Channels;
+using Infra.Messaging.RabbitMQ.Connections;
+using Infra.Messaging.RabbitMQ.Publicadores;
+using Infra.Messaging.RabbitMQ.Topology;
 using Application.Emails;
 using Application.Interfaces.Email;
-using Application.UseCase.Lembretes;
+using Application.Funcionalidades.Lembretes.CasosDeUso;
 using Hangfire;
 using Hangfire.SqlServer;
 using Infra.BackgroundJobs.Hangfire.Jobs.Lembretes;
-using Application.Interfaces.UseCases.Lembretes;
-using Application.Interfaces.UseCases.Notificacoes;
-using Infra.Messaging.RabbitMQ.Topology;
+using Application.Funcionalidades.Lembretes.Contratos.CasosDeUso;
+using Application.Funcionalidades.Notificacoes.Contratos.CasosDeUso;
 using Infra.Messaging.RabbitMQ.Consumidores;
 using Infra.Messaging.RabbitMQ.Topology.Topologies.Tarefas;
 using Infra.Messaging.RabbitMQ.Topology.Topologies.Notificacoes;
-using Application.Events.Tarefas;
+using Application.Funcionalidades.Tarefas.Eventos;
 using Application.Messaging.MessageHandlers;
 using Infra.Messaging.RabbitMQ.Consumidores.Tarefas;
-using Repository.TarefaRep;
-using Repository.Repositorys.NotificacaoRep;
-using Repository.Repositorys.ParamGeralRep;
-using Infra.Notifications;
+using Repository.Repositorios.Tarefas;
+using Repository.Repositorios.Notificacoes;
+using Repository.Repositorios.ParamGerais;
+using Infra.Notificacoes;
 using System.Text;
-using Application.UseCase.Notificacoes;
-using Infra.Messaging.RabbitMQ.Publicadores;
+using Application.Funcionalidades.Notificacoes.CasosDeUso;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostContext, config) =>
@@ -82,15 +80,15 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<IMessageConsumer, GerarLembreteConsumer>();
 
         //Evento
-        services.AddScoped<IMessageHandler<TarefaCriadaEvent>, GerarLembreteMessageHandler>();
+        services.AddScoped<IMessageHandler<TarefaCriadaEvento>, GerarLembreteMessageHandler>();
 
         //UseCase
-        services.AddScoped<IEnviarLembretePorEmailUseCase, EnviarLembretePorEmailUseCase>();
-        services.AddScoped<IGerarLembreteUseCase,TarefaCriadaGerarLembreteUseCase>();
-        services.AddScoped<IAgendarLembreteJobScheduler, AgendarLembreteJobScheduler>();
-        services.AddScoped<IAgendarLembreteUseCase, AgendarLembreteUseCase>();
-        services.AddScoped<IDispararLembreteUseCase, DispararLembreteUseCase>();
-        services.AddScoped<ICriarNotificacaoUseCase, CriarNotificacaoUseCase>();
+        services.AddScoped<IEnviarLembretePorEmailCasoDeUso, EnviarLembretePorEmailCasoDeUso>();
+        services.AddScoped<IGerarLembreteCasoDeUso,TarefaCriadaGerarLembreteCasoDeUso>();
+        services.AddScoped<IAgendadorJobLembrete, AgendarLembreteJobScheduler>();
+        services.AddScoped<IAgendarLembreteCasoDeUso, AgendarLembreteCasoDeUso>();
+        services.AddScoped<IDispararLembreteCasoDeUso, DispararLembreteCasoDeUso>();
+        services.AddScoped<ICriarNotificacaoCasoDeUso, CriarNotificacaoCasoDeUso>();
 
         services.AddScoped<IMessageDispatcher, MessageDispatcher>();
 
@@ -117,7 +115,7 @@ var host = Host.CreateDefaultBuilder(args)
             options.ServerName = "Worker-Hangfire-Server";
         });
 
-        services.Configure<EmailOptions>(
+        services.Configure<OpcoesEmail>(
             hostContext.Configuration.GetSection("Email"));
 
     })
@@ -161,3 +159,5 @@ static void ValidateRequiredConfiguration(IConfiguration configuration)
         }
     }
 }
+
+

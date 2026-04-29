@@ -1,4 +1,4 @@
-﻿namespace Infra.Messaging.RabbitMQ.Publicadores
+namespace Application.Interfaces.Messaging
 {
     public interface IRabbitEventPublisher
     {

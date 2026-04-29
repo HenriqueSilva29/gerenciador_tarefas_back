@@ -1,0 +1,50 @@
+﻿using Application.Funcionalidades.Tarefas.Dtos;
+using Application.Funcionalidades.Tarefas.Contratos.CasosDeUso;
+using Application.Funcionalidades.UsuarioAutenticado.Servicos;
+using Application.Utils.Transacao;
+using Domain.Enumeradores;
+using Domain.Excecoes;
+using Microsoft.AspNetCore.Http;
+using Repository.Repositorios.Tarefas;
+
+namespace Application.Funcionalidades.Tarefas.CasosDeUso
+{
+    public class AtualizarPrioridadeTarefaCasoDeUso : IAtualizarPrioridadeTarefaCasoDeUso
+    {
+        private readonly IRepTarefa _rep;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IServicoUsuarioAutenticado _servUsuarioAutenticado;
+
+        public AtualizarPrioridadeTarefaCasoDeUso(
+            IRepTarefa rep,
+            IUnitOfWork unitOfWork,
+            IServicoUsuarioAutenticado servUsuarioAutenticado)
+        {
+            _rep = rep;
+            _unitOfWork = unitOfWork;
+            _servUsuarioAutenticado = servUsuarioAutenticado;
+        }
+
+        public async Task Executar(int id, AtualizarPrioridadeTarefaRequisicao dto)
+        {
+            var idUsuario = _servUsuarioAutenticado.ObterIdUsuarioLogado();
+
+            var tarefa = await _rep.ObterPorIdDoUsuarioAsync(id, idUsuario);
+
+            if (tarefa is null)
+                throw new ExcecaoAplicacao(
+                    EnumCodigosDeExcecao.RegistroNaoEncontrado,
+                    "Tarefa nao encontrada no banco de dados",
+                    StatusCodes.Status404NotFound);
+
+            tarefa.DefinirPrioridade(dto.Prioridade);
+
+            await _unitOfWork.BeginTransactionAsync();
+            _rep.Atualizar(tarefa);
+            await _unitOfWork.CommitTransactionAsync();
+        }
+    }
+}
+
+
+

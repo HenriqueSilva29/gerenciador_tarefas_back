@@ -1,5 +1,5 @@
-﻿using Application.Dtos.Autenticacaos;
-using Application.Services.ServAutenticacaos;
+﻿using Application.Funcionalidades.Autenticacao.Dtos;
+using Application.Funcionalidades.Autenticacao.Servicos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -8,16 +8,16 @@ namespace API.Controllers
     [ApiController]
     public class AutenticacaoController : ControllerBase
     {
-        private readonly IServAutenticacao _aplic;
+        private readonly IServicoAutenticacao _aplic;
 
         public AutenticacaoController(
-            IServAutenticacao aplic)
+            IServicoAutenticacao aplic)
         {
             _aplic = aplic;
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(RequestAutenticacaoRequest request)
+        public async Task<IActionResult> Login(AutenticacaoRequisicao request)
         {
             var token = await _aplic.Login(request);
 
@@ -25,3 +25,5 @@ namespace API.Controllers
         }
     }
 }
+
+

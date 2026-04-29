@@ -1,4 +1,4 @@
-﻿using Domain.Exceptions;
+﻿using Domain.Excecoes;
 using Microsoft.AspNetCore.Mvc;
 using System.Buffers.Text;
 
@@ -8,7 +8,7 @@ namespace API.Errors
     {
         public static ProblemDetails Create(Exception exception, HttpContext context)
         {
-            if (exception is ExceptionBase ex)
+            if (exception is ExcecaoBase ex)
             {
                 return CreateFromBaseException(ex, context);
             }
@@ -22,7 +22,7 @@ namespace API.Errors
         }
 
         private static ProblemDetails CreateFromBaseException(
-            ExceptionBase exception,
+            ExcecaoBase exception,
             HttpContext context)
         {
             return new ProblemDetails
@@ -66,3 +66,4 @@ namespace API.Errors
         }
     }
 }
+

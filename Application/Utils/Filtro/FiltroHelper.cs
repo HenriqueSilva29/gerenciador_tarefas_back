@@ -1,4 +1,4 @@
-﻿using Application.Interfaces.Filtros;
+using Application.Interfaces.Filtros;
 
 namespace Application.Utils.Filtro
 {
@@ -6,7 +6,7 @@ namespace Application.Utils.Filtro
     {
         public static IQueryable<T> AplicarFiltros<T>(
             this IQueryable<T> query,
-            IBaseFiltroRequest<T> filtroDto)
+            IBaseFiltroRequisicao<T> filtroDto)
         {
             var filtros = filtroDto.ObterFiltros();
 
@@ -19,3 +19,4 @@ namespace Application.Utils.Filtro
         }
     }
 }
+

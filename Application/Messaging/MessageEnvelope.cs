@@ -1,4 +1,4 @@
-﻿namespace Application.Messaging
+namespace Application.Messaging
 {
     public class MessageEnvelope
     {

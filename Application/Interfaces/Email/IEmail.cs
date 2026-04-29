@@ -1,4 +1,4 @@
-﻿using Application.Emails;
+using Application.Emails;
 
 namespace Application.Interfaces.Email
 {

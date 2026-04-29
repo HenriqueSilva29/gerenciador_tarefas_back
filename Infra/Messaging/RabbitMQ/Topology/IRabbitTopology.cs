@@ -1,6 +1,6 @@
-﻿using RabbitMQ.Client;
+using RabbitMQ.Client;
 
-namespace Infra.Mensageria.RabbitMQ.Topology
+namespace Infra.Messaging.RabbitMQ.Topology
 {
     public interface IRabbitTopology
     {

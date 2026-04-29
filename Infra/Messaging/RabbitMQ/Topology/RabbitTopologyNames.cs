@@ -1,4 +1,4 @@
-namespace Infra.Messaging.RabbitMQ
+namespace Infra.Messaging.RabbitMQ.Topology
 {
     public static class RabbitTopologyNames
     {

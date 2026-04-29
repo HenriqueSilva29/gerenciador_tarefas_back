@@ -1,5 +1,5 @@
-using Application.Events.Notificacoes;
-using Application.Events.Tarefas;
+using Application.Funcionalidades.Notificacoes.Eventos;
+using Application.Funcionalidades.Tarefas.Eventos;
 using Application.Interfaces.Messaging;
 using Application.Messaging;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,8 +18,8 @@ public class MessageDispatcher : IMessageDispatcher
     {
         var types = new Dictionary<string, Type>()
         {
-            { nameof(TarefaCriadaEvent), typeof(TarefaCriadaEvent) },
-            { nameof(NotificacaoCriadaEvent), typeof(NotificacaoCriadaEvent) },
+            { nameof(TarefaCriadaEvento), typeof(TarefaCriadaEvento) },
+            { nameof(NotificacaoCriadaEvento), typeof(NotificacaoCriadaEvento) },
         };
 
         var envelope = JsonSerializer.Deserialize<MessageEnvelope>(json);

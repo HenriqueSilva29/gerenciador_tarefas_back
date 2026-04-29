@@ -1,4 +1,4 @@
-﻿
+
 namespace Application.Utils.Paginacao
 {
     public class PaginacaoHelper<T>

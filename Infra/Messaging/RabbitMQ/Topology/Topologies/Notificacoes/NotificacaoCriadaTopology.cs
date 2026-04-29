@@ -1,7 +1,6 @@
-using Infra.Mensageria.RabbitMQ.Topology;
+using Infra.Messaging.RabbitMQ.Topology;
 using Infra.Messaging.RabbitMQ;
 using Infra.Messaging.RabbitMQ.Consumidores.Notificacoes;
-using Infra.Messaging.RabbitMQ.Topology;
 using RabbitMQ.Client;
 
 namespace Infra.Messaging.RabbitMQ.Topology.Topologies.Notificacoes

@@ -1,6 +1,6 @@
 using API.Hubs;
-using Application.Dtos.Notificacoes;
-using Application.Interfaces.Notificacoes;
+using Application.Funcionalidades.Notificacoes.Dtos;
+using Application.Funcionalidades.Notificacoes.Contratos.TempoReal;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.SignalR
@@ -14,7 +14,7 @@ namespace API.SignalR
             _hubContext = hubContext;
         }
 
-        public async Task NotificarUsuarioAsync(int? usuarioId, NotificacaoTempoRealResponse dto)
+        public async Task NotificarUsuarioAsync(int? usuarioId, NotificacaoTempoRealResposta dto)
         {
             await _hubContext.Clients
                 .User(usuarioId.ToString())

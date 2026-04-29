@@ -1,6 +1,6 @@
-﻿using RabbitMQ.Client;
+using RabbitMQ.Client;
 
-namespace Infra.Mensageria.RabbitMQ.Channels
+namespace Infra.Messaging.RabbitMQ.Channels
 {
     public interface IRabbitChannelFactory
     {

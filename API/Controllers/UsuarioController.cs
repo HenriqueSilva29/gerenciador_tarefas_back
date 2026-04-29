@@ -1,6 +1,6 @@
-﻿using Application.Dtos.Usuarios;
-using Application.Interfaces.UseCases.Usuarios;
-using Application.Services.ServUsuarios;
+﻿using Application.Funcionalidades.Usuarios.Dtos;
+using Application.Funcionalidades.Usuarios.Contratos.CasosDeUso;
+using Application.Funcionalidades.Usuarios.Servicos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -8,14 +8,14 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class UsuarioController : ControllerBase
     {
-        private readonly IServUsuario _aplic;
-        public UsuarioController(IServUsuario aplic)
+        private readonly IServicoUsuario _aplic;
+        public UsuarioController(IServicoUsuario aplic)
         {
             _aplic = aplic;
         }
 
         [HttpPost("registrar")]
-        public  async Task<ActionResult> RegistrarUsuario([FromBody] RegistrarUsuarioRequest dto)
+        public  async Task<ActionResult> RegistrarUsuario([FromBody] RegistrarUsuarioRequisicao dto)
         {
             var result =  await _aplic.RegistrarUsuario(dto);
 
@@ -23,7 +23,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> AtualizarNomeUsuario([FromRoute] int id, [FromBody] AtualizarNomeUsuarioRequest dto)
+        public async Task<ActionResult> AtualizarNomeUsuario([FromRoute] int id, [FromBody] AtualizarNomeUsuarioRequisicao dto)
         {
             await _aplic.AtualizarNomeUsuario(id, dto);
 
@@ -31,3 +31,5 @@ namespace API.Controllers
         }
     }
 }
+
+

@@ -1,37 +1,38 @@
-﻿using Application.Dtos.Filtros.Tarefas;
-using Application.Dtos.ParamGerals;
-using Application.Services.ServParamGerals;
-using Application.Utils.Paginacao;
-using Domain.Entities;
+﻿using Application.Funcionalidades.ParamGerais.Dtos;
+using Application.Funcionalidades.ParamGerais.Servicos;
+using Domain.Entidades;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ParamGeralController : ControllerBase
     {
-        private IServParamGeral _aplic;
-        public ParamGeralController(IServParamGeral aplic)
+        private readonly IServicoParamGeral _aplic;
+
+        public ParamGeralController(IServicoParamGeral aplic)
         {
             _aplic = aplic;
         }
 
-        [HttpGet("listar")]
-        public async Task<ActionResult<PaginacaoHelper<ParamGeral>>> Listar([FromQuery] ParamGeralFiltroRequest filtro)
+        [HttpGet]
+        public async Task<ActionResult<ParamGeral>> Obter()
         {
-            var result = await _aplic.Listar(filtro);
-
+            var result = await _aplic.Obter();
             return Ok(result);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<PaginacaoHelper<ParamGeral>>> Atualizar([FromRoute] int id, [FromBody] UpdateParamGeralRequest dto)
+        [HttpPut]
+        public async Task<ActionResult<ParamGeral>> Atualizar([FromBody] AtualizarParamGeralRequisicao dto)
         {
-            await _aplic.Atualizar(id, dto);
-
+            await _aplic.Atualizar(dto);
             return NoContent();
         }
-
     }
 }
+
+
+

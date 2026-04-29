@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
-using Repository.ContextEFs;
+using Repository.ContextosEF;
 
 namespace Application.Utils.Transacao
 {
@@ -66,3 +66,4 @@ namespace Application.Utils.Transacao
         }
     }
 }
+

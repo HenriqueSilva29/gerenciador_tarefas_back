@@ -1,20 +1,20 @@
-using Application.Dtos.Notificacoes;
-using Application.Events.Notificacoes;
+using Application.Funcionalidades.Notificacoes.Dtos;
+using Application.Funcionalidades.Notificacoes.Eventos;
 using Application.Interfaces.Messaging;
-using Application.Interfaces.Notificacoes;
+using Application.Funcionalidades.Notificacoes.Contratos.TempoReal;
 
 namespace Application.Messaging.MessageHandlers
 {
-    public class NotificacaoCriadaMessageHandler : IMessageHandler<NotificacaoCriadaEvent>
+    public class NotificacaoCriadaMessageHandler : IMessageHandler<NotificacaoCriadaEvento>
     {
-        private readonly INotificarUsuarioUseCase _notificarUsuarioUseCase;
+        private readonly INotificarUsuarioCasoDeUso _notificarUsuarioUseCase;
 
-        public NotificacaoCriadaMessageHandler(INotificarUsuarioUseCase notificarUsuarioUseCase)
+        public NotificacaoCriadaMessageHandler(INotificarUsuarioCasoDeUso notificarUsuarioUseCase)
         {
             _notificarUsuarioUseCase = notificarUsuarioUseCase;
         }
 
-        public Task HandleAsync(NotificacaoCriadaEvent message)
+        public Task HandleAsync(NotificacaoCriadaEvento message)
             => _notificarUsuarioUseCase.ExecuteAsync(message);
     }
 }

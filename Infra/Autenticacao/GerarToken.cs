@@ -1,5 +1,5 @@
-﻿using Application.Interfaces.UseCases.Autenticacaos;
-using Domain.Entities;
+﻿using Application.Funcionalidades.Autenticacao.Contratos.CasosDeUso;
+using Domain.Entidades;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Infra.Autenticacao
 {
-    public class GerarToken : IGerarTokenUseCase
+    public class GerarToken : IGerarTokenCasoDeUso
     {
         private readonly IConfiguration _configuration;
 
@@ -42,3 +42,4 @@ namespace Infra.Autenticacao
         }
     }
 }
+

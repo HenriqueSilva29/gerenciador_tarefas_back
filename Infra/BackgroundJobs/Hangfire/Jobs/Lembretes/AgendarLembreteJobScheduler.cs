@@ -1,15 +1,15 @@
-﻿using Application.Interfaces.UseCases.Lembretes;
-using Domain.Common.ValueObjects;
+﻿using Application.Funcionalidades.Lembretes.Contratos.CasosDeUso;
+using Domain.Comum.ObjetosDeValor;
 
 namespace Infra.BackgroundJobs.Hangfire.Jobs.Lembretes
 {
-    public class AgendarLembreteJobScheduler : IAgendarLembreteJobScheduler
+    public class AgendarLembreteJobScheduler : IAgendadorJobLembrete
     {
-        private readonly IAgendarLembreteUseCase _agendarLembreteUseCase;
+        private readonly IAgendarLembreteCasoDeUso _agendarLembreteUseCase;
 
         public AgendarLembreteJobScheduler
         (
-            IAgendarLembreteUseCase agendarLembreteUseCase
+            IAgendarLembreteCasoDeUso agendarLembreteUseCase
         )
         {
             _agendarLembreteUseCase = agendarLembreteUseCase;
@@ -20,3 +20,4 @@ namespace Infra.BackgroundJobs.Hangfire.Jobs.Lembretes
         }
     }
 }
+

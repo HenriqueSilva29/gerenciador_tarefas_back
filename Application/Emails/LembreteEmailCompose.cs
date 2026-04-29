@@ -1,23 +1,36 @@
-﻿using Application.Dtos.LembreteDtos;
-using Domain.Entities;
+﻿using Domain.Entidades;
 
 namespace Application.Emails
 {
     public class LembreteEmailCompose
     {
-        public EmailMessage Compose(Lembrete entity, string emailDestinatario)
+        public EmailMessage Compose(Lembrete lembrete, ParamGeral paramGeral)
         {
+            var unidade = ObterUnidadeTexto(paramGeral.Unidade);
+
             return new EmailMessage
             {
-                To = emailDestinatario,
-                Subject = $"Lembrete: {entity.Descricao}",
+                To = paramGeral.Email,
+                Subject = $"Lembrete: {lembrete.Tarefa.Titulo}",
                 Body = $"""
-                <p>Sua tarefa está próxima do horário previsto.</p>
-                <p><strong>Descrição:</strong> {entity.Descricao}</p>
-                <p><strong>Disparo:</strong> {entity.DataDisparo:dd/MM/yyyy HH:mm}</p>
+                <p>Título: {lembrete.Tarefa.Titulo} </p>
+                <p><strong>Descrição:</strong> {lembrete.Descricao}</p>
+                <p>Seu compromisso inicia-se em {paramGeral.QuantidadeDateTimeAntesDoInicio} {unidade}.</p>
                 """,
                 IsHtml = true
             };
         }
+
+        private static string ObterUnidadeTexto(EnumUnidadeTempo unidade)
+        {
+            return unidade switch
+            {
+                EnumUnidadeTempo.Dias => "dia(s)",
+                EnumUnidadeTempo.Horas => "hora(s)",
+                EnumUnidadeTempo.Minutos => "minuto(s)",
+                _ => "tempo"
+            };
+        }
     }
 }
+

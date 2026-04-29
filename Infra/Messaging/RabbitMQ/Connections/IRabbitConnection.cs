@@ -1,6 +1,6 @@
-﻿using RabbitMQ.Client;
+using RabbitMQ.Client;
 
-namespace Infra.Mensageria.RabbitMQ.Connections
+namespace Infra.Messaging.RabbitMQ.Connections
 {
     public interface IRabbitConnection : IDisposable
     {

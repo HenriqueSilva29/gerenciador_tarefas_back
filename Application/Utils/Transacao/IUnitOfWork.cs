@@ -1,4 +1,4 @@
-﻿namespace Application.Utils.Transacao
+namespace Application.Utils.Transacao
 {
     public interface IUnitOfWork
     {

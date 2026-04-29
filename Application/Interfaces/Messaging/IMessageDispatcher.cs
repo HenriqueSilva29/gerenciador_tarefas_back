@@ -1,4 +1,4 @@
-﻿namespace Application.Interfaces.Messaging
+namespace Application.Interfaces.Messaging
 {
     public interface IMessageDispatcher
     {
