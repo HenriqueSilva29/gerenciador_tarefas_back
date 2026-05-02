@@ -2,6 +2,7 @@ using Infra.Messaging.RabbitMQ.Channels;
 using Infra.Messaging.RabbitMQ;
 using Infra.Messaging.RabbitMQ.Consumidores;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Infra.Messaging.RabbitMQ.Consumidores.Tarefas
 {
@@ -11,8 +12,9 @@ namespace Infra.Messaging.RabbitMQ.Consumidores.Tarefas
 
         public GerarLembreteConsumer(
             IRabbitChannelFactory channelFactory,
-            IServiceScopeFactory scopeFactory)
-            : base(channelFactory, scopeFactory)
+            IServiceScopeFactory scopeFactory,
+            ILogger<RabbitMessageConsumerBase> logger)
+            : base(channelFactory, scopeFactory, logger)
         {
         }
 

@@ -1,4 +1,4 @@
-﻿using API.Errors;
+using API.Errors;
 using System.Text.Json;
 
 namespace API.Middlewares
@@ -6,10 +6,14 @@ namespace API.Middlewares
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<ExceptionMiddleware> _logger;
 
-        public ExceptionMiddleware(RequestDelegate next)
+        public ExceptionMiddleware(
+            RequestDelegate next,
+            ILogger<ExceptionMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -20,6 +24,12 @@ namespace API.Middlewares
             }
             catch (Exception ex)
             {
+                _logger.LogError(
+                    ex,
+                    "Erro nao tratado na requisicao {Metodo} {Path}",
+                    context.Request.Method,
+                    context.Request.Path);
+
                 await HandleExceptionAsync(context, ex);
             }
         }

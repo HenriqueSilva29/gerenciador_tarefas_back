@@ -31,6 +31,7 @@ using Repository.Repositorios.ParamGerais;
 using Infra.Notificacoes;
 using System.Text;
 using Application.Funcionalidades.Notificacoes.CasosDeUso;
+using Application.Observabilidade;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostContext, config) =>
@@ -44,7 +45,12 @@ var host = Host.CreateDefaultBuilder(args)
     .ConfigureLogging(logging =>
     {
         logging.ClearProviders();
-        logging.AddConsole();
+        logging.AddSimpleConsole(options =>
+        {
+            options.IncludeScopes = true;
+            options.SingleLine = true;
+            options.TimestampFormat = "yyyy-MM-dd HH:mm:ss ";
+        });
     })
     .ConfigureServices((hostContext, services) =>
     {
@@ -74,6 +80,7 @@ var host = Host.CreateDefaultBuilder(args)
         // RabbitMQ
         services.AddSingleton<IRabbitConnection, RabbitConnection>();
         services.AddSingleton<IRabbitChannelFactory, RabbitChannelFactory>();
+        services.AddSingleton<ICorrelationContextAccessor, CorrelationContextAccessor>();
         services.AddScoped<IRabbitEventPublisher, RabbitEventPublisher>();
 
         //Consumidores

@@ -55,6 +55,7 @@ using Application.Funcionalidades.UsuarioAutenticado.CasosDeUso;
 using Application.Funcionalidades.UsuarioAutenticado.Servicos;
 using Application.Funcionalidades.Notificacoes.Eventos;
 using Application.Messaging.MessageHandlers;
+using Application.Observabilidade;
 using Infra.Messaging.RabbitMQ.Consumidores;
 using Infra.Messaging.RabbitMQ.Consumidores.Notificacoes;
 using Infra.Messaging.RabbitMQ.Topology.Topologies.Notificacoes;
@@ -88,6 +89,7 @@ builder.Services.AddHangfire(config =>
 //API
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUsuarioContexto, UsuarioContexto>();
+builder.Services.AddSingleton<ICorrelationContextAccessor, CorrelationContextAccessor>();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IUserIdProvider, SignalRUserIdProvider>();
 builder.Services.AddHostedService<RabbitInitializerHostedService>();
@@ -209,8 +211,12 @@ builder.Host.UseSerilog();
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
+    .Enrich.FromLogContext()
     .WriteTo.Console()
-    .WriteTo.File("logs/rabbit-log-.txt", rollingInterval: RollingInterval.Day)
+    .WriteTo.File(
+        "logs/rabbit-log-.txt",
+        rollingInterval: RollingInterval.Day,
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [CorrelationId={CorrelationId}] [TraceId={TraceId}] {Message:lj}{NewLine}{Exception}")
     .CreateLogger();
 
 var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
@@ -254,6 +260,7 @@ app.UseStaticFiles();
 app.UseCors("AllowFrontend");
 
 app.UseRouting();
+app.UseMiddleware<RastreabilidadeMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
