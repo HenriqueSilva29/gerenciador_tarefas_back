@@ -19,8 +19,7 @@ using Application.Interfaces.Email;
 using Serilog;
 using Application.Funcionalidades.Lembretes.CasosDeUso;
 using Repository.Repositorios.Usuarios;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Text;
 using Application.Funcionalidades.Lembretes.Contratos.CasosDeUso;
 using Application.Funcionalidades.Autenticacao.Servicos;
@@ -60,6 +59,7 @@ using Infra.Messaging.RabbitMQ.Consumidores;
 using Infra.Messaging.RabbitMQ.Consumidores.Notificacoes;
 using Infra.Messaging.RabbitMQ.Topology.Topologies.Notificacoes;
 using Infra.Messaging.RabbitMQ.Topology.Topologies.Tarefas;
+using API.Autenticacao;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,6 +92,8 @@ builder.Services.AddSignalR();
 builder.Services.AddSingleton<IUserIdProvider, SignalRUserIdProvider>();
 builder.Services.AddHostedService<RabbitInitializerHostedService>();
 builder.Services.AddHostedService<RabbitConsumerHostedService>();
+builder.Services.AddScoped<IGeradorClaimsUsuario, GeradorClaimsUsuario>();
+
 
 //Repositorios
 builder.Services.AddScoped<IRepTarefa, RepTarefa>();
@@ -123,7 +125,6 @@ builder.Services.AddScoped<LembreteEmailCompose>();
 
 //Infra
 builder.Services.AddScoped<IEmail,Email>();
-builder.Services.AddScoped<IGerarTokenCasoDeUso, GerarToken>();
 builder.Services.AddScoped<IVerificarSenhaCasoDeUso, VerificarSenha>();
 builder.Services.AddScoped<INotificacaoTempoReal, NotificacaoTempoReal>();
 
@@ -174,34 +175,29 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.MaxDepth = 32;
     });
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-        };
+        options.Cookie.Name = "organizaai_auth";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.None;
 
-        options.Events = new JwtBearerEvents
+        options.ExpireTimeSpan = TimeSpan.FromHours(1);
+        options.SlidingExpiration = true;
+
+        options.Events = new CookieAuthenticationEvents
         {
-            OnMessageReceived = context =>
+            OnRedirectToLogin = context =>
             {
-                var accessToken = context.Request.Query["access_token"];
-                var path = context.HttpContext.Request.Path;
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.CompletedTask;
+            },
 
-                if (!string.IsNullOrEmpty(accessToken) &&
-                    path.StartsWithSegments("/hubs/notificacoes"))
-                {
-                    context.Token = accessToken;
-                }
-
+            OnRedirectToAccessDenied = context =>
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
                 return Task.CompletedTask;
             }
         };
@@ -274,9 +270,6 @@ static void ValidateRequiredConfiguration(IConfiguration configuration)
 
     Require("ConnectionStrings:DefaultConnection");
     Require("RabbitMQ:Uri");
-    Require("Jwt:Key");
-    Require("Jwt:Issuer");
-    Require("Jwt:Audience");
     Require("Email:Host");
     Require("Email:Port");
     Require("Email:UserName");

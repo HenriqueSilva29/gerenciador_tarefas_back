@@ -4,7 +4,7 @@ namespace Application.Funcionalidades.Autenticacao.Contratos.CasosDeUso
 {
     public interface ILoginCasoDeUso
     {
-        public Task<string> Executar(AutenticacaoRequisicao request);
+        public Task<AutenticacaoResposta> Executar(AutenticacaoRequisicao request);
     }
 }
 

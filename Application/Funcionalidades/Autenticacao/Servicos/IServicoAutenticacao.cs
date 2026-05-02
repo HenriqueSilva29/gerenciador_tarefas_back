@@ -4,7 +4,7 @@ namespace Application.Funcionalidades.Autenticacao.Servicos
 {
     public interface IServicoAutenticacao
     {
-        public Task<string> Login(AutenticacaoRequisicao request);
+        public Task<AutenticacaoResposta> Login(AutenticacaoRequisicao request);
     }
 }
 

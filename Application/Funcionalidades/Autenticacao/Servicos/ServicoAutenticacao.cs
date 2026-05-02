@@ -13,7 +13,7 @@ namespace Application.Funcionalidades.Autenticacao.Servicos
             _loginUseCase = loginUseCase;
         }
 
-        public Task<string> Login(AutenticacaoRequisicao request) 
+        public Task<AutenticacaoResposta> Login(AutenticacaoRequisicao request) 
             =>  _loginUseCase.Executar(request);
 
     }
